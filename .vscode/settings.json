@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "figma": {
+      "url": "ws://127.0.0.1:3845/mcp",
+      "type": "websocket"
+    }
+  }
+}
