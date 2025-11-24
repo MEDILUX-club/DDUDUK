@@ -38,10 +38,11 @@ class _SurveyStep3PainLevelScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: AppDimens.space24),
-                  Text('통증에 대한 기본적인 정보가 필요해요', style: AppTextStyles.titleText1),
+                  Text('통증에 대한 기본적인 정보를 알려주세요',
+                      style: AppTextStyles.titleText1),
                   const SizedBox(height: AppDimens.space8),
                   Text(
-                    '정확한 운동 프로그램을 위해 필요한 정보예요',
+                    '정확한 운동 프로그램을 위해 필요해요',
                     style: AppTextStyles.body14Regular.copyWith(
                       color: AppColors.textNeutral,
                     ),
@@ -49,7 +50,8 @@ class _SurveyStep3PainLevelScreenState
                   const SizedBox(height: AppDimens.space32),
                   Text('Q1.', style: AppTextStyles.body14Medium),
                   const SizedBox(height: AppDimens.space6),
-                  Text('어느 쪽 무릎이 아프신가요?', style: AppTextStyles.body18SemiBold),
+                  Text('어느 쪽 무릎이 아프신가요?',
+                      style: AppTextStyles.body18SemiBold),
                   const SizedBox(height: AppDimens.space12),
                   Row(
                     children: [
@@ -132,7 +134,7 @@ class _SurveyStep3PainLevelScreenState
               ),
               const SizedBox(width: AppDimens.itemSpacing),
               Expanded(
-                child: PrimaryButton(
+                child: BaseButton(
                   text: '다음으로',
                   onPressed: () {
                     Navigator.of(context).push(
@@ -165,12 +167,10 @@ class _KneeOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color borderColor = selected
-        ? AppColors.primary
-        : AppColors.lineNeutral;
-    final Color backgroundColor = selected
-        ? AppColors.primaryLight
-        : AppColors.fillBoxDefault;
+    final Color borderColor =
+        selected ? AppColors.primary : AppColors.lineNeutral;
+    final Color backgroundColor =
+        selected ? AppColors.primaryLight : AppColors.fillBoxDefault;
     final Color textColor = selected ? AppColors.primary : AppColors.textNormal;
 
     return Expanded(

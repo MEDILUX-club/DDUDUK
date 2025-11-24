@@ -30,7 +30,7 @@ class TermsAgreementScreen extends StatelessWidget {
                 Text('서비스 이용 약관 동의 화면', style: AppTextStyles.body14Regular),
               ],
             ),
-            PrimaryButton(
+            BaseButton(
               text: '다음: 설문 안내',
               onPressed: () {
                 Navigator.of(context).push(

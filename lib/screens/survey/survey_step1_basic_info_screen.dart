@@ -68,7 +68,7 @@ class _SurveyStep1BasicInfoScreenState
                   Text('기본 정보를 입력해주세요', style: AppTextStyles.titleText1),
                   const SizedBox(height: AppDimens.space8),
                   Text(
-                    '정확한 운동 프로그램을 위해 필요한 정보예요',
+                    '정확한 운동 프로그램을 위해 필요해요',
                     style: AppTextStyles.body14Regular.copyWith(
                       color: AppColors.textNeutral,
                     ),
@@ -136,7 +136,7 @@ class _SurveyStep1BasicInfoScreenState
               ),
             ),
           ),
-          PrimaryButton(
+          BaseButton(
             text: '다음으로',
             onPressed: () {
               Navigator.of(context).push(

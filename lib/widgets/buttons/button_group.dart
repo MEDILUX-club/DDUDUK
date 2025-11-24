@@ -39,17 +39,14 @@ class ButtonGroup extends StatelessWidget {
                 ),
                 foregroundColor: AppColors.textNormal,
               ),
-              child: Text(
-                subText,
-                style: AppTextStyles.body14Medium,
-              ),
+              child: Text(subText, style: AppTextStyles.body14Medium),
             ),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
           flex: 2,
-          child: PrimaryButton(
+          child: BaseButton(
             text: mainText,
             onPressed: onMainPressed,
             isEnabled: isMainEnabled,

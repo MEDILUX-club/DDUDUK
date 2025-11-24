@@ -21,8 +21,8 @@ class _SurveyStep2PainLocationScreenState
 
   final List<Map<String, dynamic>> _parts = [
     {'label': '목', 'icon': Icons.person},
-    {'label': '팔꿈치', 'icon': Icons.person},
     {'label': '어깨', 'icon': Icons.person},
+    {'label': '팔꿈치', 'icon': Icons.person},
     {'label': '손목', 'icon': Icons.person},
     {'label': '허리', 'icon': Icons.person},
     {'label': '고관절', 'icon': Icons.person},
@@ -106,7 +106,7 @@ class _SurveyStep2PainLocationScreenState
               ),
               const SizedBox(width: AppDimens.itemSpacing),
               Expanded(
-                child: PrimaryButton(
+                child: BaseButton(
                   text: '다음으로',
                   onPressed: () {
                     Navigator.of(context).push(

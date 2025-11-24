@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:dduduk_app/layouts/default_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step1_basic_info_screen.dart';
+import 'package:dduduk_app/theme/app_colors.dart';
+import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
-import 'package:dduduk_app/widgets/buttons/primary_button.dart';
 
 class SurveyIntroScreen extends StatelessWidget {
   const SurveyIntroScreen({super.key});
@@ -10,34 +11,147 @@ class SurveyIntroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      title: 'Survey Intro',
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Spacer(),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
+      title: '',
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: AppDimens.space24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: AppDimens.space24),
+              Text('셀프 설문을 시작합니다.', style: AppTextStyles.titleHeader),
+              const SizedBox(height: AppDimens.space12),
               Text(
-                'survey_intro_screen.dart',
-                style: AppTextStyles.body14Regular,
+                '당신에게 꼭 맞는 운동 프로그램을 위해\n몇 가지 질문에 답해주세요',
+                style: AppTextStyles.body14Regular.copyWith(
+                  color: AppColors.textNeutral,
+                  height: 1.6,
+                ),
               ),
-              SizedBox(height: 8),
-              Text('설문 시작 안내 화면', style: AppTextStyles.body14Regular),
+              const SizedBox(height: AppDimens.space32),
+              const Center(
+                child: Icon(
+                  Icons.content_paste_search_rounded,
+                  size: 100,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(height: AppDimens.space32),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(AppDimens.space20),
+                decoration: BoxDecoration(
+                  color: AppColors.fillBoxDefault,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _InfoRow(
+                      icon: Icons.access_time,
+                      title: '소요시간',
+                      description: '약 2-3분 내외로 완료할 수 있어요',
+                    ),
+                    const SizedBox(height: AppDimens.space16),
+                    _InfoRow(
+                      icon: Icons.analytics_outlined,
+                      title: '맞춤형 분석',
+                      description: '답변을 바탕으로 개인화된 운동 프로그램을 제공해요',
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppDimens.space16),
+              Row(
+                children: [
+                  Icon(
+                    Icons.lock_outline,
+                    size: 16,
+                    color: AppColors.textAssistive,
+                  ),
+                  const SizedBox(width: AppDimens.space8),
+                  Text(
+                    '당신의 정보는 안전하게 보호됩니다',
+                    style: AppTextStyles.body12Regular.copyWith(
+                      color: AppColors.textAssistive,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppDimens.space32),
+              SizedBox(
+                width: double.infinity,
+                height: AppDimens.buttonHeight,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.textWhite,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const SurveyStep1BasicInfoScreen(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    '시작하기',
+                    style: AppTextStyles.body14Medium.copyWith(
+                      color: AppColors.textWhite,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
-          PrimaryButton(
-            text: '다음: Step 1 기본정보',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const SurveyStep1BasicInfoScreen(),
-                ),
-              );
-            },
-          ),
-        ],
+        ),
       ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({
+    required this.icon,
+    required this.title,
+    required this.description,
+  });
+
+  final IconData icon;
+  final String title;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: AppColors.primary),
+        const SizedBox(width: AppDimens.space12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: AppTextStyles.body14Medium.copyWith(
+                  color: AppColors.textNormal,
+                ),
+              ),
+              const SizedBox(height: AppDimens.space4),
+              Text(
+                description,
+                style: AppTextStyles.body14Regular.copyWith(
+                  color: AppColors.textNeutral,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
