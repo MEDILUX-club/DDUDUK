@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dduduk_app/screens/survey/survey_step1_basic_info_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:dduduk_app/widgets/buttons/primary_button.dart';
 
 class SurveyIntroScreen extends StatelessWidget {
   const SurveyIntroScreen({super.key});
@@ -32,23 +33,15 @@ class SurveyIntroScreen extends StatelessWidget {
                 Text('설문 시작 안내 화면', style: AppTextStyles.body14Regular),
               ],
             ),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const SurveyStep1BasicInfoScreen(),
-                    ),
-                  );
-                },
-                child: Text(
-                  '다음: Step 1 기본정보',
-                  style: AppTextStyles.body14Medium.copyWith(
-                    color: AppColors.textWhite,
+            PrimaryButton(
+              text: '다음: Step 1 기본정보',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const SurveyStep1BasicInfoScreen(),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ],
         ),

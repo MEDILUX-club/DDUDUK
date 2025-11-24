@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dduduk_app/screens/survey/survey_step6_preferred_time_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:dduduk_app/widgets/buttons/primary_button.dart';
 
 class SurveyStep5WorkoutExpScreen extends StatelessWidget {
   const SurveyStep5WorkoutExpScreen({super.key});
@@ -32,23 +33,15 @@ class SurveyStep5WorkoutExpScreen extends StatelessWidget {
                 Text('Step 5 - 운동 경험 및 횟수', style: AppTextStyles.body14Regular),
               ],
             ),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const SurveyStep6PreferredTimeScreen(),
-                    ),
-                  );
-                },
-                child: Text(
-                  '다음: Step 6 선호 시간대',
-                  style: AppTextStyles.body14Medium.copyWith(
-                    color: AppColors.textWhite,
+            PrimaryButton(
+              text: '다음: Step 6 선호 시간대',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const SurveyStep6PreferredTimeScreen(),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ],
         ),

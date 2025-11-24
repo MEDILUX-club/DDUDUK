@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dduduk_app/screens/survey/survey_intro_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:dduduk_app/widgets/buttons/primary_button.dart';
 
 class TermsAgreementScreen extends StatelessWidget {
   const TermsAgreementScreen({super.key});
@@ -32,23 +33,15 @@ class TermsAgreementScreen extends StatelessWidget {
                 Text('서비스 이용 약관 동의 화면', style: AppTextStyles.body14Regular),
               ],
             ),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const SurveyIntroScreen(),
-                    ),
-                  );
-                },
-                child: Text(
-                  '다음: 설문 안내',
-                  style: AppTextStyles.body14Medium.copyWith(
-                    color: AppColors.textWhite,
+            PrimaryButton(
+              text: '다음: 설문 안내',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const SurveyIntroScreen(),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ],
         ),

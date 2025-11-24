@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:dduduk_app/widgets/buttons/primary_button.dart';
 
 class SurveyCompletionScreen extends StatelessWidget {
   const SurveyCompletionScreen({super.key});
@@ -28,17 +29,11 @@ class SurveyCompletionScreen extends StatelessWidget {
                 Text('설문 완료 및 분석 중 화면', style: AppTextStyles.body14Regular),
               ],
             ),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                },
-                child: Text(
-                  '처음으로',
-                  style: AppTextStyles.body14Medium.copyWith(color: AppColors.textWhite),
-                ),
-              ),
+            PrimaryButton(
+              text: '처음으로',
+              onPressed: () {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
             ),
           ],
         ),

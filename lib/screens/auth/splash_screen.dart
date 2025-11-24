@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dduduk_app/screens/auth/onboarding_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:dduduk_app/widgets/buttons/primary_button.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -30,21 +31,13 @@ class SplashScreen extends StatelessWidget {
                 Text('앱 시작 로고 화면', style: AppTextStyles.body14Regular),
               ],
             ),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-                  );
-                },
-                child: Text(
-                  '다음: 온보딩',
-                  style: AppTextStyles.body14Medium.copyWith(
-                    color: AppColors.textWhite,
-                  ),
-                ),
-              ),
+            PrimaryButton(
+              text: '다음: 온보딩',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+                );
+              },
             ),
           ],
         ),

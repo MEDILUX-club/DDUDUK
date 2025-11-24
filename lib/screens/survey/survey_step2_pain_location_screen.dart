@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dduduk_app/screens/survey/survey_step3_pain_level_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:dduduk_app/widgets/buttons/primary_button.dart';
 
 class SurveyStep2PainLocationScreen extends StatelessWidget {
   const SurveyStep2PainLocationScreen({super.key});
@@ -35,23 +36,15 @@ class SurveyStep2PainLocationScreen extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const SurveyStep3PainLevelScreen(),
-                    ),
-                  );
-                },
-                child: Text(
-                  '다음: Step 3 통증 정도',
-                  style: AppTextStyles.body14Medium.copyWith(
-                    color: AppColors.textWhite,
+            PrimaryButton(
+              text: '다음: Step 3 통증 정도',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const SurveyStep3PainLevelScreen(),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ],
         ),

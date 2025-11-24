@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dduduk_app/screens/auth/sign_in_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:dduduk_app/widgets/buttons/primary_button.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -32,21 +33,13 @@ class OnboardingScreen extends StatelessWidget {
                 Text('앱 소개 슬라이드 화면', style: AppTextStyles.body14Regular),
               ],
             ),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SignInScreen()),
-                  );
-                },
-                child: Text(
-                  '다음: 로그인',
-                  style: AppTextStyles.body14Medium.copyWith(
-                    color: AppColors.textWhite,
-                  ),
-                ),
-              ),
+            PrimaryButton(
+              text: '다음: 로그인',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SignInScreen()),
+                );
+              },
             ),
           ],
         ),
