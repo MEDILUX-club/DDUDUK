@@ -3,6 +3,7 @@ import 'package:dduduk_app/screens/auth/sign_in_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/buttons/primary_button.dart';
+import 'package:dduduk_app/widgets/common/header_bar.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -11,11 +12,7 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.fillDefault,
-      appBar: AppBar(
-        backgroundColor: AppColors.fillDefault,
-        elevation: 0,
-        title: const Text('Onboarding', style: AppTextStyles.titleHeader),
-      ),
+      appBar: const HeaderBar(title: 'Onboarding'),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -36,9 +33,9 @@ class OnboardingScreen extends StatelessWidget {
             PrimaryButton(
               text: '다음: 로그인',
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const SignInScreen()),
-                );
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => const SignInScreen()));
               },
             ),
           ],

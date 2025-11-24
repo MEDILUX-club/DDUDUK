@@ -3,6 +3,7 @@ import 'package:dduduk_app/screens/survey/survey_step4_lifestyle_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/buttons/primary_button.dart';
+import 'package:dduduk_app/widgets/common/header_bar.dart';
 
 class SurveyStep3PainLevelScreen extends StatelessWidget {
   const SurveyStep3PainLevelScreen({super.key});
@@ -11,11 +12,7 @@ class SurveyStep3PainLevelScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.fillDefault,
-      appBar: AppBar(
-        backgroundColor: AppColors.fillDefault,
-        elevation: 0,
-        title: const Text('Step 3 - 통증 정도', style: AppTextStyles.titleHeader),
-      ),
+      appBar: const HeaderBar(title: 'Step 3 - 통증 정도'),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(

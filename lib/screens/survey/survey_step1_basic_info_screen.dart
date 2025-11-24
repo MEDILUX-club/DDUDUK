@@ -3,6 +3,7 @@ import 'package:dduduk_app/screens/survey/survey_step2_pain_location_screen.dart
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/buttons/primary_button.dart';
+import 'package:dduduk_app/widgets/common/header_bar.dart';
 
 class SurveyStep1BasicInfoScreen extends StatelessWidget {
   const SurveyStep1BasicInfoScreen({super.key});
@@ -11,11 +12,7 @@ class SurveyStep1BasicInfoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.fillDefault,
-      appBar: AppBar(
-        backgroundColor: AppColors.fillDefault,
-        elevation: 0,
-        title: const Text('Step 1 - 기본정보', style: AppTextStyles.titleHeader),
-      ),
+      appBar: const HeaderBar(title: 'Step 1 - 기본정보'),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(

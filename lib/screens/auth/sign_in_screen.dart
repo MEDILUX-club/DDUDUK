@@ -3,6 +3,7 @@ import 'package:dduduk_app/screens/auth/terms_agreement_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/buttons/primary_button.dart';
+import 'package:dduduk_app/widgets/common/header_bar.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
@@ -11,11 +12,7 @@ class SignInScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.fillDefault,
-      appBar: AppBar(
-        backgroundColor: AppColors.fillDefault,
-        elevation: 0,
-        title: const Text('Sign In', style: AppTextStyles.titleHeader),
-      ),
+      appBar: const HeaderBar(title: 'Sign In'),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(

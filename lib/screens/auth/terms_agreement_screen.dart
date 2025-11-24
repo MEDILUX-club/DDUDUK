@@ -3,6 +3,7 @@ import 'package:dduduk_app/screens/survey/survey_intro_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/buttons/primary_button.dart';
+import 'package:dduduk_app/widgets/common/header_bar.dart';
 
 class TermsAgreementScreen extends StatelessWidget {
   const TermsAgreementScreen({super.key});
@@ -11,11 +12,7 @@ class TermsAgreementScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.fillDefault,
-      appBar: AppBar(
-        backgroundColor: AppColors.fillDefault,
-        elevation: 0,
-        title: const Text('Terms of Service', style: AppTextStyles.titleHeader),
-      ),
+      appBar: const HeaderBar(title: 'Terms of Service'),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -37,9 +34,7 @@ class TermsAgreementScreen extends StatelessWidget {
               text: '다음: 설문 안내',
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const SurveyIntroScreen(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const SurveyIntroScreen()),
                 );
               },
             ),
