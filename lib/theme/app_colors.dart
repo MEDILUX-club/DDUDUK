@@ -8,10 +8,10 @@ abstract class AppColors {
   // Fill (배경색)
   // ===========================================================================
   /// 기본 배경색 (메인 화면 배경) - #F5F5F5
-  static const Color fillDefault = Color(0xFFF5F5F5);
+  static const Color fillBoxDefault = Color(0xFFFCFCFC);
 
   /// 박스 내부 배경색 (카드, 컨테이너 등) - #FCFCFC
-  static const Color fillBoxDefault = Color(0xFFFCFCFC);
+  static const Color fillDefault = Color(0xFFF5F5F5);
 
   /// 옵션/선택지 배경색 - #FCFCFC
   static const Color fillOption = Color(0xFFFCFCFC);

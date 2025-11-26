@@ -19,6 +19,7 @@ class HeaderBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: AppColors.fillDefault,
       elevation: 0,
+      toolbarHeight: 56,
       centerTitle: true,
       leading: showBackButton
           ? IconButton(
@@ -33,7 +34,7 @@ class HeaderBar extends StatelessWidget implements PreferredSizeWidget {
               },
             )
           : const SizedBox.shrink(),
-      title: Text(title, style: AppTextStyles.titleHeader),
+      title: Text(title, style: AppTextStyles.body18SemiBold),
     );
   }
 

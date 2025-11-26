@@ -18,7 +18,7 @@ class DefaultLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.fillDefault,
+      backgroundColor: AppColors.fillBoxDefault,
       appBar: title != null ? HeaderBar(title: title!) : null,
       body: SafeArea(
         child: Padding(

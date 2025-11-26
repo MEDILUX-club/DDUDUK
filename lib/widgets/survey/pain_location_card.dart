@@ -2,28 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class PainLocationCard extends StatelessWidget {
   const PainLocationCard({
     super.key,
     required this.label,
-    required this.icon,
+    required this.iconPath,
     required this.isSelected,
     required this.onTap,
   });
 
   final String label;
-  final IconData icon;
+  final String iconPath;
   final bool isSelected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final Color borderColor = isSelected
-        ? AppColors.primary
-        : AppColors.lineNeutral;
     final Color backgroundColor = isSelected
-        ? AppColors.primaryLight
+        ? const Color(0xFFE6F8F2)
         : AppColors.fillBoxDefault;
     final Color textColor = isSelected
         ? AppColors.primary
@@ -35,7 +33,10 @@ class PainLocationCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: borderColor, width: isSelected ? 1.5 : 1.0),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.linePrimary,
+            width: isSelected ? 2 : 1,
+          ),
         ),
         padding: const EdgeInsets.symmetric(
           horizontal: AppDimens.space12,
@@ -44,7 +45,7 @@ class PainLocationCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 36, color: textColor),
+            SvgPicture.asset(iconPath, width: 48, height: 48),
             const SizedBox(height: AppDimens.space10),
             Text(
               label,

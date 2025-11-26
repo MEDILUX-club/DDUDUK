@@ -6,6 +6,8 @@ import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/buttons/primary_button.dart';
 import 'package:dduduk_app/widgets/survey/pain_location_card.dart';
+import 'package:dduduk_app/widgets/common/step_badge.dart';
+import 'package:dduduk_app/widgets/common/step_progress_bar.dart';
 
 class SurveyStep2PainLocationScreen extends StatefulWidget {
   const SurveyStep2PainLocationScreen({super.key});
@@ -19,23 +21,25 @@ class _SurveyStep2PainLocationScreenState
     extends State<SurveyStep2PainLocationScreen> {
   final Set<String> selectedParts = {};
 
-  final List<Map<String, dynamic>> _parts = [
-    {'label': '목', 'icon': Icons.person},
-    {'label': '어깨', 'icon': Icons.person},
-    {'label': '팔꿈치', 'icon': Icons.person},
-    {'label': '손목', 'icon': Icons.person},
-    {'label': '허리', 'icon': Icons.person},
-    {'label': '고관절', 'icon': Icons.person},
-    {'label': '무릎', 'icon': Icons.person},
-    {'label': '발목', 'icon': Icons.person},
+  final List<Map<String, String>> _parts = [
+    {'label': '목', 'iconPath': 'assets/icons/ic_neck.svg'},
+    {'label': '팔꿈치', 'iconPath': 'assets/icons/ic_elbow.svg'},
+    {'label': '어깨', 'iconPath': 'assets/icons/ic_shoulder.svg'},
+    {'label': '손목', 'iconPath': 'assets/icons/ic_wrist.svg'},
+    {'label': '허리', 'iconPath': 'assets/icons/ic_waist.svg'},
+    {'label': '고관절', 'iconPath': 'assets/icons/ic_hip_joint.svg'},
+    {'label': '무릎', 'iconPath': 'assets/icons/ic_knee.svg'},
+    {'label': '발목', 'iconPath': 'assets/icons/ic_ankle.svg'},
   ];
 
   void _togglePart(String label) {
     setState(() {
       if (selectedParts.contains(label)) {
-        selectedParts.remove(label);
+        selectedParts.clear();
       } else {
-        selectedParts.add(label);
+        selectedParts
+          ..clear()
+          ..add(label);
       }
     });
   }
@@ -46,14 +50,22 @@ class _SurveyStep2PainLocationScreenState
       title: '통증부위',
       child: Column(
         children: [
+          const SizedBox(height: AppDimens.space16),
+          const StepProgressBar(
+            currentStep: 2,
+            totalSteps: 3,
+            horizontalBleed: AppDimens.screenPadding,
+          ),
           const SizedBox(height: AppDimens.space24),
+          const StepBadge(label: '2. 통증부위'),
+          const SizedBox(height: AppDimens.space12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('어디가 아프신가요?', style: AppTextStyles.titleText1),
               const SizedBox(height: AppDimens.space8),
               Text(
-                '통증이 있는 부위를 모두 선택해주세요\n(중복 선택 가능)',
+                '통증이 있는 부위를 모두 선택해주세요.',
                 style: AppTextStyles.body14Regular.copyWith(
                   color: AppColors.textNeutral,
                 ),
@@ -73,11 +85,11 @@ class _SurveyStep2PainLocationScreenState
               itemBuilder: (_, index) {
                 final item = _parts[index];
                 final String label = item['label'] as String;
-                final IconData icon = item['icon'] as IconData;
+                final String iconPath = item['iconPath'] as String;
                 final bool isSelected = selectedParts.contains(label);
                 return PainLocationCard(
                   label: label,
-                  icon: icon,
+                  iconPath: iconPath,
                   isSelected: isSelected,
                   onTap: () => _togglePart(label),
                 );
