@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:dduduk_app/layouts/default_layout.dart';
+import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step6_preferred_time_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
-import 'package:dduduk_app/widgets/buttons/button_group.dart';
 import 'package:dduduk_app/widgets/survey/lifestyle_option_card.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
@@ -62,8 +61,23 @@ class _SurveyStep5WorkoutExpScreenState
 
   @override
   Widget build(BuildContext context) {
-    return DefaultLayout(
+    return SurveyLayout(
       title: '운동 경험',
+      stepLabel: '5. 운동 경험',
+      currentStep: 5,
+      totalSteps: 6,
+      bottomButtons: SurveyButtonsConfig(
+        prevText: '이전으로',
+        onPrev: () => Navigator.of(context).pop(),
+        nextText: '다음으로',
+        onNext: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => const SurveyStep6PreferredTimeScreen(),
+            ),
+          );
+        },
+      ),
       child: Column(
         children: [
           Expanded(
@@ -216,20 +230,6 @@ class _SurveyStep5WorkoutExpScreenState
               ),
             ),
           ),
-          const SizedBox(height: AppDimens.space12),
-          ButtonGroup(
-            subText: '이전으로',
-            mainText: '다음으로',
-            onSubPressed: () => Navigator.of(context).pop(),
-            onMainPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const SurveyStep6PreferredTimeScreen(),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: AppDimens.space16),
         ],
       ),
     );

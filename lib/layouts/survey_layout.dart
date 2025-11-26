@@ -1,0 +1,131 @@
+import 'package:dduduk_app/layouts/default_layout.dart';
+import 'package:dduduk_app/theme/app_dimens.dart';
+import 'package:dduduk_app/widgets/common/step_badge.dart';
+import 'package:dduduk_app/widgets/common/step_progress_bar.dart';
+import 'package:dduduk_app/theme/app_colors.dart';
+import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:dduduk_app/widgets/buttons/primary_button.dart';
+import 'package:flutter/material.dart';
+
+class SurveyLayout extends StatelessWidget {
+  const SurveyLayout({
+    super.key,
+    required this.title,
+    required this.stepLabel,
+    required this.currentStep,
+    required this.totalSteps,
+    required this.child,
+    this.bottomButtons,
+  });
+
+  final String title;
+  final String stepLabel;
+  final int currentStep;
+  final int totalSteps;
+  final Widget child;
+  final SurveyButtonsConfig? bottomButtons;
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultLayout(
+      title: title,
+      bottomNavigationBar: bottomButtons == null
+          ? null
+          : _BottomButtons(config: bottomButtons!),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: AppDimens.space16),
+          StepProgressBar(
+            currentStep: currentStep,
+            totalSteps: totalSteps,
+            horizontalBleed: AppDimens.screenPadding,
+          ),
+          const SizedBox(height: AppDimens.space24),
+          StepBadge(label: stepLabel),
+          const SizedBox(height: AppDimens.space12),
+          Expanded(child: child),
+        ],
+      ),
+    );
+  }
+}
+
+class SurveyButtonsConfig {
+  const SurveyButtonsConfig({
+    required this.nextText,
+    required this.onNext,
+    this.prevText,
+    this.onPrev,
+  });
+
+  final String nextText;
+  final VoidCallback onNext;
+  final String? prevText;
+  final VoidCallback? onPrev;
+}
+
+class _BottomButtons extends StatelessWidget {
+  const _BottomButtons({required this.config});
+
+  final SurveyButtonsConfig config;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool hasPrev = config.prevText != null && config.onPrev != null;
+
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppDimens.screenPadding,
+          AppDimens.space12,
+          AppDimens.screenPadding,
+          AppDimens.space16,
+        ),
+        child: hasPrev
+            ? Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: AppDimens.buttonHeight,
+                      child: OutlinedButton(
+                        onPressed: config.onPrev,
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: AppColors.linePrimary),
+                          backgroundColor: AppColors.fillBoxDefault,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          foregroundColor: AppColors.textNormal,
+                        ),
+                        child: Text(
+                          config.prevText!,
+                          style: AppTextStyles.body14Medium,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppDimens.itemSpacing),
+                  Expanded(
+                    child: SizedBox(
+                      height: AppDimens.buttonHeight,
+                      child: BaseButton(
+                        text: config.nextText,
+                        onPressed: config.onNext,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : SizedBox(
+                height: AppDimens.buttonHeight,
+                child: BaseButton(
+                  text: config.nextText,
+                  onPressed: config.onNext,
+                ),
+              ),
+      ),
+    );
+  }
+}

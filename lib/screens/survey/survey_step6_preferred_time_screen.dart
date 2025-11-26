@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:dduduk_app/layouts/default_layout.dart';
+import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_completion_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
-import 'package:dduduk_app/widgets/buttons/button_group.dart';
 import 'package:dduduk_app/widgets/survey/simple_selection_card.dart';
 
 class SurveyStep6PreferredTimeScreen extends StatefulWidget {
@@ -35,8 +34,21 @@ class _SurveyStep6PreferredTimeScreenState
 
   @override
   Widget build(BuildContext context) {
-    return DefaultLayout(
+    return SurveyLayout(
       title: '운동 선호시간',
+      stepLabel: '6. 운동 선호시간',
+      currentStep: 6,
+      totalSteps: 6,
+      bottomButtons: SurveyButtonsConfig(
+        prevText: '이전으로',
+        onPrev: () => Navigator.of(context).pop(),
+        nextText: '다음으로',
+        onNext: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const SurveyCompletionScreen()),
+          );
+        },
+      ),
       child: Column(
         children: [
           Expanded(
@@ -106,20 +118,6 @@ class _SurveyStep6PreferredTimeScreenState
               ),
             ),
           ),
-          const SizedBox(height: AppDimens.space12),
-          ButtonGroup(
-            subText: '이전으로',
-            mainText: '다음으로',
-            onSubPressed: () => Navigator.of(context).pop(),
-            onMainPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const SurveyCompletionScreen(),
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: AppDimens.space16),
         ],
       ),
     );

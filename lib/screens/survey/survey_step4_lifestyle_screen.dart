@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dduduk_app/layouts/default_layout.dart';
+import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step5_workout_exp_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
-import 'package:dduduk_app/widgets/buttons/primary_button.dart';
 import 'package:dduduk_app/widgets/common/custom_text_field.dart';
 import 'package:dduduk_app/widgets/survey/lifestyle_option_card.dart';
 
@@ -133,8 +132,23 @@ class _SurveyStep4LifestyleScreenState
 
   @override
   Widget build(BuildContext context) {
-    return DefaultLayout(
+    return SurveyLayout(
       title: 'Step 4 - 생활 패턴',
+      stepLabel: '4. 생활 패턴',
+      currentStep: 4,
+      totalSteps: 6,
+      bottomButtons: SurveyButtonsConfig(
+        prevText: '이전으로',
+        onPrev: () => Navigator.of(context).pop(),
+        nextText: '다음으로',
+        onNext: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => const SurveyStep5WorkoutExpScreen(),
+            ),
+          );
+        },
+      ),
       child: Column(
         children: [
           Expanded(
@@ -220,42 +234,6 @@ class _SurveyStep4LifestyleScreenState
               ),
             ),
           ),
-          const SizedBox(height: AppDimens.space12),
-          Row(
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: AppDimens.buttonHeight,
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AppColors.linePrimary),
-                      backgroundColor: AppColors.fillBoxDefault,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      foregroundColor: AppColors.textNormal,
-                    ),
-                    child: Text('이전으로', style: AppTextStyles.body14Medium),
-                  ),
-                ),
-              ),
-              const SizedBox(width: AppDimens.itemSpacing),
-              Expanded(
-                child: BaseButton(
-                  text: '다음으로',
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const SurveyStep5WorkoutExpScreen(),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppDimens.space16),
         ],
       ),
     );
