@@ -12,6 +12,7 @@ class SurveyIntroScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultLayout(
       title: '',
+      backgroundColor: AppColors.fillDefault,
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(bottom: AppDimens.space24),
