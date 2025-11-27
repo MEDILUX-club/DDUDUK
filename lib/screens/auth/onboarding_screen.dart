@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:dduduk_app/screens/auth/sign_in_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
@@ -58,89 +58,82 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       backgroundColor: AppColors.fillDefault,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          padding: const EdgeInsets.fromLTRB(24, 60, 24, 16),
           child: Column(
             children: [
-              Flexible(
-                flex: 5,
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.fillBoxDefault,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(24),
                     child: Image.asset(
-                      'assets/images/onboarding/onboarding.png',
+                      'assets/images/img_signin.png',
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
-                        return Container(color: AppColors.fillBoxDefault);
+                        return Container(color: AppColors.fillDefault);
                       },
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
-              Flexible(
-                flex: 4,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: PageView.builder(
-                        controller: _pageController,
-                        itemCount: _pages.length,
-                        onPageChanged: (index) {
-                          setState(() {
-                            _currentPage = index;
-                          });
-                        },
-                        itemBuilder: (context, index) {
-                          final page = _pages[index];
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                page.title,
-                                style: AppTextStyles.titleHeader,
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                page.description,
-                                style: AppTextStyles.body16Regular.copyWith(
-                                  color: AppColors.textAssistive,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          );
-                        },
-                      ),
+              const SizedBox(height: 40),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(_pages.length, (index) {
+                  final isActive = _currentPage == index;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    width: isActive ? 24 : 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: isActive
+                          ? AppColors.primary
+                          : AppColors.lineNeutral,
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(_pages.length, (index) {
-                        final isActive = _currentPage == index;
-                        return AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          width: isActive ? 24 : 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: isActive
-                                ? AppColors.primary
-                                : AppColors.lineNeutral,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        );
-                      }),
-                    ),
-                  ],
-                ),
+                  );
+                }),
               ),
               const SizedBox(height: 24),
+              Flexible(
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: _pages.length,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentPage = index;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    final page = _pages[index];
+                    return Align(
+                      alignment: Alignment.topCenter,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            page.title,
+                            style: AppTextStyles.titleHeader,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            page.description,
+                            style: AppTextStyles.body16Regular.copyWith(
+                              color: AppColors.textAssistive,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const Spacer(),
               SizedBox(
                 width: double.infinity,
                 height: 56,
