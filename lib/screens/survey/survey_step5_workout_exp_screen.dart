@@ -42,7 +42,7 @@ class _SurveyStep5WorkoutExpScreenState
     },
     {
       'key': 'mixed',
-      'title': '복합',
+      'title': '혼합',
       'subtitle': '여러 가지 운동을 함께 해요',
       'imagePath': 'assets/images/img_emoji_mixed.png',
     },

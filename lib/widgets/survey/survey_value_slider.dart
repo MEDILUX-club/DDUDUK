@@ -86,7 +86,8 @@ class SurveyValueSlider extends StatelessWidget {
             activeTrackColor: AppColors.primary,
             inactiveTrackColor: AppColors.fillBoxDefault,
             thumbColor: AppColors.primary,
-            overlayColor: AppColors.primaryLight.withValues(alpha: 0.6),
+            overlayColor: Colors.transparent,
+
             activeTickColor: AppColors.primary,
             inactiveTickColor: AppColors.primaryLight,
             tickSize: const Size(4, 4),
@@ -97,7 +98,7 @@ class SurveyValueSlider extends StatelessWidget {
             interval: resolvedInterval,
             stepSize: resolvedStep,
             value: value,
-            showTicks: true,
+            showTicks: false,
             showDividers: false,
             enableTooltip: false,
             onChanged: (dynamic newValue) {
