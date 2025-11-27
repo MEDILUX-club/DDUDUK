@@ -32,16 +32,16 @@ class SurveyIntroScreen extends StatelessWidget {
               const SizedBox(height: AppDimens.space32),
               Center(
                 child: SizedBox(
-                  width: 140,
-                  height: 140,
+                  width: 170,
+                  height: 170,
                   child: Stack(
                     children: const [
                       Positioned(
-                        right: 8,
-                        bottom: 8,
+                        right: 26,
+                        bottom: 26,
                         child: Image(
-                          width: 120,
-                          height: 120,
+                          width: 132,
+                          height: 132,
                           image: AssetImage(
                             'assets/images/img_bg_find_in_page.png',
                           ),
@@ -51,8 +51,8 @@ class SurveyIntroScreen extends StatelessWidget {
                         left: 0,
                         top: 0,
                         child: Image(
-                          width: 120,
-                          height: 120,
+                          width: 132,
+                          height: 132,
                           image: AssetImage(
                             'assets/images/img_fg_find_in_page.png',
                           ),
@@ -80,7 +80,7 @@ class SurveyIntroScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: AppDimens.space16),
                     _InfoRow(
-                      icon: Icons.analytics_outlined,
+                      icon: Icons.add_task,
                       title: '맞춤형 분석',
                       description: '답변을 바탕으로 개인화된 운동 프로그램을 제공해요',
                     ),
