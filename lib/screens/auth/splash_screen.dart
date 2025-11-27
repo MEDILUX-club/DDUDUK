@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:dduduk_app/screens/auth/onboarding_screen.dart';
+
+import 'package:flutter/material.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:dduduk_app/screens/auth/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 1), () {
+    Timer(const Duration(seconds: 2), () {
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const OnboardingScreen()),
@@ -37,15 +38,19 @@ class _SplashBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final double scale = (size.width / 375).clamp(0.9, 1.2);
+    final double fontSize = 20 * scale;
+    final double letterSpacing = 2.4 * scale;
+
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 120),
-        child: Text(
-          'DDUDUK',
-          style: AppTextStyles.titleHeader.copyWith(
-            color: AppColors.textWhite,
-            letterSpacing: 2,
-          ),
+      child: Text(
+        'DDUDUK',
+        style: AppTextStyles.titleHeader.copyWith(
+          fontSize: fontSize,
+          fontWeight: FontWeight.w500,
+          color: AppColors.textWhite,
+          letterSpacing: letterSpacing,
         ),
       ),
     );

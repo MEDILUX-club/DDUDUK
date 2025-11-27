@@ -20,6 +20,12 @@ class PainLocationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double scale = (MediaQuery.of(context).size.width / 375).clamp(
+      0.9,
+      1.2,
+    );
+    final double iconSize = AppDimens.space48 * scale;
+    final double iconHeight = iconSize * 0.9;
     final Color backgroundColor = isSelected
         ? const Color(0xFFE6F8F2)
         : AppColors.fillBoxDefault;
@@ -32,7 +38,7 @@ class PainLocationCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: backgroundColor,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppDimens.space12),
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.linePrimary,
             width: isSelected ? 2 : 1,
@@ -45,7 +51,7 @@ class PainLocationCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(iconPath, width: 48, height: 48),
+            SvgPicture.asset(iconPath, width: iconSize, height: iconHeight),
             const SizedBox(height: AppDimens.space10),
             Text(
               label,
