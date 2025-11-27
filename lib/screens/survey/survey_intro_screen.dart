@@ -30,11 +30,36 @@ class SurveyIntroScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppDimens.space32),
-              const Center(
-                child: Icon(
-                  Icons.content_paste_search_rounded,
-                  size: 100,
-                  color: AppColors.primary,
+              Center(
+                child: SizedBox(
+                  width: 140,
+                  height: 140,
+                  child: Stack(
+                    children: const [
+                      Positioned(
+                        right: 8,
+                        bottom: 8,
+                        child: Image(
+                          width: 120,
+                          height: 120,
+                          image: AssetImage(
+                            'assets/images/img_bg_find_in_page.png',
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        child: Image(
+                          width: 120,
+                          height: 120,
+                          image: AssetImage(
+                            'assets/images/img_fg_find_in_page.png',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: AppDimens.space32),
