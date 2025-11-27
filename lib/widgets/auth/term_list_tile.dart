@@ -79,7 +79,7 @@ class _CheckBox extends StatelessWidget {
         color: isChecked ? AppColors.primary : Colors.transparent,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
-          color: isChecked ? Colors.transparent : AppColors.lineNeutral,
+          color: isChecked ? Colors.transparent : AppColors.linePrimary,
           width: 2,
         ),
       ),

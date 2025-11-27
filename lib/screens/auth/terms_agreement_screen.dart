@@ -1,4 +1,4 @@
-import 'package:dduduk_app/layouts/default_layout.dart';
+﻿import 'package:dduduk_app/layouts/default_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_intro_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
@@ -38,17 +38,20 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
   Widget build(BuildContext context) {
     return DefaultLayout(
       title: '',
+      backgroundColor: AppColors.fillDefault,
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(AppDimens.space16),
         child: BaseButton(
           text: '다음으로',
-          isEnabled: _allAgreed,
-          onPressed: () {
-            if (!_allAgreed) return;
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SurveyIntroScreen()),
-            );
-          },
+          onPressed: _allAgreed
+              ? () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const SurveyIntroScreen(),
+                    ),
+                  );
+                }
+              : null,
         ),
       ),
       child: SingleChildScrollView(
@@ -68,22 +71,15 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
               ),
             ),
             const SizedBox(height: AppDimens.space24),
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColors.fillBoxDefault,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: TermListTile(
-                title: '전체 동의',
-                isChecked: _allAgreed,
-                onChanged: _toggleAll,
-                onDetailTap: null,
-                backgroundColor: AppColors.fillBoxDefault,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppDimens.space12,
-                  vertical: AppDimens.space14,
-                ),
+            TermListTile(
+              title: '전체 동의',
+              isChecked: _allAgreed,
+              onChanged: _toggleAll,
+              onDetailTap: null,
+              backgroundColor: AppColors.fillBoxDefault,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppDimens.space12,
+                vertical: AppDimens.space14,
               ),
             ),
             const SizedBox(height: AppDimens.space20),

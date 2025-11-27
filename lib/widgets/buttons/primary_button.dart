@@ -14,7 +14,7 @@ class BaseButton extends StatelessWidget {
   });
 
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final bool isEnabled;
   final Color? backgroundColor;
   final Color? textColor;
@@ -22,16 +22,17 @@ class BaseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color resolvedBackground = isEnabled
+    final bool enabled = isEnabled && onPressed != null;
+    final Color resolvedBackground = enabled
         ? (backgroundColor ?? AppColors.primary)
-        : AppColors.interactionInactive;
+        : AppColors.interactionDisabled;
     final Color resolvedText = textColor ?? AppColors.textWhite;
 
     return SizedBox(
       height: 56,
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: isEnabled ? onPressed : null,
+        onPressed: enabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: resolvedBackground,
           foregroundColor: resolvedText,
