@@ -32,21 +32,21 @@ class _SurveyStep4LifestyleScreenState
   final List<Map<String, dynamic>> _options = [
     {
       'key': 'sedentary',
-      'title': '주로 앉아서 일해요',
+      'title': '주로 앉아있어요',
       'subtitle': '사무직, 학생 등',
-      'icon': Icons.chair,
+      'imagePath': 'assets/images/img_emoji_chair.png',
     },
     {
       'key': 'light',
       'title': '가볍게 움직여요',
       'subtitle': '서서 일하거나 가볍게 움직여요',
-      'icon': Icons.directions_walk,
+      'imagePath': 'assets/images/img_emoji_run.png',
     },
     {
       'key': 'active',
       'title': '매우 활동적이에요',
       'subtitle': '체육, 건설직 등',
-      'icon': Icons.fitness_center,
+      'imagePath': 'assets/images/img_emoji_muscle.png',
     },
   ];
 
@@ -133,7 +133,8 @@ class _SurveyStep4LifestyleScreenState
   @override
   Widget build(BuildContext context) {
     return SurveyLayout(
-      title: 'Step 4 - 생활 패턴',
+      title: '평소 생활 패턴을 알려주세요',
+      description: '수면/기상 시간에 맞춰 운동을 안내해드릴게요',
       stepLabel: '4. 생활 패턴',
       currentStep: 4,
       totalSteps: 6,
@@ -156,16 +157,7 @@ class _SurveyStep4LifestyleScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: AppDimens.space24),
-                  Text('평소 몇 시에 주무시나요?', style: AppTextStyles.titleText1),
-                  const SizedBox(height: AppDimens.space8),
-                  Text(
-                    '수면 패턴에 맞춘 운동을 안내드릴게요',
-                    style: AppTextStyles.body14Regular.copyWith(
-                      color: AppColors.textNeutral,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimens.space20),
+                  const SizedBox(height: AppDimens.space16),
                   Row(
                     children: [
                       Expanded(
@@ -204,7 +196,7 @@ class _SurveyStep4LifestyleScreenState
                     ],
                   ),
                   const SizedBox(height: AppDimens.space32),
-                  Text('생활패턴은 어떠신가요?', style: AppTextStyles.titleText1),
+                  Text('생활패턴이 어떠신가요?', style: AppTextStyles.titleText1),
                   const SizedBox(height: AppDimens.space8),
                   Text(
                     '평소 생활 패턴에 맞춘 운동을 안내드릴게요',
@@ -221,7 +213,7 @@ class _SurveyStep4LifestyleScreenState
                           bottom: AppDimens.space12,
                         ),
                         child: LifestyleOptionCard(
-                          icon: option['icon'] as IconData,
+                          imagePath: option['imagePath'] as String,
                           title: option['title'] as String,
                           subtitle: option['subtitle'] as String,
                           selected: _selectedLifestyle == key,

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step3_pain_level_screen.dart';
-import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
-import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/survey/pain_location_card.dart';
 
 class SurveyStep2PainLocationScreen extends StatefulWidget {
@@ -44,7 +42,8 @@ class _SurveyStep2PainLocationScreenState
   @override
   Widget build(BuildContext context) {
     return SurveyLayout(
-      title: '통증부위',
+      title: '어디가 아프신가요?',
+      description: '통증이 있는 부위를 모두 선택해주세요.',
       stepLabel: '2. 통증부위',
       currentStep: 2,
       totalSteps: 6,
@@ -63,15 +62,7 @@ class _SurveyStep2PainLocationScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('어디가 아프신가요?', style: AppTextStyles.titleText1),
-          const SizedBox(height: AppDimens.space8),
-          Text(
-            '통증이 있는 부위를 모두 선택해주세요.',
-            style: AppTextStyles.body14Regular.copyWith(
-              color: AppColors.textNeutral,
-            ),
-          ),
-          const SizedBox(height: AppDimens.space24),
+          const SizedBox(height: AppDimens.space16),
           Flexible(
             child: GridView.builder(
               itemCount: _parts.length,

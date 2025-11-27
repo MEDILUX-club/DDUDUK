@@ -11,6 +11,7 @@ class SurveyLayout extends StatelessWidget {
   const SurveyLayout({
     super.key,
     required this.title,
+    this.description,
     required this.stepLabel,
     required this.currentStep,
     required this.totalSteps,
@@ -19,6 +20,7 @@ class SurveyLayout extends StatelessWidget {
   });
 
   final String title;
+  final String? description;
   final String stepLabel;
   final int currentStep;
   final int totalSteps;
@@ -28,7 +30,7 @@ class SurveyLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      title: title,
+      title: '셀프 설문',
       bottomNavigationBar: bottomButtons == null
           ? null
           : _BottomButtons(config: bottomButtons!),
@@ -43,6 +45,8 @@ class SurveyLayout extends StatelessWidget {
           ),
           const SizedBox(height: AppDimens.space24),
           StepBadge(label: stepLabel),
+          const SizedBox(height: AppDimens.space12),
+          _SurveyTitle(title: title, description: description),
           const SizedBox(height: AppDimens.space12),
           Expanded(child: child),
         ],
@@ -126,6 +130,32 @@ class _BottomButtons extends StatelessWidget {
                 ),
               ),
       ),
+    );
+  }
+}
+
+class _SurveyTitle extends StatelessWidget {
+  const _SurveyTitle({required this.title, this.description});
+
+  final String title;
+  final String? description;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: AppTextStyles.titleHeader),
+        if (description != null) ...[
+          const SizedBox(height: AppDimens.space8),
+          Text(
+            description!,
+            style: AppTextStyles.body14Regular.copyWith(
+              color: AppColors.textNeutral,
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

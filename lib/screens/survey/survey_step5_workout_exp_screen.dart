@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step6_preferred_time_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
@@ -35,25 +35,25 @@ class _SurveyStep5WorkoutExpScreenState
       'key': 'cardio',
       'title': '유산소 운동',
       'subtitle': '가볍게 걷거나 뛰는 걸 좋아해요',
-      'icon': Icons.directions_run,
+      'imagePath': 'assets/images/img_emoji_walk.png',
     },
     {
       'key': 'strength',
       'title': '근력 운동',
-      'subtitle': '근력 위주로 운동해요',
-      'icon': Icons.fitness_center,
+      'subtitle': '근력 위주의 운동을 해요',
+      'imagePath': 'assets/images/img_emoji_strength.png',
     },
     {
       'key': 'mixed',
-      'title': '혼합',
-      'subtitle': '다양한 운동을 섞어서 해요',
-      'icon': Icons.diversity_3,
+      'title': '복합',
+      'subtitle': '여러 가지 운동을 함께 해요',
+      'imagePath': 'assets/images/img_emoji_handshake.png',
     },
     {
       'key': 'flexibility',
       'title': '유연성',
       'subtitle': '몸을 풀어주는 운동을 해요',
-      'icon': Icons.self_improvement,
+      'imagePath': 'assets/images/img_emoji_yoga.png',
     },
   ];
 
@@ -62,7 +62,8 @@ class _SurveyStep5WorkoutExpScreenState
   @override
   Widget build(BuildContext context) {
     return SurveyLayout(
-      title: '운동 경험',
+      title: '평소 운동경험은 어떻게 되나요?',
+      description: '어떤 운동을 선호하시는지 알려주세요',
       stepLabel: '5. 운동 경험',
       currentStep: 5,
       totalSteps: 6,
@@ -85,16 +86,7 @@ class _SurveyStep5WorkoutExpScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: AppDimens.space24),
-                  Text('평소 운동경험은 어떻게 되나요?', style: AppTextStyles.titleText1),
-                  const SizedBox(height: AppDimens.space8),
-                  Text(
-                    '어떤 운동이 적합할지 알려주세요',
-                    style: AppTextStyles.body14Regular.copyWith(
-                      color: AppColors.textNeutral,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimens.space20),
+                  const SizedBox(height: AppDimens.space16),
                   SfSliderTheme(
                     data: SfSliderThemeData(
                       activeTrackHeight: 12,
@@ -157,7 +149,7 @@ class _SurveyStep5WorkoutExpScreenState
                           bottom: AppDimens.space12,
                         ),
                         child: LifestyleOptionCard(
-                          icon: type['icon'] as IconData,
+                          imagePath: type['imagePath'] as String,
                           title: type['title'] as String,
                           subtitle: type['subtitle'] as String,
                           selected: _selectedType == key,

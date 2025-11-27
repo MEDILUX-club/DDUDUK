@@ -55,7 +55,8 @@ class _SurveyStep1BasicInfoScreenState
   @override
   Widget build(BuildContext context) {
     return SurveyLayout(
-      title: '기본정보',
+      title: '기본 정보를 입력해주세요',
+      description: '정확한 운동 프로그램을 위해 필요해요',
       stepLabel: '1. 기본정보',
       currentStep: 1,
       totalSteps: 6,
@@ -76,16 +77,7 @@ class _SurveyStep1BasicInfoScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: AppDimens.space24),
-                  Text('기본 정보를 입력해주세요', style: AppTextStyles.titleText1),
-                  const SizedBox(height: AppDimens.space8),
-                  Text(
-                    '정확한 운동 프로그램을 위해 필요해요',
-                    style: AppTextStyles.body14Regular.copyWith(
-                      color: AppColors.textNeutral,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimens.space32),
+                  const SizedBox(height: AppDimens.space16),
                   Text('생년월일', style: AppTextStyles.body14Medium),
                   const SizedBox(height: AppDimens.space8),
                   CustomTextField(

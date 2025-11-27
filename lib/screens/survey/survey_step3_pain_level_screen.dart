@@ -28,7 +28,8 @@ class _SurveyStep3PainLevelScreenState
   @override
   Widget build(BuildContext context) {
     return SurveyLayout(
-      title: '통증 기본 정보',
+      title: '통증 정보를 알려주세요',
+      description: '정확한 운동 프로그램을 위해 필요해요',
       stepLabel: '3. 통증 기본 정보',
       currentStep: 3,
       totalSteps: 6,
@@ -51,19 +52,7 @@ class _SurveyStep3PainLevelScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: AppDimens.space24),
-                  Text(
-                    '통증에 대한 기본적인 정보를 알려주세요',
-                    style: AppTextStyles.titleText1,
-                  ),
-                  const SizedBox(height: AppDimens.space8),
-                  Text(
-                    '정확한 운동 프로그램을 위해 필요해요',
-                    style: AppTextStyles.body14Regular.copyWith(
-                      color: AppColors.textNeutral,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimens.space32),
+                  const SizedBox(height: AppDimens.space16),
                   Text('Q1.', style: AppTextStyles.body14Medium),
                   const SizedBox(height: AppDimens.space6),
                   Text('어느 쪽 무릎이 아프신가요?', style: AppTextStyles.body18SemiBold),
