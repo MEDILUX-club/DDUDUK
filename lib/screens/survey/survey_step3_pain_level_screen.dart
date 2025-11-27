@@ -1,10 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step4_lifestyle_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
-import 'package:dduduk_app/widgets/survey/pain_level_slider.dart';
-import 'package:flutter/material.dart';
+import 'package:dduduk_app/widgets/survey/survey_value_slider.dart';
 
 class SurveyStep3PainLevelScreen extends StatefulWidget {
   const SurveyStep3PainLevelScreen({super.key});
@@ -18,6 +18,22 @@ class _SurveyStep3PainLevelScreenState
     extends State<SurveyStep3PainLevelScreen> {
   double _painLevel = 0;
   String _selectedKnee = '왼쪽';
+
+  final Map<double, String> _painLabels = {
+    0.0: '0',
+    2.0: '2',
+    4.0: '4',
+    6.0: '6',
+    8.0: '8',
+    10.0: '10',
+  };
+
+  String _painText(double painValue) {
+    if (painValue <= 0) return '아프지 않음';
+    if (painValue <= 4) return '약함';
+    if (painValue <= 8) return '아픔';
+    return '매우 아픔';
+  }
 
   void _selectKnee(String knee) {
     setState(() {
@@ -82,35 +98,23 @@ class _SurveyStep3PainLevelScreenState
                   Text('Q2.', style: AppTextStyles.body14Medium),
                   const SizedBox(height: AppDimens.space6),
                   Text(
-                    '현재 무릎 통증의 정도를 선택해주세요',
+                    '현재 무릎 통증 정도를 선택해주세요',
                     style: AppTextStyles.body18SemiBold,
                   ),
                   const SizedBox(height: AppDimens.space16),
-                  PainLevelSlider(
+                  SurveyValueSlider(
                     value: _painLevel,
-                    onChanged: (dynamic newValue) {
+                    min: 0,
+                    max: 10,
+                    interval: 2,
+                    stepSize: 1,
+                    labels: _painLabels,
+                    bubbleTextBuilder: _painText,
+                    onChanged: (double newValue) {
                       setState(() {
-                        _painLevel = newValue as double;
+                        _painLevel = newValue;
                       });
                     },
-                  ),
-                  const SizedBox(height: AppDimens.space8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '0',
-                        style: AppTextStyles.body12Regular.copyWith(
-                          color: AppColors.textNeutral,
-                        ),
-                      ),
-                      Text(
-                        '10',
-                        style: AppTextStyles.body12Regular.copyWith(
-                          color: AppColors.textNeutral,
-                        ),
-                      ),
-                    ],
                   ),
                   const SizedBox(height: AppDimens.space16),
                 ],

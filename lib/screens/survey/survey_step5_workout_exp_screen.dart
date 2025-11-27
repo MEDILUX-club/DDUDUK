@@ -1,12 +1,10 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step6_preferred_time_screen.dart';
-import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/survey/lifestyle_option_card.dart';
-import 'package:syncfusion_flutter_core/theme.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
+import 'package:dduduk_app/widgets/survey/survey_value_slider.dart';
 
 class SurveyStep5WorkoutExpScreen extends StatefulWidget {
   const SurveyStep5WorkoutExpScreen({super.key});
@@ -56,6 +54,10 @@ class _SurveyStep5WorkoutExpScreenState
     },
   ];
 
+  String _experienceBubble(double value) {
+    return _experienceLabels[value] ?? value.toStringAsFixed(0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SurveyLayout(
@@ -84,56 +86,19 @@ class _SurveyStep5WorkoutExpScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: AppDimens.space16),
-                  SfSliderTheme(
-                    data: SfSliderThemeData(
-                      activeTrackHeight: 12,
-                      inactiveTrackHeight: 12,
-                      activeTrackColor: AppColors.primary,
-                      inactiveTrackColor: AppColors.fillBoxDefault,
-                      thumbColor: AppColors.primary,
-                      overlayColor: AppColors.primaryLight.withValues(
-                        alpha: 0.6,
-                      ),
-                      tooltipBackgroundColor: AppColors.primary,
-                      tooltipTextStyle: AppTextStyles.body12Medium.copyWith(
-                        color: AppColors.textWhite,
-                      ),
-                      activeTickColor: AppColors.primary,
-                      inactiveTickColor: AppColors.primaryLight,
-                      tickSize: const Size(4, 4),
-                    ),
-                    child: SfSlider(
-                      min: 0.0,
-                      max: 4.0,
-                      interval: 1,
-                      stepSize: 1,
-                      value: _experience,
-                      showTicks: true,
-                      shouldAlwaysShowTooltip: true,
-                      tooltipTextFormatterCallback:
-                          (dynamic actualValue, String _) {
-                            return _experienceLabels[actualValue] ?? '';
-                          },
-                      onChanged: (value) {
-                        setState(() {
-                          _experience = (value as double);
-                        });
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: AppDimens.space8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: _experienceLabels.entries
-                        .map(
-                          (e) => Text(
-                            e.value,
-                            style: AppTextStyles.body12Medium.copyWith(
-                              color: AppColors.textNeutral,
-                            ),
-                          ),
-                        )
-                        .toList(),
+                  SurveyValueSlider(
+                    value: _experience,
+                    min: 0,
+                    max: 4,
+                    interval: 1,
+                    stepSize: 1,
+                    labels: _experienceLabels,
+                    bubbleTextBuilder: _experienceBubble,
+                    onChanged: (double newValue) {
+                      setState(() {
+                        _experience = newValue;
+                      });
+                    },
                   ),
                   const SizedBox(height: AppDimens.space32),
                   Text('운동 유형', style: AppTextStyles.titleText1),
