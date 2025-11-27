@@ -26,9 +26,15 @@ class LifestyleOptionCard extends StatelessWidget {
         : AppColors.lineNeutral;
     final Color backgroundColor = selected
         ? AppColors.primaryLight
-        : AppColors.fillDefault;
-    final Color titleColor = AppColors.textNormal;
-    final Color subtitleColor = AppColors.textNormal.withValues(alpha: 0.6);
+        : AppColors.fillBoxDefault;
+    final TextStyle titleStyle = AppTextStyles.body14Medium.copyWith(
+      fontWeight: selected
+          ? FontWeight.w700
+          : AppTextStyles.body14Medium.fontWeight,
+      color: AppColors.textNormal,
+    );
+    final Color subtitleColor = AppColors.textNeutral;
+    final List<BoxShadow> shadow = const [];
 
     return InkWell(
       onTap: onTap,
@@ -39,6 +45,7 @@ class LifestyleOptionCard extends StatelessWidget {
           color: backgroundColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: borderColor),
+          boxShadow: shadow,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -49,12 +56,7 @@ class LifestyleOptionCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: AppTextStyles.body14Medium.copyWith(
-                      color: titleColor,
-                    ),
-                  ),
+                  Text(title, style: titleStyle),
                   const SizedBox(height: AppDimens.space4),
                   Text(
                     subtitle,

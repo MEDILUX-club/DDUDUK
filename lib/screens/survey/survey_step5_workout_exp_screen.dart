@@ -20,7 +20,6 @@ class _SurveyStep5WorkoutExpScreenState
     extends State<SurveyStep5WorkoutExpScreen> {
   double _experience = 0;
   String _selectedType = 'cardio';
-  String _selectedFrequency = '주 1-2회';
 
   final Map<double, String> _experienceLabels = {
     0: '0',
@@ -47,17 +46,15 @@ class _SurveyStep5WorkoutExpScreenState
       'key': 'mixed',
       'title': '복합',
       'subtitle': '여러 가지 운동을 함께 해요',
-      'imagePath': 'assets/images/img_emoji_handshake.png',
+      'imagePath': 'assets/images/img_emoji_mixed.png',
     },
     {
       'key': 'flexibility',
       'title': '유연성',
       'subtitle': '몸을 풀어주는 운동을 해요',
-      'imagePath': 'assets/images/img_emoji_yoga.png',
+      'imagePath': 'assets/images/img_emoji_flexibility.png',
     },
   ];
-
-  final List<String> _frequencies = const ['주 1-2회', '주 3-5회', '주 6-7회'];
 
   @override
   Widget build(BuildContext context) {
@@ -158,62 +155,6 @@ class _SurveyStep5WorkoutExpScreenState
                               _selectedType = key;
                             });
                           },
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: AppDimens.space20),
-                  Text('운동 빈도', style: AppTextStyles.titleText1),
-                  const SizedBox(height: AppDimens.space12),
-                  Column(
-                    children: _frequencies.map((freq) {
-                      final bool selected = _selectedFrequency == freq;
-                      final Color borderColor = selected
-                          ? AppColors.primary
-                          : AppColors.lineNeutral;
-                      final Color iconColor = selected
-                          ? AppColors.primary
-                          : AppColors.textNeutral;
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: AppDimens.space12,
-                        ),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(12),
-                          onTap: () {
-                            setState(() {
-                              _selectedFrequency = freq;
-                            });
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: AppDimens.space14,
-                              horizontal: AppDimens.space16,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.fillBoxDefault,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: borderColor),
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    freq,
-                                    style: AppTextStyles.body14Medium.copyWith(
-                                      color: AppColors.textNormal,
-                                    ),
-                                  ),
-                                ),
-                                Icon(
-                                  selected
-                                      ? Icons.radio_button_checked
-                                      : Icons.radio_button_off,
-                                  color: iconColor,
-                                ),
-                              ],
-                            ),
-                          ),
                         ),
                       );
                     }).toList(),
