@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/screens/auth/terms_agreement_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
@@ -52,7 +53,7 @@ class SignInScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: AppDimens.space24),
                         Text(
-                          'DDUDUK에\n오신 것을 환영합니다!',
+                          'DDUDUK에 오신 것을 환영합니다',
                           style: AppTextStyles.titleHeader.copyWith(
                             color: AppColors.textWhite,
                           ),
@@ -71,7 +72,11 @@ class SignInScreen extends StatelessWidget {
                         text: 'Kakao로 시작하기',
                         backgroundColor: const Color(0xFFFEE500),
                         textColor: const Color(0xFF191919),
-                        icon: Icons.chat_bubble,
+                        leading: SvgPicture.asset(
+                          'assets/icons/ic_kakao.svg',
+                          width: 20,
+                          height: 20,
+                        ),
                         onPressed: () => _toTerms(context),
                       ),
                       const SizedBox(height: AppDimens.space16),
@@ -79,7 +84,11 @@ class SignInScreen extends StatelessWidget {
                         text: 'Naver로 시작하기',
                         backgroundColor: const Color(0xFF03C75A),
                         textColor: Colors.white,
-                        icon: Icons.search,
+                        leading: SvgPicture.asset(
+                          'assets/icons/ic_naver.svg',
+                          width: 20,
+                          height: 20,
+                        ),
                         onPressed: () => _toTerms(context),
                       ),
                       const SizedBox(height: AppDimens.space16),
@@ -87,7 +96,11 @@ class SignInScreen extends StatelessWidget {
                         text: 'Apple로 시작하기',
                         backgroundColor: Colors.black,
                         textColor: Colors.white,
-                        icon: Icons.apple,
+                        leading: SvgPicture.asset(
+                          'assets/icons/ic_apple.svg',
+                          width: 20,
+                          height: 20,
+                        ),
                         onPressed: () => _toTerms(context),
                       ),
                     ],

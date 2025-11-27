@@ -11,6 +11,7 @@ class BaseButton extends StatelessWidget {
     this.backgroundColor,
     this.textColor,
     this.icon,
+    this.leading,
   });
 
   final String text;
@@ -19,6 +20,7 @@ class BaseButton extends StatelessWidget {
   final Color? backgroundColor;
   final Color? textColor;
   final IconData? icon;
+  final Widget? leading;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,8 @@ class BaseButton extends StatelessWidget {
         ? (backgroundColor ?? AppColors.primary)
         : AppColors.interactionDisabled;
     final Color resolvedText = textColor ?? AppColors.textWhite;
+    final Widget? leadingWidget =
+        leading ?? (icon != null ? Icon(icon, color: resolvedText) : null);
 
     return SizedBox(
       height: 56,
@@ -41,7 +45,7 @@ class BaseButton extends StatelessWidget {
           ),
           elevation: 0,
         ),
-        child: icon == null
+        child: leadingWidget == null
             ? Text(
                 text,
                 style: AppTextStyles.body14Medium.copyWith(color: resolvedText),
@@ -50,7 +54,7 @@ class BaseButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(icon, color: resolvedText),
+                  leadingWidget,
                   const SizedBox(width: 8),
                   Text(
                     text,
