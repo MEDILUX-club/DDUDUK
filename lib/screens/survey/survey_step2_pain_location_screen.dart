@@ -70,7 +70,7 @@ class _SurveyStep2PainLocationScreenState
                 crossAxisCount: 2,
                 mainAxisSpacing: AppDimens.itemSpacing,
                 crossAxisSpacing: AppDimens.itemSpacing,
-                childAspectRatio: 1.3,
+                childAspectRatio: 1.6,
               ),
               itemBuilder: (_, index) {
                 final item = _parts[index];

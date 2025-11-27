@@ -46,7 +46,7 @@ class PainLocationCard extends StatelessWidget {
         ),
         padding: const EdgeInsets.symmetric(
           horizontal: AppDimens.space12,
-          vertical: AppDimens.space16,
+          vertical: AppDimens.space8,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
