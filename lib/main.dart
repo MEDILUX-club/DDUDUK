@@ -1,5 +1,5 @@
 // lib/main.dart
-import 'package:dduduk_app/screens/survey/survey_step2_pain_location_screen.dart';
+import 'package:dduduk_app/screens/auth/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home: const SplashScreen(),
-      home: const SurveyStep2PainLocationScreen(),
+      home: const OnboardingScreen(),
     );
   }
 }
