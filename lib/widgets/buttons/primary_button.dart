@@ -12,6 +12,7 @@ class BaseButton extends StatelessWidget {
     this.textColor,
     this.icon,
     this.leading,
+    this.fontWeight,
   });
 
   final String text;
@@ -21,6 +22,7 @@ class BaseButton extends StatelessWidget {
   final Color? textColor;
   final IconData? icon;
   final Widget? leading;
+  final FontWeight? fontWeight;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +50,10 @@ class BaseButton extends StatelessWidget {
         child: leadingWidget == null
             ? Text(
                 text,
-                style: AppTextStyles.body14Medium.copyWith(color: resolvedText),
+                style: AppTextStyles.body14Medium.copyWith(
+                  color: resolvedText,
+                  fontWeight: fontWeight,
+                ),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -60,6 +65,7 @@ class BaseButton extends StatelessWidget {
                     text,
                     style: AppTextStyles.body14Medium.copyWith(
                       color: resolvedText,
+                      fontWeight: fontWeight,
                     ),
                   ),
                 ],

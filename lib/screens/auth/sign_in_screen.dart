@@ -18,98 +18,114 @@ class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Column(
+      body: Container(
+        color: AppColors.primary,
+        child: SafeArea(
+          child: Column(
             children: [
-              Expanded(flex: 2, child: Container(color: AppColors.primary)),
-              Expanded(flex: 1, child: Container(color: AppColors.fillDefault)),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 68,
+                      height: 68,
+                      decoration: BoxDecoration(
+                        color: AppColors.fillBoxDefault,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'DDU\nDUK',
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.body14Medium.copyWith(
+                            color: AppColors.primaryDark,
+                            height: 1.2,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppDimens.space16),
+                    Text(
+                      'DDUDUK에',
+                      style: AppTextStyles.titleHeader.copyWith(
+                        color: AppColors.textWhite,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: AppDimens.space6),
+                    Text(
+                      '오신 것을 환영합니다!',
+                      style: AppTextStyles.titleHeader.copyWith(
+                        color: AppColors.textWhite,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColors.fillBoxDefault,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(48),
+                  ),
+                ),
+                padding: const EdgeInsets.fromLTRB(
+                  AppDimens.screenPadding,
+                  AppDimens.space32,
+                  AppDimens.screenPadding,
+                  AppDimens.space24,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    BaseButton(
+                      text: 'Kakao로 시작하기',
+                      backgroundColor: const Color(0xFFFEE500),
+                      textColor: const Color(0xFF191919),
+                      fontWeight: FontWeight.w700,
+                      leading: SvgPicture.asset(
+                        'assets/icons/ic_kakao.svg',
+                        width: 20,
+                        height: 20,
+                      ),
+                      onPressed: () => _toTerms(context),
+                    ),
+                    const SizedBox(height: AppDimens.space16),
+                    BaseButton(
+                      text: 'Naver로 시작하기',
+                      backgroundColor: const Color(0xFF03C75A),
+                      textColor: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      leading: SvgPicture.asset(
+                        'assets/icons/ic_naver.svg',
+                        width: 20,
+                        height: 20,
+                      ),
+                      onPressed: () => _toTerms(context),
+                    ),
+                    const SizedBox(height: AppDimens.space16),
+                    BaseButton(
+                      text: 'Apple로 시작하기',
+                      backgroundColor: Colors.black,
+                      textColor: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      leading: SvgPicture.asset(
+                        'assets/icons/ic_apple.svg',
+                        width: 20,
+                        height: 20,
+                      ),
+                      onPressed: () => _toTerms(context),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
-          SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(24),
-                          child: Image.asset(
-                            'assets/images/onboarding/onboarding.png',
-                            height: 320,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                height: 320,
-                                width: double.infinity,
-                                color: AppColors.primary,
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: AppDimens.space24),
-                        Text(
-                          'DDUDUK에 오신 것을 환영합니다',
-                          style: AppTextStyles.titleHeader.copyWith(
-                            color: AppColors.textWhite,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      BaseButton(
-                        text: 'Kakao로 시작하기',
-                        backgroundColor: const Color(0xFFFEE500),
-                        textColor: const Color(0xFF191919),
-                        leading: SvgPicture.asset(
-                          'assets/icons/ic_kakao.svg',
-                          width: 20,
-                          height: 20,
-                        ),
-                        onPressed: () => _toTerms(context),
-                      ),
-                      const SizedBox(height: AppDimens.space16),
-                      BaseButton(
-                        text: 'Naver로 시작하기',
-                        backgroundColor: const Color(0xFF03C75A),
-                        textColor: Colors.white,
-                        leading: SvgPicture.asset(
-                          'assets/icons/ic_naver.svg',
-                          width: 20,
-                          height: 20,
-                        ),
-                        onPressed: () => _toTerms(context),
-                      ),
-                      const SizedBox(height: AppDimens.space16),
-                      BaseButton(
-                        text: 'Apple로 시작하기',
-                        backgroundColor: Colors.black,
-                        textColor: Colors.white,
-                        leading: SvgPicture.asset(
-                          'assets/icons/ic_apple.svg',
-                          width: 20,
-                          height: 20,
-                        ),
-                        onPressed: () => _toTerms(context),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
