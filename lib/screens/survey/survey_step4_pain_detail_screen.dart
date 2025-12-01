@@ -17,7 +17,7 @@ class SurveyStep4LifestyleScreen extends StatefulWidget {
 
 class _SurveyStep4LifestyleScreenState
     extends State<SurveyStep4LifestyleScreen> {
-  double _painLevel = 10;
+  double _painLevel = 0;
   String? _selectedPainPattern;
   final Set<String> _selectedPainTriggers = {};
   String? _selectedPainDuration;
