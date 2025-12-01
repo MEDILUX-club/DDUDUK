@@ -20,7 +20,7 @@ class _SurveyStep1BasicInfoScreenState
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
 
-  String _selectedGender = '남성';
+  String? _selectedGender;
 
   @override
   void dispose() {
