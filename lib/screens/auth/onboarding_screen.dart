@@ -58,26 +58,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       backgroundColor: AppColors.fillDefault,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 40, 24, 16),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
           child: Column(
             children: [
-              Flexible(
+              Expanded(
                 flex: 5,
-                fit: FlexFit.tight,
                 child: Center(
-                  child: FractionallySizedBox(
-                    heightFactor: 0.85,
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(24),
-                        child: Image.asset(
-                          'assets/images/img_onboarding.png',
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(color: AppColors.fillDefault);
-                          },
-                        ),
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: Image.asset(
+                        'assets/images/img_onboarding.png',
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(color: AppColors.fillDefault);
+                        },
                       ),
                     ),
                   ),
@@ -102,8 +98,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   );
                 }),
               ),
-              const SizedBox(height: 24),
-              Flexible(
+              const SizedBox(height: 16),
+              Expanded(
+                flex: 2,
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: _pages.length,
@@ -114,32 +111,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   },
                   itemBuilder: (context, index) {
                     final page = _pages[index];
-                    return Align(
-                      alignment: Alignment.topCenter,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            page.title,
-                            style: AppTextStyles.titleHeader,
-                            textAlign: TextAlign.center,
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          page.title,
+                          style: AppTextStyles.titleHeader,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          page.description,
+                          style: AppTextStyles.body16Regular.copyWith(
+                            color: AppColors.textAssistive,
                           ),
-                          const SizedBox(height: 12),
-                          Text(
-                            page.description,
-                            style: AppTextStyles.body16Regular.copyWith(
-                              color: AppColors.textAssistive,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     );
                   },
                 ),
               ),
-              const Spacer(),
               SizedBox(
                 width: double.infinity,
                 height: 56,

@@ -17,115 +17,136 @@ class SignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      body: Container(
-        color: AppColors.primary,
-        child: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 68,
-                      height: 68,
-                      decoration: BoxDecoration(
-                        color: AppColors.fillBoxDefault,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'DDU\nDUK',
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.body14Medium.copyWith(
-                            color: AppColors.primaryDark,
-                            height: 1.2,
-                            fontWeight: FontWeight.w700,
+      backgroundColor: AppColors.fillDefault,
+      body: Stack(
+        children: [
+          // 상단 초록색 배경 (화면 반절)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: screenHeight * 0.5,
+            child: Container(color: AppColors.primary),
+          ),
+          // 배경 이미지 - 화면 상단 70% 차지
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: screenHeight * 0.7,
+            child: Image.asset(
+              'assets/images/img_signin.png',
+              fit: BoxFit.cover,
+              alignment: Alignment.bottomCenter,
+            ),
+          ),
+          // 콘텐츠
+          SafeArea(
+            child: Column(
+              children: [
+                // 상단 로고 및 텍스트
+                Padding(
+                  padding: const EdgeInsets.only(top: 200),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 68,
+                        height: 68,
+                        decoration: BoxDecoration(
+                          color: AppColors.fillBoxDefault,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'DDU\nDUK',
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.body16Regular.copyWith(
+                              color: AppColors.primaryDark,
+                              height: 1.2,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: AppDimens.space16),
-                    Text(
-                      'DDUDUK에',
-                      style: AppTextStyles.titleHeader.copyWith(
-                        color: AppColors.textWhite,
+                      const SizedBox(height: AppDimens.space16),
+                      Text(
+                        'DDUDUK에',
+                        style: AppTextStyles.titleHeader.copyWith(
+                          color: AppColors.textWhite,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppDimens.space6),
-                    Text(
-                      '오신 것을 환영합니다!',
-                      style: AppTextStyles.titleHeader.copyWith(
-                        color: AppColors.textWhite,
+                      const SizedBox(height: AppDimens.space6),
+                      Text(
+                        '오신 것을 환영합니다!',
+                        style: AppTextStyles.titleHeader.copyWith(
+                          color: AppColors.textWhite,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppColors.fillBoxDefault,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(48),
+                    ],
                   ),
                 ),
-                padding: const EdgeInsets.fromLTRB(
-                  AppDimens.screenPadding,
-                  AppDimens.space32,
-                  AppDimens.screenPadding,
-                  AppDimens.space24,
+                const Spacer(),
+                // 하단 버튼 영역
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppDimens.screenPadding,
+                    AppDimens.space24,
+                    AppDimens.screenPadding,
+                    AppDimens.space24,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      BaseButton(
+                        text: 'Kakao로 시작하기',
+                        backgroundColor: const Color(0xFFFEE500),
+                        textColor: const Color(0xFF191919),
+                        fontWeight: FontWeight.w700,
+                        leading: SvgPicture.asset(
+                          'assets/icons/ic_kakao.svg',
+                          width: 20,
+                          height: 20,
+                        ),
+                        onPressed: () => _toTerms(context),
+                      ),
+                      const SizedBox(height: AppDimens.space12),
+                      BaseButton(
+                        text: 'Naver로 시작하기',
+                        backgroundColor: const Color(0xFF03C75A),
+                        textColor: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        leading: SvgPicture.asset(
+                          'assets/icons/ic_naver.svg',
+                          width: 20,
+                          height: 20,
+                        ),
+                        onPressed: () => _toTerms(context),
+                      ),
+                      const SizedBox(height: AppDimens.space12),
+                      BaseButton(
+                        text: 'Apple로 시작하기',
+                        backgroundColor: Colors.black,
+                        textColor: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        leading: SvgPicture.asset(
+                          'assets/icons/ic_apple.svg',
+                          width: 20,
+                          height: 20,
+                        ),
+                        onPressed: () => _toTerms(context),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    BaseButton(
-                      text: 'Kakao로 시작하기',
-                      backgroundColor: const Color(0xFFFEE500),
-                      textColor: const Color(0xFF191919),
-                      fontWeight: FontWeight.w700,
-                      leading: SvgPicture.asset(
-                        'assets/icons/ic_kakao.svg',
-                        width: 20,
-                        height: 20,
-                      ),
-                      onPressed: () => _toTerms(context),
-                    ),
-                    const SizedBox(height: AppDimens.space16),
-                    BaseButton(
-                      text: 'Naver로 시작하기',
-                      backgroundColor: const Color(0xFF03C75A),
-                      textColor: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      leading: SvgPicture.asset(
-                        'assets/icons/ic_naver.svg',
-                        width: 20,
-                        height: 20,
-                      ),
-                      onPressed: () => _toTerms(context),
-                    ),
-                    const SizedBox(height: AppDimens.space16),
-                    BaseButton(
-                      text: 'Apple로 시작하기',
-                      backgroundColor: Colors.black,
-                      textColor: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      leading: SvgPicture.asset(
-                        'assets/icons/ic_apple.svg',
-                        width: 20,
-                        height: 20,
-                      ),
-                      onPressed: () => _toTerms(context),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
