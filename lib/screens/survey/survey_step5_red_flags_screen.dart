@@ -63,7 +63,7 @@ class _SurveyStep5WorkoutExpScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: AppDimens.space10),
+                  const SizedBox(height: AppDimens.space2),
                   PainSinceOptions(
                     selected: _selectedRisk,
                     onSelect: _showRiskAlert,
