@@ -58,26 +58,32 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       backgroundColor: AppColors.fillDefault,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 60, 24, 16),
+          padding: const EdgeInsets.fromLTRB(24, 40, 24, 16),
           child: Column(
             children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.5,
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(24),
-                    child: Image.asset(
-                      'assets/images/img_onboarding.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(color: AppColors.fillDefault);
-                      },
+              Flexible(
+                flex: 5,
+                fit: FlexFit.tight,
+                child: Center(
+                  child: FractionallySizedBox(
+                    heightFactor: 0.85,
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: Image.asset(
+                          'assets/images/img_onboarding.png',
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(color: AppColors.fillDefault);
+                          },
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(_pages.length, (index) {

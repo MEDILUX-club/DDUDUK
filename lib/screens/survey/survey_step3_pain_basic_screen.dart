@@ -17,7 +17,7 @@ class SurveyStep3PainLevelScreen extends StatefulWidget {
 
 class _SurveyStep3PainLevelScreenState
     extends State<SurveyStep3PainLevelScreen> {
-  String _selectedKnee = '왼쪽';
+  String? _selectedKnee;
   final List<String> _selectedPainAreas = [];
   String? _painSince;
 
@@ -31,10 +31,10 @@ class _SurveyStep3PainLevelScreenState
   ];
 
   static const List<String> _painSinceOptions = [
-    '특별히 다친 기억은 없지만 서서히 아파졌어요',
-    '최근 활동량이 많아진 뒤 더 심해졌어요',
-    '넘어지거나 꺾이거나 뚝 소리 난 뒤부터 아파요',
-    '무리하게 운동한 이후부터 아파요',
+    '원인 기억은 없는데 서서히 아파졌어요',
+    '최근 활동이 많아서 심해졌어요',
+    '넘어지거나 꺾이거나 부딪힌 뒤부터 아파요',
+    '무리하게 운동한 후부터 아파요',
   ];
 
   void _selectKnee(String knee) {
@@ -144,7 +144,7 @@ class _SurveyStep3PainLevelScreenState
                   const SizedBox(height: AppDimens.space24),
                   Text('Q2.', style: AppTextStyles.body14Medium),
                   const SizedBox(height: AppDimens.space6),
-                  Text('언제부터 아팠나요?', style: AppTextStyles.body18SemiBold),
+                  Text('언제부터 아팠어요?', style: AppTextStyles.body18SemiBold),
                   const SizedBox(height: AppDimens.space12),
                   PainSinceOptions(
                     selected: _painSince,
