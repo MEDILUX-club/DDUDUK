@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
-import 'package:dduduk_app/screens/survey/survey_step4_lifestyle_screen.dart';
+import 'package:dduduk_app/screens/survey/survey_step4_pain_detail_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
