@@ -61,11 +61,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
           child: Column(
             children: [
+              const SizedBox(height: 80),
               Expanded(
-                flex: 5,
+                flex: 6,
                 child: Center(
                   child: AspectRatio(
-                    aspectRatio: 1,
+                    aspectRatio: 0.85,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24),
                       child: Image.asset(
@@ -87,13 +88,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     margin: const EdgeInsets.symmetric(horizontal: 4),
-                    width: isActive ? 24 : 8,
-                    height: 8,
+                    width: isActive ? 55 : 12,
+                    height: 10,
                     decoration: BoxDecoration(
                       color: isActive
                           ? AppColors.primary
                           : AppColors.lineNeutral,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(6),
                     ),
                   );
                 }),
