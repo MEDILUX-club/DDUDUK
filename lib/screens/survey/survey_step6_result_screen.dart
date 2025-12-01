@@ -77,11 +77,10 @@ class SurveyStep6ResultScreen extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(
+                Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => const SurveyCompletionScreen(),
                   ),
-                  (route) => false,
                 );
               },
               style: ElevatedButton.styleFrom(

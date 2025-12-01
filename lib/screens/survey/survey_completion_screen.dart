@@ -11,6 +11,7 @@ class SurveyCompletionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultLayout(
       title: '셀프 설문',
+      onBack: () => Navigator.of(context).pop(),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           vertical: AppDimens.space24,
