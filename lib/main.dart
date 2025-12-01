@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 //import 'package:dduduk_app/screens/auth/splash_screen.dart';
-import 'package:dduduk_app/screens/survey/survey_step3_pain_basic_screen.dart';
+import 'package:dduduk_app/screens/auth/onboarding_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       //home: const SplashScreen(),
-      home: const SurveyStep3PainLevelScreen(),
+      home: const OnboardingScreen(),
     );
   }
 }

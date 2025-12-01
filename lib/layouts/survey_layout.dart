@@ -37,7 +37,6 @@ class SurveyLayout extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: AppDimens.space16),
           StepProgressBar(
             currentStep: currentStep,
             totalSteps: totalSteps,
