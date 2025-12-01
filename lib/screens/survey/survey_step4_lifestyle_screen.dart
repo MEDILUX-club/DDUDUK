@@ -1,12 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step5_workout_exp_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
-import 'package:dduduk_app/widgets/common/custom_text_field.dart';
-import 'package:dduduk_app/widgets/survey/lifestyle_option_card.dart';
+import 'package:dduduk_app/widgets/survey/pain_level_slider.dart';
+import 'package:dduduk_app/widgets/survey/pain_since_options.dart';
 
 class SurveyStep4LifestyleScreen extends StatefulWidget {
   const SurveyStep4LifestyleScreen({super.key});
@@ -18,124 +17,67 @@ class SurveyStep4LifestyleScreen extends StatefulWidget {
 
 class _SurveyStep4LifestyleScreenState
     extends State<SurveyStep4LifestyleScreen> {
-  final TextEditingController _sleepController = TextEditingController(
-    text: '22:00',
-  );
-  final TextEditingController _wakeController = TextEditingController(
-    text: '07:00',
-  );
+  double _painLevel = 10;
+  String? _selectedPainPattern;
+  final Set<String> _selectedPainTriggers = {};
+  String? _selectedPainDuration;
 
-  DateTime? _sleepTime;
-  DateTime? _wakeTime;
-  String _selectedLifestyle = 'sedentary';
-
-  final List<Map<String, dynamic>> _options = [
-    {
-      'key': 'sedentary',
-      'title': '주로 앉아있어요',
-      'subtitle': '사무직, 학생 등',
-      'imagePath': 'assets/images/img_emoji_chair.png',
-    },
-    {
-      'key': 'light',
-      'title': '가볍게 움직여요',
-      'subtitle': '서서 일하거나 가볍게 움직여요',
-      'imagePath': 'assets/images/img_emoji_run.png',
-    },
-    {
-      'key': 'active',
-      'title': '매우 활동적이에요',
-      'subtitle': '체육, 건설직 등',
-      'imagePath': 'assets/images/img_emoji_muscle.png',
-    },
+  static const List<String> _painPatternOptions = [
+    '걸리거나, 걸리적거리는 느낌이 있어요',
+    '움직일수록 뻐근하고 뭉직한 느낌이 있어요',
+    '무릎이 붓고, 만지면 뜨거워요',
+    '놀랐을 때 콕 찌르는 듯이 아파요',
+    '아침에 일어나면 뻣뻣해요',
   ];
 
-  @override
-  void dispose() {
-    _sleepController.dispose();
-    _wakeController.dispose();
-    super.dispose();
-  }
+  static const List<String> _painTriggerOptions = [
+    '오래 걷거나 서있을 때',
+    '계단 올라갈 때',
+    '계단 내려갈 때',
+    '쭈그려 앉을 때',
+    '운동 후',
+    '무릎을 비틀거나 회전할 때',
+    '아침에 일어났을 때',
+  ];
 
-  String _formatTime(DateTime time) =>
-      '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+  static const List<String> _painDurationOptions = ['30분 미만', '30분 이상'];
 
-  Future<void> _pickTime({required bool isSleep}) async {
-    final DateTime now = DateTime.now();
-    final DateTime initial = isSleep
-        ? (_sleepTime ?? DateTime(now.year, now.month, now.day, 22, 0))
-        : (_wakeTime ?? DateTime(now.year, now.month, now.day, 7, 0));
-
-    DateTime temp = initial;
-
-    final DateTime? picked = await showModalBottomSheet<DateTime>(
-      context: context,
-      backgroundColor: AppColors.fillBoxDefault,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (sheetContext) {
-        return SizedBox(
-          height: 300,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppDimens.space16,
-                  vertical: AppDimens.space12,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.of(sheetContext).pop(temp),
-                      style: TextButton.styleFrom(
-                        foregroundColor: AppColors.primary,
-                      ),
-                      child: const Text('완료'),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.time,
-                  initialDateTime: initial,
-                  use24hFormat: true,
-                  onDateTimeChanged: (value) => temp = value,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-
-    if (picked != null) {
-      setState(() {
-        if (isSleep) {
-          _sleepTime = picked;
-          _sleepController.text = _formatTime(picked);
-        } else {
-          _wakeTime = picked;
-          _wakeController.text = _formatTime(picked);
-        }
-      });
-    }
-  }
-
-  void _selectLifestyle(String key) {
+  void _selectPainPattern(String value) {
     setState(() {
-      _selectedLifestyle = key;
+      _selectedPainPattern = value;
     });
+  }
+
+  void _togglePainTrigger(String value) {
+    setState(() {
+      if (_selectedPainTriggers.contains(value)) {
+        _selectedPainTriggers.remove(value);
+      } else {
+        _selectedPainTriggers.add(value);
+      }
+    });
+  }
+
+  void _selectPainDuration(String value) {
+    setState(() {
+      _selectedPainDuration = value;
+    });
+  }
+
+  String _painDescription(double value) {
+    if (value <= 0) return '통증 없어요';
+    if (value <= 3) return '거의 신경 쓰이지 않아요';
+    if (value <= 6) return '불편하지만 참을 만해요';
+    if (value <= 8) return '일상에 영향이 있어요';
+    return '잠을 못 잘 정도로 아프고 고통스러워요';
   }
 
   @override
   Widget build(BuildContext context) {
     return SurveyLayout(
-      title: '평소 생활 패턴을 알려주세요',
-      description: '수면/기상 시간에 맞춰 운동을 안내해드릴게요',
-      stepLabel: '4. 생활 패턴',
+      title: '통증에 대한 세부 정보가 필요해요',
+      description: '정확한 운동 프로그램을 위해 필요한 정보예요',
+      stepLabel: '4. 통증 세부 정보',
       currentStep: 4,
       totalSteps: 6,
       bottomButtons: SurveyButtonsConfig(
@@ -158,66 +100,125 @@ class _SurveyStep4LifestyleScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: AppDimens.space16),
+                  Text(
+                    'Q1. 현재 무릎 통증의 정도를 알고 싶어요.',
+                    style: AppTextStyles.body18SemiBold,
+                  ),
+                  const SizedBox(height: AppDimens.space16),
+                  Center(
+                    child: Container(
+                      width: 120,
+                      height: 120,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.primaryLight,
+                      ),
+                      padding: const EdgeInsets.all(AppDimens.space12),
+                      child: Image.asset('assets/images/img_face_0.png'),
+                    ),
+                  ),
+                  const SizedBox(height: AppDimens.space12),
+                  Center(
+                    child: Text(
+                      '${_painLevel.toStringAsFixed(0)}/10',
+                      style: AppTextStyles.body20Bold.copyWith(
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppDimens.space6),
+                  Center(
+                    child: Text(
+                      _painDescription(_painLevel),
+                      style: AppTextStyles.body14Regular,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: AppDimens.space16),
+                  PainLevelSlider(
+                    value: _painLevel,
+                    onChanged: (value) =>
+                        setState(() => _painLevel = value as double),
+                  ),
+                  const SizedBox(height: AppDimens.space6),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('취침시간', style: AppTextStyles.body14Medium),
-                            const SizedBox(height: AppDimens.space8),
-                            CustomTextField(
-                              controller: _sleepController,
-                              hintText: '22:00',
-                              icon: Icons.access_time,
-                              readOnly: true,
-                              onTap: () => _pickTime(isSleep: true),
-                            ),
-                          ],
+                      Text(
+                        '통증없음 (0)',
+                        style: AppTextStyles.body14Regular.copyWith(
+                          color: AppColors.textDisabled,
                         ),
                       ),
-                      const SizedBox(width: AppDimens.itemSpacing),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('기상시간', style: AppTextStyles.body14Medium),
-                            const SizedBox(height: AppDimens.space8),
-                            CustomTextField(
-                              controller: _wakeController,
-                              hintText: '07:00',
-                              icon: Icons.access_time,
-                              readOnly: true,
-                              onTap: () => _pickTime(isSleep: false),
-                            ),
-                          ],
+                      Text(
+                        '극심한 통증 (10)',
+                        style: AppTextStyles.body14Regular.copyWith(
+                          color: AppColors.textDisabled,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppDimens.space32),
-                  Text('생활패턴이 어떠신가요?', style: AppTextStyles.titleText1),
+                  const SizedBox(height: AppDimens.space24),
+                  Text(
+                    'Q2. 언제 통증이 더 심해지나요?',
+                    style: AppTextStyles.body18SemiBold,
+                  ),
+                  const SizedBox(height: AppDimens.space4),
+                  Text(
+                    '(중복선택 가능)',
+                    style: AppTextStyles.body12Regular.copyWith(
+                      color: AppColors.textDisabled,
+                    ),
+                  ),
+                  const SizedBox(height: AppDimens.space12),
+                  Wrap(
+                    spacing: AppDimens.space8,
+                    runSpacing: AppDimens.space8,
+                    children: _painTriggerOptions
+                        .map(
+                          (option) => _SelectableChip(
+                            label: option,
+                            selected: _selectedPainTriggers.contains(option),
+                            onTap: () => _togglePainTrigger(option),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  const SizedBox(height: AppDimens.space24),
+                  Text('Q3. 통증 느낌이 어떤가요?', style: AppTextStyles.body18SemiBold),
                   const SizedBox(height: AppDimens.space8),
                   Text(
-                    '평소 생활 패턴에 맞춘 운동을 안내드릴게요',
+                    '최근 자주 느끼는 통증 양상을 선택해주세요',
                     style: AppTextStyles.body14Regular.copyWith(
                       color: AppColors.textNeutral,
                     ),
                   ),
-                  const SizedBox(height: AppDimens.space20),
-                  Column(
-                    children: _options.map((option) {
-                      final key = option['key'] as String;
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: AppDimens.space12,
-                        ),
-                        child: LifestyleOptionCard(
-                          imagePath: option['imagePath'] as String,
-                          title: option['title'] as String,
-                          subtitle: option['subtitle'] as String,
-                          selected: _selectedLifestyle == key,
-                          onTap: () => _selectLifestyle(key),
+                  const SizedBox(height: AppDimens.space12),
+                  PainSinceOptions(
+                    selected: _selectedPainPattern,
+                    onSelect: _selectPainPattern,
+                    options: _painPatternOptions,
+                  ),
+                  const SizedBox(height: AppDimens.space24),
+                  Text(
+                    'Q4. 통증이 얼마나 지속되나요?',
+                    style: AppTextStyles.body18SemiBold,
+                  ),
+                  const SizedBox(height: AppDimens.space12),
+                  Row(
+                    children: _painDurationOptions.map((option) {
+                      return Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            right: option == _painDurationOptions.last
+                                ? 0
+                                : AppDimens.itemSpacing,
+                          ),
+                          child: _SelectableCardButton(
+                            label: option,
+                            selected: _selectedPainDuration == option,
+                            onTap: () => _selectPainDuration(option),
+                          ),
                         ),
                       );
                     }).toList(),
@@ -227,6 +228,88 @@ class _SurveyStep4LifestyleScreenState
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SelectableChip extends StatelessWidget {
+  const _SelectableChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color borderColor = selected
+        ? AppColors.primary
+        : AppColors.linePrimary;
+    final Color backgroundColor = selected
+        ? AppColors.primaryLight
+        : AppColors.fillBoxDefault;
+    final Color textColor = selected ? AppColors.primary : AppColors.textNormal;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppDimens.space12,
+          vertical: AppDimens.space8,
+        ),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: borderColor),
+        ),
+        child: Text(
+          label,
+          style: AppTextStyles.body14Regular.copyWith(color: textColor),
+        ),
+      ),
+    );
+  }
+}
+
+class _SelectableCardButton extends StatelessWidget {
+  const _SelectableCardButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color borderColor = selected
+        ? AppColors.primary
+        : AppColors.linePrimary;
+    final Color backgroundColor = selected
+        ? AppColors.primaryLight
+        : AppColors.fillBoxDefault;
+    final Color textColor = selected ? AppColors.primary : AppColors.textNormal;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: AppDimens.space14),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: borderColor),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: AppTextStyles.body16Regular.copyWith(color: textColor),
+        ),
       ),
     );
   }

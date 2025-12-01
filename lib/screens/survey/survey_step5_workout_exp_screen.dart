@@ -2,9 +2,7 @@
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step6_preferred_time_screen.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
-import 'package:dduduk_app/theme/app_text_styles.dart';
-import 'package:dduduk_app/widgets/survey/lifestyle_option_card.dart';
-import 'package:dduduk_app/widgets/survey/survey_value_slider.dart';
+import 'package:dduduk_app/widgets/survey/pain_since_options.dart';
 
 class SurveyStep5WorkoutExpScreen extends StatefulWidget {
   const SurveyStep5WorkoutExpScreen({super.key});
@@ -16,54 +14,27 @@ class SurveyStep5WorkoutExpScreen extends StatefulWidget {
 
 class _SurveyStep5WorkoutExpScreenState
     extends State<SurveyStep5WorkoutExpScreen> {
-  double _experience = 0;
-  String _selectedType = 'cardio';
+  String? _selectedRisk;
 
-  final Map<double, String> _experienceLabels = {
-    0: '0',
-    1: '3개월',
-    2: '6개월',
-    3: '12개월',
-    4: '이상',
-  };
-
-  final List<Map<String, dynamic>> _types = [
-    {
-      'key': 'cardio',
-      'title': '유산소 운동',
-      'subtitle': '가볍게 걷거나 뛰는 걸 좋아해요',
-      'imagePath': 'assets/images/img_emoji_walk.png',
-    },
-    {
-      'key': 'strength',
-      'title': '근력 운동',
-      'subtitle': '근력 위주의 운동을 해요',
-      'imagePath': 'assets/images/img_emoji_strength.png',
-    },
-    {
-      'key': 'mixed',
-      'title': '혼합',
-      'subtitle': '여러 가지 운동을 함께 해요',
-      'imagePath': 'assets/images/img_emoji_mixed.png',
-    },
-    {
-      'key': 'flexibility',
-      'title': '유연성',
-      'subtitle': '몸을 풀어주는 운동을 해요',
-      'imagePath': 'assets/images/img_emoji_flexibility.png',
-    },
+  static const List<String> _riskOptions = [
+    '해당사항 없음',
+    '지금 걷기 어려울 정도로 심한 통증이 있어요',
+    '무릎이 갑자기 많이 붓고 만지면 뜨거워요',
+    '무릎이 붓고, 만지면 뜨거워요',
+    '무릎을 움직일 때 평소보다 잘 안 움직여요',
+    '무릎 힘이 빠지거나 다리 감각이 둔해져요.',
+    '발열 또는 전신 몸살 같은 감염 의심 증상이 있어요',
+    '종아리나 다리가 심하게 붓고,\n통증이 찌르듯이 심해요',
   ];
-
-  String _experienceBubble(double value) {
-    return _experienceLabels[value] ?? value.toStringAsFixed(0);
-  }
 
   @override
   Widget build(BuildContext context) {
     return SurveyLayout(
-      title: '평소 운동경험은 어떻게 되나요?',
-      description: '어떤 운동을 선호하시는지 알려주세요',
-      stepLabel: '5. 운동 경험',
+      title:
+          '다음은 중요한 위험신호예요\n'
+          '해당사항이 있나요?',
+      description: '',
+      stepLabel: '5. 위험 신호',
       currentStep: 5,
       totalSteps: 6,
       bottomButtons: SurveyButtonsConfig(
@@ -85,44 +56,14 @@ class _SurveyStep5WorkoutExpScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: AppDimens.space16),
-                  SurveyValueSlider(
-                    value: _experience,
-                    min: 0,
-                    max: 4,
-                    interval: 1,
-                    stepSize: 1,
-                    labels: _experienceLabels,
-                    bubbleTextBuilder: _experienceBubble,
-                    onChanged: (double newValue) {
-                      setState(() {
-                        _experience = newValue;
-                      });
+                  const SizedBox(height: AppDimens.space10),
+                  PainSinceOptions(
+                    selected: _selectedRisk,
+                    onSelect: (value) {
+                      setState(() => _selectedRisk = value);
                     },
-                  ),
-                  const SizedBox(height: AppDimens.space32),
-                  Text('운동 유형', style: AppTextStyles.titleText1),
-                  const SizedBox(height: AppDimens.space12),
-                  Column(
-                    children: _types.map((type) {
-                      final key = type['key'] as String;
-                      return Padding(
-                        padding: const EdgeInsets.only(
-                          bottom: AppDimens.space12,
-                        ),
-                        child: LifestyleOptionCard(
-                          imagePath: type['imagePath'] as String,
-                          title: type['title'] as String,
-                          subtitle: type['subtitle'] as String,
-                          selected: _selectedType == key,
-                          onTap: () {
-                            setState(() {
-                              _selectedType = key;
-                            });
-                          },
-                        ),
-                      );
-                    }).toList(),
+                    options: _riskOptions,
+                    trailingSpacing: AppDimens.space4,
                   ),
                 ],
               ),

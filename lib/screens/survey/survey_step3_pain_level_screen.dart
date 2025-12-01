@@ -4,7 +4,8 @@ import 'package:dduduk_app/screens/survey/survey_step4_lifestyle_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
-import 'package:dduduk_app/widgets/survey/survey_value_slider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:dduduk_app/widgets/survey/pain_since_options.dart';
 
 class SurveyStep3PainLevelScreen extends StatefulWidget {
   const SurveyStep3PainLevelScreen({super.key});
@@ -16,28 +17,46 @@ class SurveyStep3PainLevelScreen extends StatefulWidget {
 
 class _SurveyStep3PainLevelScreenState
     extends State<SurveyStep3PainLevelScreen> {
-  double _painLevel = 0;
   String _selectedKnee = '왼쪽';
+  final List<String> _selectedPainAreas = [];
+  String? _painSince;
 
-  final Map<double, String> _painLabels = {
-    0.0: '0',
-    2.0: '2',
-    4.0: '4',
-    6.0: '6',
-    8.0: '8',
-    10.0: '10',
-  };
+  final List<_KneePainArea> _kneePainAreas = const [
+    _KneePainArea(label: '무릎 안쪽', iconPath: 'assets/icons/ic_knee_inside.svg'),
+    _KneePainArea(
+      label: '무릎 바깥쪽',
+      iconPath: 'assets/icons/ic_knee_outside.svg',
+    ),
+    _KneePainArea(label: '무릎 앞쪽', iconPath: 'assets/icons/ic_knee_front.svg'),
+  ];
 
-  String _painText(double painValue) {
-    if (painValue <= 0) return '아프지 않음';
-    if (painValue <= 4) return '약함';
-    if (painValue <= 8) return '아픔';
-    return '매우 아픔';
-  }
+  static const List<String> _painSinceOptions = [
+    '특별히 다친 기억은 없지만 서서히 아파졌어요',
+    '최근 활동량이 많아진 뒤 더 심해졌어요',
+    '넘어지거나 꺾이거나 뚝 소리 난 뒤부터 아파요',
+    '무리하게 운동한 이후부터 아파요',
+  ];
 
   void _selectKnee(String knee) {
     setState(() {
       _selectedKnee = knee;
+    });
+  }
+
+  void _togglePainArea(String area) {
+    setState(() {
+      if (_selectedPainAreas.contains(area)) {
+        _selectedPainAreas.remove(area);
+        return;
+      }
+      if (_selectedPainAreas.length >= 2) return;
+      _selectedPainAreas.add(area);
+    });
+  }
+
+  void _selectPainSince(String value) {
+    setState(() {
+      _painSince = value;
     });
   }
 
@@ -94,27 +113,43 @@ class _SurveyStep3PainLevelScreenState
                       ),
                     ],
                   ),
+                  const SizedBox(height: AppDimens.space12),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '최대 2개 선택 가능',
+                      style: AppTextStyles.body12Regular.copyWith(
+                        color: AppColors.textDisabled,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppDimens.space12),
+                  Column(
+                    children: _kneePainAreas
+                        .map(
+                          (area) => Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: AppDimens.space8,
+                            ),
+                            child: _KneePainAreaCard(
+                              label: area.label,
+                              iconPath: area.iconPath,
+                              selected: _selectedPainAreas.contains(area.label),
+                              onTap: () => _togglePainArea(area.label),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
                   const SizedBox(height: AppDimens.space24),
                   Text('Q2.', style: AppTextStyles.body14Medium),
                   const SizedBox(height: AppDimens.space6),
-                  Text(
-                    '현재 무릎 통증 정도를 선택해주세요',
-                    style: AppTextStyles.body18SemiBold,
-                  ),
-                  const SizedBox(height: AppDimens.space16),
-                  SurveyValueSlider(
-                    value: _painLevel,
-                    min: 0,
-                    max: 10,
-                    interval: 2,
-                    stepSize: 1,
-                    labels: _painLabels,
-                    bubbleTextBuilder: _painText,
-                    onChanged: (double newValue) {
-                      setState(() {
-                        _painLevel = newValue;
-                      });
-                    },
+                  Text('언제부터 아팠나요?', style: AppTextStyles.body18SemiBold),
+                  const SizedBox(height: AppDimens.space12),
+                  PainSinceOptions(
+                    selected: _painSince,
+                    onSelect: _selectPainSince,
+                    options: _painSinceOptions,
                   ),
                   const SizedBox(height: AppDimens.space16),
                 ],
@@ -164,6 +199,69 @@ class _KneeOption extends StatelessWidget {
               style: AppTextStyles.body14Medium.copyWith(color: textColor),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _KneePainArea {
+  const _KneePainArea({required this.label, required this.iconPath});
+
+  final String label;
+  final String iconPath;
+}
+
+class _KneePainAreaCard extends StatelessWidget {
+  const _KneePainAreaCard({
+    required this.label,
+    required this.iconPath,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final String iconPath;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color borderColor = selected
+        ? AppColors.primary
+        : AppColors.linePrimary;
+    final Color backgroundColor = selected
+        ? AppColors.primaryLight
+        : AppColors.fillBoxDefault;
+    final Color textColor = selected ? AppColors.primary : AppColors.textNormal;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: borderColor),
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppDimens.space12,
+          vertical: AppDimens.space12,
+        ),
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              iconPath,
+              width: AppDimens.space48,
+              height: AppDimens.space48,
+            ),
+            const SizedBox(width: AppDimens.space12),
+            Expanded(
+              child: Text(
+                label,
+                style: AppTextStyles.body16Regular.copyWith(color: textColor),
+              ),
+            ),
+          ],
         ),
       ),
     );

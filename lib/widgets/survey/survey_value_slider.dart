@@ -13,6 +13,7 @@ class SurveyValueSlider extends StatelessWidget {
     required this.value,
     required this.onChanged,
     required this.labels,
+    this.showBubble = true,
     this.min,
     this.max,
     this.interval,
@@ -23,6 +24,7 @@ class SurveyValueSlider extends StatelessWidget {
   final double value;
   final ValueChanged<double> onChanged;
   final Map<double, String> labels;
+  final bool showBubble;
   final double? min;
   final double? max;
   final double? interval;
@@ -52,33 +54,36 @@ class SurveyValueSlider extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(
-          height: 32,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Align(
-                alignment: Alignment(-1 + normalized * 2, 1),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimens.space12,
-                    vertical: AppDimens.space6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Text(
-                    bubbleText,
-                    style: AppTextStyles.body12Medium.copyWith(
-                      color: AppColors.textWhite,
+        if (showBubble)
+          SizedBox(
+            height: 32,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Align(
+                  alignment: Alignment(-1 + normalized * 2, 1),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDimens.space12,
+                      vertical: AppDimens.space6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      bubbleText,
+                      style: AppTextStyles.body12Medium.copyWith(
+                        color: AppColors.textWhite,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
+              ],
+            ),
+          )
+        else
+          const SizedBox(height: AppDimens.space8),
         SfSliderTheme(
           data: SfSliderThemeData(
             activeTrackHeight: 12,
