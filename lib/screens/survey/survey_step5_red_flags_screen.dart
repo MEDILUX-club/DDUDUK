@@ -40,8 +40,8 @@ class _SurveyStep5WorkoutExpScreenState
   Widget build(BuildContext context) {
     return SurveyLayout(
       title:
-          '위험 신호에 해당하는 항목이 있나요?\n'
-          '다음 중 해당하는 항목을 선택해 주세요.',
+          '다음은 중요한 위험신호예요\n'
+          '해당사항이 있나요?',
       description: '',
       stepLabel: '5. 위험 신호',
       currentStep: 5,
