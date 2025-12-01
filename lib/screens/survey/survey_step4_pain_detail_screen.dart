@@ -99,9 +99,10 @@ class _SurveyStep4LifestyleScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // 1. 현재 무릎 통증의 정도 (항상 표시)
                   const SizedBox(height: AppDimens.space16),
                   Text(
-                    'Q1. 현재 무릎 통증의 정도를 알고 싶어요.',
+                    '1. 현재 무릎 통증의 정도를 알고 싶어요.',
                     style: AppTextStyles.body18SemiBold,
                   ),
                   const SizedBox(height: AppDimens.space16),
@@ -158,9 +159,10 @@ class _SurveyStep4LifestyleScreenState
                       ),
                     ],
                   ),
+                  // 2. 언제 통증이 더 심해지나요? (항상 표시)
                   const SizedBox(height: AppDimens.space24),
                   Text(
-                    'Q2. 언제 통증이 더 심해지나요?',
+                    '2. 언제 통증이 더 심해지나요?',
                     style: AppTextStyles.body18SemiBold,
                   ),
                   const SizedBox(height: AppDimens.space4),
@@ -184,45 +186,55 @@ class _SurveyStep4LifestyleScreenState
                         )
                         .toList(),
                   ),
-                  const SizedBox(height: AppDimens.space24),
-                  Text('Q3. 통증 느낌이 어떤가요?', style: AppTextStyles.body18SemiBold),
-                  const SizedBox(height: AppDimens.space8),
-                  Text(
-                    '최근 자주 느끼는 통증 양상을 선택해주세요',
-                    style: AppTextStyles.body14Regular.copyWith(
-                      color: AppColors.textNeutral,
+                  // 3. 통증 느낌이 어떤가요? (2번 선택 시 표시)
+                  if (_selectedPainTriggers.isNotEmpty) ...[
+                    const SizedBox(height: AppDimens.space24),
+                    Text(
+                      '3. 통증 느낌이 어떤가요?',
+                      style: AppTextStyles.body18SemiBold,
                     ),
-                  ),
-                  const SizedBox(height: AppDimens.space12),
-                  PainSinceOptions(
-                    selected: _selectedPainPattern,
-                    onSelect: _selectPainPattern,
-                    options: _painPatternOptions,
-                  ),
-                  const SizedBox(height: AppDimens.space24),
-                  Text(
-                    'Q4. 통증이 얼마나 지속되나요?',
-                    style: AppTextStyles.body18SemiBold,
-                  ),
-                  const SizedBox(height: AppDimens.space12),
-                  Row(
-                    children: _painDurationOptions.map((option) {
-                      return Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            right: option == _painDurationOptions.last
-                                ? 0
-                                : AppDimens.itemSpacing,
+                    const SizedBox(height: AppDimens.space8),
+                    Text(
+                      '최근 자주 느끼는 통증 양상을 선택해주세요',
+                      style: AppTextStyles.body14Regular.copyWith(
+                        color: AppColors.textNeutral,
+                      ),
+                    ),
+                    const SizedBox(height: AppDimens.space12),
+                    PainSinceOptions(
+                      selected: _selectedPainPattern,
+                      onSelect: _selectPainPattern,
+                      options: _painPatternOptions,
+                    ),
+                  ],
+                  // 4. 통증이 얼마나 지속되나요? ("아침에 일어나면 뻣뻣해요" 선택 시 표시)
+                  if (_selectedPainPattern == '아침에 일어나면 뻣뻣해요') ...[
+                    const SizedBox(height: AppDimens.space24),
+                    Text(
+                      '4. 통증이 얼마나 지속되나요?',
+                      style: AppTextStyles.body18SemiBold,
+                    ),
+                    const SizedBox(height: AppDimens.space12),
+                    Row(
+                      children: _painDurationOptions.map((option) {
+                        return Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              right: option == _painDurationOptions.last
+                                  ? 0
+                                  : AppDimens.itemSpacing,
+                            ),
+                            child: _SelectableCardButton(
+                              label: option,
+                              selected: _selectedPainDuration == option,
+                              onTap: () => _selectPainDuration(option),
+                            ),
                           ),
-                          child: _SelectableCardButton(
-                            label: option,
-                            selected: _selectedPainDuration == option,
-                            onTap: () => _selectPainDuration(option),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                  const SizedBox(height: AppDimens.space16),
                 ],
               ),
             ),
