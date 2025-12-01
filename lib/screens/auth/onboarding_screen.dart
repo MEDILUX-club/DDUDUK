@@ -68,7 +68,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(24),
                     child: Image.asset(
-                      'assets/images/img_signin.png',
+                      'assets/images/img_onboarding.png',
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(color: AppColors.fillDefault);
