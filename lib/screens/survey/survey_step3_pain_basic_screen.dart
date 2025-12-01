@@ -87,10 +87,12 @@ class _SurveyStep3PainLevelScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: AppDimens.space16),
-                  Text('Q1.', style: AppTextStyles.body14Medium),
                   const SizedBox(height: AppDimens.space6),
-                  Text('어느 쪽 무릎이 아프신가요?', style: AppTextStyles.body18SemiBold),
+                  // 1. 어느 쪽 무릎이 아프신가요?
+                  Text(
+                    '1. 어느 쪽 무릎이 아프신가요?',
+                    style: AppTextStyles.body18SemiBold,
+                  ),
                   const SizedBox(height: AppDimens.space12),
                   Row(
                     children: [
@@ -113,44 +115,50 @@ class _SurveyStep3PainLevelScreenState
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppDimens.space12),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      '최대 2개 선택 가능',
-                      style: AppTextStyles.body12Regular.copyWith(
-                        color: AppColors.textDisabled,
+                  // 무릎 관절 위치 (1번 질문 선택 시 표시)
+                  if (_selectedKnee != null) ...[
+                    const SizedBox(height: AppDimens.space12),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        '최대 2개 선택 가능',
+                        style: AppTextStyles.body12Regular.copyWith(
+                          color: AppColors.textDisabled,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: AppDimens.space12),
-                  Column(
-                    children: _kneePainAreas
-                        .map(
-                          (area) => Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: AppDimens.space8,
+                    const SizedBox(height: AppDimens.space12),
+                    Column(
+                      children: _kneePainAreas
+                          .map(
+                            (area) => Padding(
+                              padding: const EdgeInsets.only(
+                                bottom: AppDimens.space8,
+                              ),
+                              child: _KneePainAreaCard(
+                                label: area.label,
+                                iconPath: area.iconPath,
+                                selected: _selectedPainAreas.contains(
+                                  area.label,
+                                ),
+                                onTap: () => _togglePainArea(area.label),
+                              ),
                             ),
-                            child: _KneePainAreaCard(
-                              label: area.label,
-                              iconPath: area.iconPath,
-                              selected: _selectedPainAreas.contains(area.label),
-                              onTap: () => _togglePainArea(area.label),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                  const SizedBox(height: AppDimens.space24),
-                  Text('Q2.', style: AppTextStyles.body14Medium),
-                  const SizedBox(height: AppDimens.space6),
-                  Text('언제부터 아팠어요?', style: AppTextStyles.body18SemiBold),
-                  const SizedBox(height: AppDimens.space12),
-                  PainSinceOptions(
-                    selected: _painSince,
-                    onSelect: _selectPainSince,
-                    options: _painSinceOptions,
-                  ),
+                          )
+                          .toList(),
+                    ),
+                  ],
+                  // 2. 언제부터 아팠나요? (무릎 관절 위치 선택 시 표시)
+                  if (_selectedPainAreas.isNotEmpty) ...[
+                    const SizedBox(height: AppDimens.space24),
+                    Text('2. 언제부터 아팠나요?', style: AppTextStyles.body18SemiBold),
+                    const SizedBox(height: AppDimens.space12),
+                    PainSinceOptions(
+                      selected: _painSince,
+                      onSelect: _selectPainSince,
+                      options: _painSinceOptions,
+                    ),
+                  ],
                   const SizedBox(height: AppDimens.space16),
                 ],
               ),
