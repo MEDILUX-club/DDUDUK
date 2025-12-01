@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
-import 'package:dduduk_app/screens/survey/survey_step3_pain_level_screen.dart';
+import 'package:dduduk_app/screens/survey/survey_step3_pain_basic_screen.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/widgets/survey/pain_location_card.dart';
 

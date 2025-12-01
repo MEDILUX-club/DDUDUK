@@ -53,9 +53,7 @@ class _SurveyStep5WorkoutExpScreenState
         nextText: '다음으로',
         onNext: () {
           Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => const SurveyStep6PreferredTimeScreen(),
-            ),
+            MaterialPageRoute(builder: (_) => const SurveyStep6ResultScreen()),
           );
         },
       ),

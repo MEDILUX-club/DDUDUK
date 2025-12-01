@@ -10,18 +10,20 @@ class DefaultLayout extends StatelessWidget {
     this.title,
     this.bottomNavigationBar,
     this.backgroundColor = AppColors.fillBoxDefault,
+    this.onBack,
   });
 
   final String? title;
   final Widget child;
   final Widget? bottomNavigationBar;
   final Color backgroundColor;
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: title != null ? HeaderBar(title: title!) : null,
+      appBar: title != null ? HeaderBar(title: title!, onBack: onBack) : null,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(
