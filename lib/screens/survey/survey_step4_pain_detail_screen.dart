@@ -4,7 +4,7 @@ import 'package:dduduk_app/screens/survey/survey_step5_red_flags_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
-import 'package:dduduk_app/widgets/survey/pain_level_slider.dart';
+import 'package:dduduk_app/widgets/survey/pain_level_face.dart';
 import 'package:dduduk_app/widgets/survey/pain_since_options.dart';
 
 class SurveyStep4LifestyleScreen extends StatefulWidget {
@@ -64,11 +64,12 @@ class _SurveyStep4LifestyleScreenState
     });
   }
 
-  String _painDescription(double value) {
-    if (value <= 0) return '통증 없어요';
-    if (value <= 3) return '거의 신경 쓰이지 않아요';
-    if (value <= 6) return '불편하지만 참을 만해요';
-    if (value <= 8) return '일상에 영향이 있어요';
+  String _getPainDescription() {
+    if (_painLevel <= 0) return '전혀 아프지 않아요';
+    if (_painLevel <= 2) return '살짝 불편해요';
+    if (_painLevel <= 4) return '통증이 느껴지고 신경 쓰여요';
+    if (_painLevel <= 6) return '일상 생활에 지장이 있을 정도로 아파요';
+    if (_painLevel <= 8) return '많이 아프고 힘들어요';
     return '잠을 못 잘 정도로 아프고 고통스러워요';
   }
 
@@ -107,16 +108,7 @@ class _SurveyStep4LifestyleScreenState
                   ),
                   const SizedBox(height: AppDimens.space16),
                   Center(
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.primaryLight,
-                      ),
-                      padding: const EdgeInsets.all(AppDimens.space12),
-                      child: Image.asset('assets/images/img_face_0.png'),
-                    ),
+                    child: PainLevelFace(painLevel: _painLevel, size: 120),
                   ),
                   const SizedBox(height: AppDimens.space12),
                   Center(
@@ -130,7 +122,7 @@ class _SurveyStep4LifestyleScreenState
                   const SizedBox(height: AppDimens.space6),
                   Center(
                     child: Text(
-                      _painDescription(_painLevel),
+                      _getPainDescription(),
                       style: AppTextStyles.body14Regular,
                       textAlign: TextAlign.center,
                     ),
