@@ -32,16 +32,16 @@ class SurveyIntroScreen extends StatelessWidget {
               const SizedBox(height: AppDimens.space32),
               Center(
                 child: SizedBox(
-                  width: 170,
-                  height: 170,
+                  width: 240,
+                  height: 240,
                   child: Stack(
                     children: const [
                       Positioned(
-                        right: 26,
-                        bottom: 26,
+                        right: 36,
+                        bottom: 36,
                         child: Image(
-                          width: 132,
-                          height: 132,
+                          width: 186,
+                          height: 186,
                           image: AssetImage(
                             'assets/images/img_bg_find_in_page.png',
                           ),
@@ -51,8 +51,8 @@ class SurveyIntroScreen extends StatelessWidget {
                         left: 0,
                         top: 0,
                         child: Image(
-                          width: 132,
-                          height: 132,
+                          width: 186,
+                          height: 186,
                           image: AssetImage(
                             'assets/images/img_fg_find_in_page.png',
                           ),
