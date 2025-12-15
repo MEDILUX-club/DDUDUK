@@ -1,10 +1,12 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
-import 'package:dduduk_app/screens/auth/splash_screen.dart';
+import 'package:dduduk_app/router.dart';
 
 void main() {
+  usePathUrlStrategy(); // URL 기반 라우팅 활성화 (# 없이)
   runApp(const MyApp());
 }
 
@@ -13,9 +15,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Dduduk',
       debugShowCheckedModeBanner: false,
+      routerConfig: appRouter,
       theme: ThemeData(
         // 1. 배경색을 회색(fillDefault)으로 고정
         scaffoldBackgroundColor: AppColors.fillDefault,
@@ -42,8 +45,6 @@ class MyApp extends StatelessWidget {
 
         useMaterial3: true,
       ),
-      //home: const SplashScreen(),
-      home: const SplashScreen(),
     );
   }
 }
