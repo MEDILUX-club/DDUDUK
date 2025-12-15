@@ -108,7 +108,12 @@ final GoRouter appRouter = GoRouter(
         final extra = state.extra as Map<String, dynamic>?;
         return ExercisePlayScreen(
           videoUrl: extra?['videoUrl'] ?? '',
-          exerciseName: extra?['exerciseName'] ?? '운동',
+          exerciseName: extra?['exerciseName'] ?? '푸쉬업',
+          exerciseDescription:
+              extra?['exerciseDescription'] ??
+              '가슴과 삼두근을 강화하는 기본 운동이에요\n팔꿈치를 90도로 구부리며 천천히 내렸다가 올려요',
+          sets: extra?['sets'] ?? 3,
+          reps: extra?['reps'] ?? 10,
           currentIndex: extra?['currentIndex'] ?? 0,
           totalCount: extra?['totalCount'] ?? 1,
           onPreviousExercise: extra?['onPreviousExercise'],

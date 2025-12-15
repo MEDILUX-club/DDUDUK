@@ -152,9 +152,9 @@ class ExerciseControlPanel extends StatelessWidget {
               label: '이전 운동',
               svgPath: 'assets/icons/ic_previous.svg',
               iconPosition: IconPosition.left,
-              backgroundColor: AppColors.interactionDisabled,
-              textColor: AppColors.textAssistive,
-              onPressed: hasPrevious ? onPreviousPressed : null,
+              backgroundColor: AppColors.fillDefault,
+              textColor: AppColors.textNormal,
+              onPressed: onPreviousPressed,
             ),
             const SizedBox(width: 16),
             // 재생/일시정지 버튼
@@ -168,9 +168,9 @@ class ExerciseControlPanel extends StatelessWidget {
               label: '다음 운동',
               svgPath: 'assets/icons/ic_next.svg',
               iconPosition: IconPosition.right,
-              backgroundColor: AppColors.primary,
-              textColor: AppColors.textWhite,
-              onPressed: hasNext ? onNextPressed : null,
+              backgroundColor: AppColors.fillDefault,
+              textColor: AppColors.textNormal,
+              onPressed: onNextPressed,
             ),
           ],
         ),
@@ -259,9 +259,9 @@ class _NavigationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isEnabled = onPressed != null;
-    final bgColor = isEnabled ? backgroundColor : AppColors.interactionDisabled;
-    final fgColor = isEnabled ? textColor : AppColors.textDisabled;
+    // 항상 활성화 상태 (비활성화 기능 제거)
+    final bgColor = backgroundColor;
+    final fgColor = textColor;
 
     Widget iconWidget = SvgPicture.asset(
       svgPath,
@@ -273,7 +273,14 @@ class _NavigationButton extends StatelessWidget {
     final children = [
       if (iconPosition == IconPosition.left) iconWidget,
       if (iconPosition == IconPosition.left) const SizedBox(width: 4),
-      Text(label, style: AppTextStyles.body14Medium.copyWith(color: fgColor)),
+      Text(
+        label,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: fgColor,
+        ),
+      ),
       if (iconPosition == IconPosition.right) const SizedBox(width: 4),
       if (iconPosition == IconPosition.right) iconWidget,
     ];

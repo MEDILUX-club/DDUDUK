@@ -112,63 +112,42 @@ class ExerciseVideoPlayerState extends State<ExerciseVideoPlayer> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.interactionDisabled,
+        color: AppColors.fillOption,
         borderRadius: BorderRadius.circular(12),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: AspectRatio(
           aspectRatio: 16 / 9,
-          child: GestureDetector(
-            onTap: _isInitialized ? togglePlay : null,
-            child: Stack(
-              children: [
-                // 비디오 플레이어
-                if (_isInitialized)
-                  Positioned.fill(child: VideoPlayer(_controller)),
+          child: Stack(
+            children: [
+              // 비디오 플레이어
+              if (_isInitialized)
+                Positioned.fill(child: VideoPlayer(_controller)),
 
-                // 재생 버튼 오버레이 (일시정지 상태일 때만 표시)
-                if (!_isPlaying)
-                  Center(
+              // 확대 버튼 (우측 하단)
+              if (widget.showExpandButton && widget.onExpandPressed != null)
+                Positioned(
+                  right: 12,
+                  bottom: 12,
+                  child: GestureDetector(
+                    onTap: widget.onExpandPressed,
                     child: Container(
-                      width: 72,
-                      height: 72,
+                      width: 44,
+                      height: 44,
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.3),
+                        color: Colors.black.withValues(alpha: 0.4),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
-                        Icons.play_arrow,
+                        Icons.fullscreen,
                         color: Colors.white,
-                        size: 48,
+                        size: 24,
                       ),
                     ),
                   ),
-
-                // 확대 버튼 (우측 하단)
-                if (widget.showExpandButton && widget.onExpandPressed != null)
-                  Positioned(
-                    right: 12,
-                    bottom: 12,
-                    child: GestureDetector(
-                      onTap: widget.onExpandPressed,
-                      child: Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.4),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.fullscreen,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
       ),

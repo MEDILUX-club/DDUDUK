@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_video_player.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_control_panel.dart';
@@ -55,6 +57,14 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
   Duration _currentPosition = Duration.zero;
   bool _isPlaying = false;
   bool _isFullScreen = false; // 전체 화면 모드 여부
+  bool _isLandscape = false; // 가로 모드 여부
+
+  @override
+  void dispose() {
+    // 앱 종료 시 세로 모드로 복원
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    super.dispose();
+  }
 
   void _onPlayStateChanged(bool isPlaying) {
     setState(() {
@@ -86,6 +96,20 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
     });
   }
 
+  void _toggleLandscape() {
+    setState(() {
+      _isLandscape = !_isLandscape;
+    });
+    if (_isLandscape) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+    } else {
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasPrevious = widget.currentIndex > 0;
@@ -94,7 +118,9 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
     return Scaffold(
       backgroundColor: AppColors.fillBoxDefault,
       body: SafeArea(
-        child: _isFullScreen
+        child: _isLandscape
+            ? _buildLandscapeMode(hasPrevious, hasNext)
+            : _isFullScreen
             ? _buildFullScreenMode(hasPrevious, hasNext)
             : _buildNormalMode(hasPrevious, hasNext),
       ),
@@ -116,12 +142,37 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
             videoUrl: widget.videoUrl,
             onPlayStateChanged: _onPlayStateChanged,
             onPositionChanged: _onPositionChanged,
-            onExpandPressed: _toggleFullScreen,
-            showExpandButton: true,
+            showExpandButton: false, // 비디오 플레이어 내부 버튼 숨김
           ),
         ),
 
         const Spacer(),
+
+        // 확대 버튼 (컨트롤 패널 바로 위)
+        Padding(
+          padding: const EdgeInsets.only(right: 16, bottom: 12),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: GestureDetector(
+              onTap: _toggleFullScreen,
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: const Color(0x4D454545),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    'assets/icons/ic_zoom.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
 
         // 컨트롤 패널 (운동 정보 포함)
         Container(
@@ -176,8 +227,33 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
                 videoUrl: widget.videoUrl,
                 onPlayStateChanged: _onPlayStateChanged,
                 onPositionChanged: _onPositionChanged,
-                onExpandPressed: _toggleFullScreen,
-                showExpandButton: false, // 전체 화면에서는 확대 버튼 숨김
+                showExpandButton: false,
+              ),
+            ),
+          ),
+        ),
+
+        // 회전 버튼 (컨트롤 패널 바로 위)
+        Padding(
+          padding: const EdgeInsets.only(right: 16, bottom: 12),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: GestureDetector(
+              onTap: _toggleLandscape,
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: const Color(0x4D454545),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    'assets/icons/ic_rotation.svg',
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
               ),
             ),
           ),
@@ -253,5 +329,148 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
         ],
       ),
     );
+  }
+
+  /// 가로 모드 (비디오 + 오른쪽 컨트롤)
+  Widget _buildLandscapeMode(bool hasPrevious, bool hasNext) {
+    return Row(
+      children: [
+        // 왼쪽: 뒤로가기 버튼 + 비디오 영역
+        Expanded(
+          flex: 3,
+          child: Stack(
+            children: [
+              // 비디오 플레이어
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ExerciseVideoPlayer(
+                    key: _videoPlayerKey,
+                    videoUrl: widget.videoUrl,
+                    onPlayStateChanged: _onPlayStateChanged,
+                    onPositionChanged: _onPositionChanged,
+                    showExpandButton: false,
+                  ),
+                ),
+              ),
+              // 뒤로가기 버튼 (왼쪽 상단)
+              Positioned(
+                left: 8,
+                top: 8,
+                child: IconButton(
+                  icon: const Icon(Icons.keyboard_arrow_down),
+                  color: AppColors.textAssistive,
+                  onPressed: _toggleLandscape,
+                ),
+              ),
+              // 회전 버튼 (오른쪽 하단)
+              Positioned(
+                right: 16,
+                bottom: 16,
+                child: GestureDetector(
+                  onTap: _toggleLandscape,
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: const BoxDecoration(
+                      color: Color(0x4D454545),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        'assets/icons/ic_rotation.svg',
+                        width: 24,
+                        height: 24,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        // 오른쪽: 컨트롤 패널 (흰색 배경)
+        Container(
+          width: 200,
+          decoration: const BoxDecoration(color: Colors.white),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: Column(
+              children: [
+                // 타이머 (상단)
+                Text(
+                  _formatDuration(_currentPosition),
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textStrong,
+                  ),
+                ),
+                const Spacer(),
+                // 버튼들 (하단)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // 이전 버튼
+                    _buildControlButton(
+                      svgPath: 'assets/icons/ic_previous.svg',
+                      onTap: _handlePrevious,
+                    ),
+                    const SizedBox(width: 12),
+                    // 재생/일시정지 버튼
+                    GestureDetector(
+                      onTap: _handlePlayPause,
+                      child: Container(
+                        width: 56,
+                        height: 56,
+                        decoration: const BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          _isPlaying ? Icons.pause : Icons.play_arrow,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // 다음 버튼
+                    _buildControlButton(
+                      svgPath: 'assets/icons/ic_next.svg',
+                      onTap: _handleNext,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildControlButton({
+    required String svgPath,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: AppColors.fillDefault,
+          shape: BoxShape.circle,
+        ),
+        child: Center(child: SvgPicture.asset(svgPath, width: 20, height: 20)),
+      ),
+    );
+  }
+
+  String _formatDuration(Duration duration) {
+    final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
   }
 }
