@@ -107,7 +107,9 @@ final GoRouter appRouter = GoRouter(
         // 쿼리 파라미터 또는 extra에서 데이터 받기
         final extra = state.extra as Map<String, dynamic>?;
         return ExercisePlayScreen(
-          videoUrl: extra?['videoUrl'] ?? '',
+          videoUrl:
+              extra?['videoUrl'] ??
+              'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
           exerciseName: extra?['exerciseName'] ?? '푸쉬업',
           exerciseDescription:
               extra?['exerciseDescription'] ??

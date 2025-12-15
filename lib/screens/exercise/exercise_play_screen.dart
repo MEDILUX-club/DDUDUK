@@ -134,7 +134,7 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
         // 커스텀 AppBar
         _buildAppBar(),
 
-        // 비디오 플레이어 (작은 크기)
+        // 비디오 플레이어 (작은 크기, 고정)
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: ExerciseVideoPlayer(
@@ -145,6 +145,9 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
             showExpandButton: false, // 비디오 플레이어 내부 버튼 숨김
           ),
         ),
+
+        // 여백 (컨트롤 패널과 비디오 사이)
+        const SizedBox(height: 16),
 
         const Spacer(),
 
