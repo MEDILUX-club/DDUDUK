@@ -5,7 +5,7 @@ import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:dduduk_app/widgets/survey/pain_since_options.dart';
+import 'package:dduduk_app/widgets/common/selectable_option_card.dart';
 
 class SurveyStep3PainLevelScreen extends StatefulWidget {
   const SurveyStep3PainLevelScreen({super.key});
@@ -153,10 +153,21 @@ class _SurveyStep3PainLevelScreenState
                     const SizedBox(height: AppDimens.space24),
                     Text('2. 언제부터 아팠나요?', style: AppTextStyles.body18SemiBold),
                     const SizedBox(height: AppDimens.space12),
-                    PainSinceOptions(
-                      selected: _painSince,
-                      onSelect: _selectPainSince,
-                      options: _painSinceOptions,
+                    Column(
+                      children: _painSinceOptions
+                          .map(
+                            (option) => Padding(
+                              padding: const EdgeInsets.only(
+                                bottom: AppDimens.space8,
+                              ),
+                              child: SelectableOptionCard(
+                                text: option,
+                                selected: _painSince == option,
+                                onTap: () => _selectPainSince(option),
+                              ),
+                            ),
+                          )
+                          .toList(),
                     ),
                   ],
                   const SizedBox(height: AppDimens.space16),
