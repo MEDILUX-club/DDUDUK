@@ -62,9 +62,21 @@ class ExerciseOptionCard extends StatelessWidget {
         width: 64,
         height: 64,
         fit: BoxFit.contain,
+        placeholderBuilder: (context) => const SizedBox(
+          width: 64,
+          height: 64,
+          child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+        ),
       );
     } else {
-      return Image.asset(imagePath, width: 64, height: 64, fit: BoxFit.contain);
+      return Image.asset(
+        imagePath,
+        width: 64,
+        height: 64,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) =>
+            const Icon(Icons.image_not_supported, size: 64, color: Colors.grey),
+      );
     }
   }
 }

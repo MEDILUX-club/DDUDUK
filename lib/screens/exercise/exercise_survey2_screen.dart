@@ -23,22 +23,22 @@ class _ExerciseSurvey2ScreenState extends State<ExerciseSurvey2Screen> {
   static const List<ExerciseOption> _options = [
     ExerciseOption(
       label: '3개 이하',
-      imagePath: 'assets/icons/ic_pushup_3.svg',
+      imagePath: 'assets/images/img_pushup_3.png',
       value: 3,
     ),
     ExerciseOption(
       label: '10개 이하',
-      imagePath: 'assets/icons/ic_pushup_10.svg',
+      imagePath: 'assets/images/img_pushup_10.png',
       value: 10,
     ),
     ExerciseOption(
       label: '15개 이하',
-      imagePath: 'assets/icons/ic_pushup_15.svg',
+      imagePath: 'assets/images/img_pushup_15.png',
       value: 15,
     ),
     ExerciseOption(
       label: '20개 이하',
-      imagePath: 'assets/icons/ic_pushup_20.svg',
+      imagePath: 'assets/images/img_pushup_20.png',
       value: 20,
     ),
   ];
@@ -74,10 +74,7 @@ class _ExerciseSurvey2ScreenState extends State<ExerciseSurvey2Screen> {
           const SizedBox(height: AppDimens.space12),
 
           // 타이틀
-          Text(
-            '연속으로 푸쉬업을\n몇 개까지 할 수 있나요?',
-            style: AppTextStyles.titleHeader,
-          ),
+          Text('연속으로 푸쉬업을\n몇 개까지 할 수 있나요?', style: AppTextStyles.titleHeader),
           const SizedBox(height: AppDimens.space24),
 
           // 옵션 그리드
@@ -140,10 +137,7 @@ class _ExerciseSurvey2ScreenState extends State<ExerciseSurvey2Screen> {
             Expanded(
               child: SizedBox(
                 height: AppDimens.buttonHeight,
-                child: BaseButton(
-                  text: '다음으로',
-                  onPressed: _onNextPressed,
-                ),
+                child: BaseButton(text: '다음으로', onPressed: _onNextPressed),
               ),
             ),
           ],

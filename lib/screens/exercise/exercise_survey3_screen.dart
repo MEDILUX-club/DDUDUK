@@ -23,22 +23,22 @@ class _ExerciseSurvey3ScreenState extends State<ExerciseSurvey3Screen> {
   static const List<ExerciseOption> _options = [
     ExerciseOption(
       label: '1층 이하',
-      imagePath: 'assets/icons/ic_stair_1.svg',
+      imagePath: 'assets/images/img_stair_1.png',
       value: 1,
     ),
     ExerciseOption(
       label: '3층 이하',
-      imagePath: 'assets/icons/ic_stair_3.svg',
+      imagePath: 'assets/images/img_stair_3.png',
       value: 3,
     ),
     ExerciseOption(
       label: '4층 이하',
-      imagePath: 'assets/icons/ic_stair_4.svg',
+      imagePath: 'assets/images/img_stair_4.png',
       value: 4,
     ),
     ExerciseOption(
       label: '5층 이하',
-      imagePath: 'assets/icons/ic_stair_5.svg',
+      imagePath: 'assets/images/img_stair_5.png',
       value: 5,
     ),
   ];
@@ -74,10 +74,7 @@ class _ExerciseSurvey3ScreenState extends State<ExerciseSurvey3Screen> {
           const SizedBox(height: AppDimens.space12),
 
           // 타이틀
-          Text(
-            '연속으로 계단을\n몇 개까지 오를 수 있나요?',
-            style: AppTextStyles.titleHeader,
-          ),
+          Text('연속으로 계단을\n몇 개까지 오를 수 있나요?', style: AppTextStyles.titleHeader),
           const SizedBox(height: AppDimens.space24),
 
           // 옵션 그리드
@@ -140,10 +137,7 @@ class _ExerciseSurvey3ScreenState extends State<ExerciseSurvey3Screen> {
             Expanded(
               child: SizedBox(
                 height: AppDimens.buttonHeight,
-                child: BaseButton(
-                  text: '다음으로',
-                  onPressed: _onNextPressed,
-                ),
+                child: BaseButton(text: '다음으로', onPressed: _onNextPressed),
               ),
             ),
           ],

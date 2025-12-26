@@ -10,10 +10,7 @@ import 'package:dduduk_app/widgets/exercise/exercise_option_card.dart';
 
 /// 운동 설문 4 - 플랭크 시간 설문
 class ExerciseSurvey4Screen extends StatefulWidget {
-  const ExerciseSurvey4Screen({
-    super.key,
-    this.onComplete,
-  });
+  const ExerciseSurvey4Screen({super.key, this.onComplete});
 
   /// 설문 완료 시 콜백
   final VoidCallback? onComplete;
@@ -28,22 +25,22 @@ class _ExerciseSurvey4ScreenState extends State<ExerciseSurvey4Screen> {
   static const List<ExerciseOption> _options = [
     ExerciseOption(
       label: '15초 이하',
-      imagePath: 'assets/icons/ic_plank_15.svg',
+      imagePath: 'assets/images/img_plank_15.png',
       value: 15,
     ),
     ExerciseOption(
       label: '30초 이하',
-      imagePath: 'assets/icons/ic_plank_30.svg',
+      imagePath: 'assets/images/img_plank_30.png',
       value: 30,
     ),
     ExerciseOption(
       label: '60초 이하',
-      imagePath: 'assets/icons/ic_plank_60down.svg',
+      imagePath: 'assets/images/img_plank_60down.png',
       value: 60,
     ),
     ExerciseOption(
       label: '60초 이상',
-      imagePath: 'assets/icons/ic_plank_60up.svg',
+      imagePath: 'assets/images/img_plank_60up.png',
       value: 61,
     ),
   ];
@@ -81,10 +78,7 @@ class _ExerciseSurvey4ScreenState extends State<ExerciseSurvey4Screen> {
           const SizedBox(height: AppDimens.space12),
 
           // 타이틀
-          Text(
-            '연속으로 플랭크를\n몇 개까지 할 수 있나요?',
-            style: AppTextStyles.titleHeader,
-          ),
+          Text('연속으로 플랭크를\n몇 개까지 할 수 있나요?', style: AppTextStyles.titleHeader),
           const SizedBox(height: AppDimens.space24),
 
           // 옵션 그리드
@@ -147,10 +141,7 @@ class _ExerciseSurvey4ScreenState extends State<ExerciseSurvey4Screen> {
             Expanded(
               child: SizedBox(
                 height: AppDimens.buttonHeight,
-                child: BaseButton(
-                  text: '다음으로',
-                  onPressed: _onNextPressed,
-                ),
+                child: BaseButton(text: '다음으로', onPressed: _onNextPressed),
               ),
             ),
           ],
