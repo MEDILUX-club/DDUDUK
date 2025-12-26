@@ -4,6 +4,7 @@ import 'package:dduduk_app/layouts/home_layout.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:dduduk_app/widgets/exercise/exercise_start_card.dart';
 import 'package:go_router/go_router.dart';
 
 /// 운동 메인 화면 (데이터 있음)
@@ -16,6 +17,7 @@ class ExerciseMainScreen extends StatefulWidget {
 
 class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
   int _currentNavIndex = 1; // 운동 탭 선택됨
+  final String _userName = '황두현님'; // 사용자 이름 (추후 API 연동 시 변경)
 
   void _onNavTap(int index) {
     setState(() {
@@ -38,7 +40,10 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 상단 그린 카드
-          _buildStartCard(),
+          ExerciseStartCard(
+            userName: _userName,
+            onStartPressed: _onStartExercise,
+          ),
           const SizedBox(height: AppDimens.space24),
 
           // 이번 주 진행 상황
@@ -52,95 +57,7 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
     );
   }
 
-  Widget _buildStartCard() {
-    final today = DateTime.now();
-    final dateString =
-        '${today.year}.${today.month.toString().padLeft(2, '0')}.${today.day.toString().padLeft(2, '0')}';
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppDimens.space20),
-      decoration: BoxDecoration(
-        color: AppColors.primaryLight,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 날짜
-          Text(
-            dateString,
-            style: AppTextStyles.body14Medium.copyWith(
-              color: AppColors.primary,
-            ),
-          ),
-          const SizedBox(height: AppDimens.space8),
-          // 이름 + 질문 텍스트 + 아이콘
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '황두현님',
-                      style: AppTextStyles.body20Bold.copyWith(
-                        color: AppColors.textStrong,
-                      ),
-                    ),
-                    Text(
-                      '오늘 운동 시작해볼까요?',
-                      style: AppTextStyles.body20Bold.copyWith(
-                        color: AppColors.textStrong,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // 아령 아이콘 (두 줄 높이에 맞춤)
-              Icon(
-                Icons.fitness_center,
-                size: 56,
-                color: AppColors.primarySecondary,
-              ),
-            ],
-          ),
-          const SizedBox(height: AppDimens.space16),
-          // 시작하기 버튼 (가로 100%)
-          SizedBox(
-            width: double.infinity,
-            height: AppDimens.buttonHeight,
-            child: ElevatedButton(
-              onPressed: _onStartExercise,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '시작하기',
-                    style: AppTextStyles.body16Regular.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward, size: 20),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildWeeklyProgress() {
     return Column(

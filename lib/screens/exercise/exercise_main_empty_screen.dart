@@ -6,6 +6,7 @@ import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/common/bottom_nav_bar.dart';
+import 'package:dduduk_app/widgets/exercise/exercise_start_card.dart';
 import 'package:go_router/go_router.dart';
 
 /// 운동 메인 화면 (빈 상태)
@@ -19,6 +20,7 @@ class ExerciseMainEmptyScreen extends StatefulWidget {
 
 class _ExerciseMainEmptyScreenState extends State<ExerciseMainEmptyScreen> {
   int _currentNavIndex = 1; // 운동 탭 선택됨
+  final String _userName = '황두현님'; // 사용자 이름 (추후 API 연동 시 변경)
 
   void _onNavTap(int index) {
     setState(() {
@@ -52,7 +54,10 @@ class _ExerciseMainEmptyScreenState extends State<ExerciseMainEmptyScreen> {
         child: Column(
           children: [
             // 상단 그린 카드
-            _buildStartCard(),
+            ExerciseStartCard(
+              userName: _userName,
+              onStartPressed: _onStartExercise,
+            ),
             const SizedBox(height: AppDimens.space24),
 
             // 빈 상태 메시지
@@ -67,96 +72,7 @@ class _ExerciseMainEmptyScreenState extends State<ExerciseMainEmptyScreen> {
     );
   }
 
-  Widget _buildStartCard() {
-    final today = DateTime.now();
-    final dateString =
-        '${today.year}.${today.month.toString().padLeft(2, '0')}.${today.day.toString().padLeft(2, '0')}';
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppDimens.space20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.primaryLight, AppColors.primarySecondary],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  dateString,
-                  style: AppTextStyles.body14Medium.copyWith(
-                    color: AppColors.primary,
-                  ),
-                ),
-                const SizedBox(height: AppDimens.space8),
-                Text(
-                  '황두현님',
-                  style: AppTextStyles.body16Regular.copyWith(
-                    color: AppColors.textStrong,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  '오늘 운동 시작해볼까요?',
-                  style: AppTextStyles.body18SemiBold.copyWith(
-                    color: AppColors.textStrong,
-                  ),
-                ),
-                const SizedBox(height: AppDimens.space16),
-                // 시작하기 버튼
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _onStartExercise,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '시작하기',
-                          style: AppTextStyles.body16Regular.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Icon(Icons.arrow_forward, size: 20),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: AppDimens.space12),
-          // 아령 아이콘
-          SvgPicture.asset(
-            'assets/icons/ic_fitness.svg',
-            width: 64,
-            height: 64,
-            colorFilter: const ColorFilter.mode(
-              AppColors.primary,
-              BlendMode.srcIn,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildEmptyState() {
     return Stack(
@@ -172,9 +88,9 @@ class _ExerciseMainEmptyScreenState extends State<ExerciseMainEmptyScreen> {
 
   Widget _buildBlurredContent() {
     return ImageFiltered(
-      imageFilter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+      imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
       child: Opacity(
-        opacity: 0.6,
+        opacity: 0.5,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
