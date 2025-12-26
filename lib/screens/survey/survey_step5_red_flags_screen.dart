@@ -3,7 +3,8 @@ import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step6_result_screen.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/widgets/survey/alert_modal.dart';
-import 'package:dduduk_app/widgets/survey/pain_since_options.dart';
+import 'package:dduduk_app/theme/app_colors.dart';
+import 'package:dduduk_app/widgets/common/selectable_option_card.dart';
 
 class SurveyStep5WorkoutExpScreen extends StatefulWidget {
   const SurveyStep5WorkoutExpScreen({super.key});
@@ -64,12 +65,24 @@ class _SurveyStep5WorkoutExpScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: AppDimens.space2),
-                  PainSinceOptions(
-                    selected: _selectedRisk,
-                    onSelect: _showRiskAlert,
-                    options: _riskOptions,
-                    trailingSpacing: AppDimens.space4,
-                  ),
+                  ..._riskOptions.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final text = entry.value;
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: index == _riskOptions.length - 1
+                            ? AppDimens.space4
+                            : AppDimens.space8,
+                      ),
+                      child: SelectableOptionCard(
+                        text: text,
+                        selected: _selectedRisk == text,
+                        onTap: () => _showRiskAlert(text),
+                        selectedTextColor: AppColors.primary,
+                        unselectedBorderColor: AppColors.linePrimary,
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),

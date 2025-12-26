@@ -70,12 +70,14 @@ class SurveyButtonsConfig {
     required this.onNext,
     this.prevText,
     this.onPrev,
+    this.isNextEnabled = true,
   });
 
   final String nextText;
   final VoidCallback onNext;
   final String? prevText;
   final VoidCallback? onPrev;
+  final bool isNextEnabled;
 }
 
 class _BottomButtons extends StatelessWidget {
@@ -126,6 +128,7 @@ class _BottomButtons extends StatelessWidget {
                       child: BaseButton(
                         text: config.nextText,
                         onPressed: config.onNext,
+                        isEnabled: config.isNextEnabled,
                       ),
                     ),
                   ),
@@ -136,6 +139,7 @@ class _BottomButtons extends StatelessWidget {
                 child: BaseButton(
                   text: config.nextText,
                   onPressed: config.onNext,
+                  isEnabled: config.isNextEnabled,
                 ),
               ),
       ),

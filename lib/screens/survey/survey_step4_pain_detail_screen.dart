@@ -5,7 +5,7 @@ import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/survey/pain_level_face.dart';
-import 'package:dduduk_app/widgets/survey/pain_since_options.dart';
+import 'package:dduduk_app/widgets/common/selectable_option_card.dart';
 
 class SurveyStep4LifestyleScreen extends StatefulWidget {
   const SurveyStep4LifestyleScreen({super.key});
@@ -144,11 +144,24 @@ class _SurveyStep4LifestyleScreenState
                       ),
                     ),
                     const SizedBox(height: AppDimens.space12),
-                    PainSinceOptions(
-                      selected: _selectedPainPattern,
-                      onSelect: _selectPainPattern,
-                      options: _painPatternOptions,
-                    ),
+                    ..._painPatternOptions.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final text = entry.value;
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          bottom: index == _painPatternOptions.length - 1
+                              ? 0
+                              : AppDimens.space8,
+                        ),
+                        child: SelectableOptionCard(
+                          text: text,
+                          selected: _selectedPainPattern == text,
+                          onTap: () => _selectPainPattern(text),
+                          selectedTextColor: AppColors.primary,
+                          unselectedBorderColor: AppColors.linePrimary,
+                        ),
+                      );
+                    }),
                   ],
                   // 4. 통증이 얼마나 지속되나요? ("아침에 일어나면 뻣뻣해요" 선택 시 표시)
                   if (_selectedPainPattern == '아침에 일어나면 뻣뻣해요') ...[
@@ -167,10 +180,20 @@ class _SurveyStep4LifestyleScreenState
                                   ? 0
                                   : AppDimens.itemSpacing,
                             ),
-                            child: _SelectableCardButton(
-                              label: option,
+                            child: SelectableOptionCard(
                               selected: _selectedPainDuration == option,
                               onTap: () => _selectPainDuration(option),
+                              unselectedBorderColor: AppColors.linePrimary,
+                              child: Center(
+                                child: Text(
+                                  option,
+                                  style: AppTextStyles.body16Regular.copyWith(
+                                    color: _selectedPainDuration == option
+                                        ? AppColors.primary
+                                        : AppColors.textNormal,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         );
@@ -230,42 +253,4 @@ class _SelectableChip extends StatelessWidget {
   }
 }
 
-class _SelectableCardButton extends StatelessWidget {
-  const _SelectableCardButton({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
 
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final Color borderColor = selected
-        ? AppColors.primary
-        : AppColors.linePrimary;
-    final Color backgroundColor = selected
-        ? AppColors.primaryLight
-        : AppColors.fillBoxDefault;
-    final Color textColor = selected ? AppColors.primary : AppColors.textNormal;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: AppDimens.space14),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: borderColor),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          label,
-          style: AppTextStyles.body16Regular.copyWith(color: textColor),
-        ),
-      ),
-    );
-  }
-}
