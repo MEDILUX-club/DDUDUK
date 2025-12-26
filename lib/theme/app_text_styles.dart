@@ -80,6 +80,22 @@ class AppTextStyles {
     color: AppColors.textNormal,
   );
 
+  static const TextStyle body16Medium = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 16,
+    fontWeight: FontWeight.w500, // Medium
+    height: 1.6,
+    color: AppColors.textNormal,
+  );
+
+  static const TextStyle body16SemiBold = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 16,
+    fontWeight: FontWeight.w600, // SemiBold
+    height: 1.6,
+    color: AppColors.textNormal,
+  );
+
   // ===========================================================================
   // 14px (Body)
   // ===========================================================================
@@ -96,6 +112,14 @@ class AppTextStyles {
     fontFamily: fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w500,
+    height: 1.6,
+    color: AppColors.textNormal,
+  );
+
+  static const TextStyle body14SemiBold = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 14,
+    fontWeight: FontWeight.w600, // SemiBold
     height: 1.6,
     color: AppColors.textNormal,
   );
@@ -118,6 +142,15 @@ class AppTextStyles {
     fontFamily: fontFamily,
     fontSize: 12,
     fontWeight: FontWeight.w500,
+    height: 1.6,
+    letterSpacing: -0.36, // Figma -3% 반영
+    color: AppColors.textNormal,
+  );
+
+  static const TextStyle body12SemiBold = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 12,
+    fontWeight: FontWeight.w600, // SemiBold
     height: 1.6,
     letterSpacing: -0.36, // Figma -3% 반영
     color: AppColors.textNormal,

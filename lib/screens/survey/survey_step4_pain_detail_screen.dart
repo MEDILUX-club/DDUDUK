@@ -64,15 +64,6 @@ class _SurveyStep4LifestyleScreenState
     });
   }
 
-  String _getPainDescription() {
-    if (_painLevel <= 0) return '전혀 아프지 않아요';
-    if (_painLevel <= 2) return '살짝 불편해요';
-    if (_painLevel <= 4) return '통증이 느껴지고 신경 쓰여요';
-    if (_painLevel <= 6) return '일상 생활에 지장이 있을 정도로 아파요';
-    if (_painLevel <= 8) return '많이 아프고 힘들어요';
-    return '잠을 못 잘 정도로 아프고 고통스러워요';
-  }
-
   @override
   Widget build(BuildContext context) {
     return SurveyLayout(
@@ -106,50 +97,10 @@ class _SurveyStep4LifestyleScreenState
                     '1. 현재 무릎 통증의 정도를 알고 싶어요.',
                     style: AppTextStyles.body18SemiBold,
                   ),
-                  const SizedBox(height: AppDimens.space16),
-                  Center(
-                    child: PainLevelFace(painLevel: _painLevel, size: 120),
-                  ),
-                  const SizedBox(height: AppDimens.space12),
-                  Center(
-                    child: Text(
-                      '${_painLevel.toStringAsFixed(0)}/10',
-                      style: AppTextStyles.body20Bold.copyWith(
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppDimens.space6),
-                  Center(
-                    child: Text(
-                      _getPainDescription(),
-                      style: AppTextStyles.body14Regular,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimens.space16),
-                  PainLevelSlider(
+                  PainLevelSelector(
                     value: _painLevel,
                     onChanged: (value) =>
                         setState(() => _painLevel = value as double),
-                  ),
-                  const SizedBox(height: AppDimens.space6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '통증없음 (0)',
-                        style: AppTextStyles.body14Regular.copyWith(
-                          color: AppColors.textDisabled,
-                        ),
-                      ),
-                      Text(
-                        '극심한 통증 (10)',
-                        style: AppTextStyles.body14Regular.copyWith(
-                          color: AppColors.textDisabled,
-                        ),
-                      ),
-                    ],
                   ),
                   // 2. 언제 통증이 더 심해지나요? (항상 표시)
                   const SizedBox(height: AppDimens.space24),

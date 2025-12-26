@@ -1,5 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
+import 'package:dduduk_app/theme/app_dimens.dart';
+import 'package:dduduk_app/theme/app_text_styles.dart';
+
+/// 통증 레벨 선택 위젯 (얼굴 + 점수 + 설명 + 슬라이더 + 라벨 전체)
+class PainLevelSelector extends StatelessWidget {
+  const PainLevelSelector({
+    super.key,
+    required this.value,
+    required this.onChanged,
+    this.faceSize = 120,
+  });
+
+  final double value;
+  final Function(dynamic) onChanged;
+  final double faceSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: AppDimens.space24),
+
+        // 얼굴 이미지
+        Center(
+          child: PainLevelFace(painLevel: value, size: faceSize),
+        ),
+        const SizedBox(height: AppDimens.space12),
+
+        // 점수 표시
+        Center(
+          child: Text(
+            '${value.toStringAsFixed(0)}/10',
+            style: AppTextStyles.body20Bold.copyWith(
+              color: AppColors.primary,
+            ),
+          ),
+        ),
+        const SizedBox(height: AppDimens.space8),
+
+        // 통증 설명
+        Center(
+          child: Text(
+            PainLevelFace.getDescription(value),
+            style: AppTextStyles.body14Regular,
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(height: AppDimens.space16),
+
+        // 슬라이더
+        PainLevelSlider(
+          value: value,
+          onChanged: onChanged,
+        ),
+        const SizedBox(height: AppDimens.space8),
+
+        // 슬라이더 라벨
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '통증없음 (0)',
+              style: AppTextStyles.body12Regular.copyWith(
+                color: AppColors.textDisabled,
+              ),
+            ),
+            Text(
+              '매우 심한 통증 (10)',
+              style: AppTextStyles.body12Regular.copyWith(
+                color: AppColors.textDisabled,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
 
 class PainLevelFace extends StatelessWidget {
   const PainLevelFace({super.key, required this.painLevel, this.size = 120});
@@ -16,7 +94,7 @@ class PainLevelFace extends StatelessWidget {
     return 'assets/images/img_face_10.png';
   }
 
-  String getDescription() {
+  static String getDescription(double painLevel) {
     if (painLevel <= 0) return '전혀 아프지 않아요';
     if (painLevel <= 2) return '살짝 불편해요';
     if (painLevel <= 4) return '통증이 느껴지고 신경 쓰여요';

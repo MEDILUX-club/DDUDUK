@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 class SurveyLayout extends StatelessWidget {
   const SurveyLayout({
     super.key,
+    this.appBarTitle = '셀프 설문',
     required this.title,
     this.description,
     required this.stepLabel,
@@ -17,8 +18,10 @@ class SurveyLayout extends StatelessWidget {
     required this.totalSteps,
     required this.child,
     this.bottomButtons,
+    this.showProgressBar = true,
   });
 
+  final String appBarTitle;
   final String title;
   final String? description;
   final String stepLabel;
@@ -26,22 +29,25 @@ class SurveyLayout extends StatelessWidget {
   final int totalSteps;
   final Widget child;
   final SurveyButtonsConfig? bottomButtons;
+  final bool showProgressBar;
 
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      title: '셀프 설문',
+      title: appBarTitle,
       bottomNavigationBar: bottomButtons == null
           ? null
           : _BottomButtons(config: bottomButtons!),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          StepProgressBar(
-            currentStep: currentStep,
-            totalSteps: totalSteps,
-            horizontalBleed: AppDimens.screenPadding,
-          ),
+          if (showProgressBar) ...[
+            StepProgressBar(
+              currentStep: currentStep,
+              totalSteps: totalSteps,
+              horizontalBleed: AppDimens.screenPadding,
+            ),
+          ],
           const SizedBox(height: AppDimens.space24),
           StepBadge(label: stepLabel),
           const SizedBox(height: AppDimens.space12),
@@ -144,12 +150,12 @@ class _SurveyTitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: AppTextStyles.titleHeader),
+        Text(title, style: AppTextStyles.body20Bold),
         if (description != null) ...[
           const SizedBox(height: AppDimens.space8),
           Text(
             description!,
-            style: AppTextStyles.body14Regular.copyWith(
+            style: AppTextStyles.body16Regular.copyWith(
               color: AppColors.textNeutral,
             ),
           ),

@@ -50,7 +50,7 @@ class BaseButton extends StatelessWidget {
         child: leadingWidget == null
             ? Text(
                 text,
-                style: AppTextStyles.body14Medium.copyWith(
+                style: AppTextStyles.body16Regular.copyWith(
                   color: resolvedText,
                   fontWeight: fontWeight,
                 ),
@@ -63,7 +63,7 @@ class BaseButton extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     text,
-                    style: AppTextStyles.body14Medium.copyWith(
+                    style: AppTextStyles.body16Regular.copyWith(
                       color: resolvedText,
                       fontWeight: fontWeight,
                     ),
