@@ -23,7 +23,6 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
     setState(() {
       _currentNavIndex = index;
     });
-    //TODO: 각 탭에 맞는 화면으로 라우팅
   }
 
   void _onStartExercise() {
