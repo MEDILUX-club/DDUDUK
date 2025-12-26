@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/layouts/default_layout.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
@@ -10,10 +11,7 @@ import 'package:dduduk_app/widgets/survey/pain_level_face.dart';
 
 /// 운동 전 통증 정도 설문 화면 (고정 설문)
 class ExerciseSurveyFixedScreen extends StatefulWidget {
-  const ExerciseSurveyFixedScreen({
-    super.key,
-    this.onComplete,
-  });
+  const ExerciseSurveyFixedScreen({super.key, this.onComplete});
 
   /// 설문 완료 시 콜백 (통증 레벨 전달)
   final void Function(double painLevel)? onComplete;
@@ -37,7 +35,8 @@ class _ExerciseSurveyFixedScreenState extends State<ExerciseSurveyFixedScreen> {
 
   void _onNextPressed() {
     widget.onComplete?.call(_painLevel);
-    Navigator.of(context).pop(_painLevel);
+    // exercise_fixed1 화면으로 이동
+    context.push('/exercise/fixed1');
   }
 
   @override
@@ -61,10 +60,7 @@ class _ExerciseSurveyFixedScreenState extends State<ExerciseSurveyFixedScreen> {
           const SizedBox(height: AppDimens.space12),
 
           // 타이틀 & 설명
-          Text(
-            '운동 전 현재 통증의 정도를 알려주세요',
-            style: AppTextStyles.titleHeader,
-          ),
+          Text('운동 전 현재 통증의 정도를 알려주세요', style: AppTextStyles.titleHeader),
           const SizedBox(height: AppDimens.space8),
           Text(
             '정확한 운동 프로그램을 위해 필요한 정보예요',
@@ -156,10 +152,7 @@ class _ExerciseSurveyFixedScreenState extends State<ExerciseSurveyFixedScreen> {
         ),
         child: SizedBox(
           height: AppDimens.buttonHeight,
-          child: BaseButton(
-            text: '다음으로',
-            onPressed: _onNextPressed,
-          ),
+          child: BaseButton(text: '다음으로', onPressed: _onNextPressed),
         ),
       ),
     );

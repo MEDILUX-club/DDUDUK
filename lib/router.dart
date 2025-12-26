@@ -28,6 +28,8 @@ import 'package:dduduk_app/screens/exercise/exercise_feedback_screen2.dart';
 import 'package:dduduk_app/screens/exercise/exercise_feedback_screen3.dart';
 import 'package:dduduk_app/screens/exercise/exercise_main_empty_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_main_screen.dart';
+import 'package:dduduk_app/screens/exercise/exercise_rest_screen.dart';
+import 'package:dduduk_app/screens/exercise/exercise_survey_fixed1_screen.dart';
 
 /// 앱 라우터 설정
 ///
@@ -134,11 +136,23 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/exercise/survey-fixed',
+      path: '/exercise/fixed',
       name: 'exerciseSurveyFixed',
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>?;
         return ExerciseSurveyFixedScreen(onComplete: extra?['onComplete']);
+      },
+    ),
+    GoRoute(
+      path: '/exercise/fixed1',
+      name: 'exerciseFixed1',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return ExerciseFixed1Screen(
+          dayNumber: extra?['dayNumber'] ?? 1,
+          exercises: extra?['exercises'] ?? [],
+          onStartPressed: extra?['onStartPressed'],
+        );
       },
     ),
     GoRoute(
@@ -188,6 +202,28 @@ final GoRouter appRouter = GoRouter(
       path: '/exercise/main',
       name: 'exerciseMain',
       builder: (context, state) => const ExerciseMainScreen(),
+    ),
+    GoRoute(
+      path: '/exercise/rest',
+      name: 'exerciseRest',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+
+        // 기본 테스트 데이터
+        final defaultNextExercises = [
+          const NextExerciseData(name: '스쿼트', sets: 3, reps: 10),
+          const NextExerciseData(name: '스쿼트', sets: 3, reps: 10),
+        ];
+
+        return ExerciseRestScreen(
+          initialRestSeconds: extra?['initialRestSeconds'] ?? 30,
+          extensionSeconds: extra?['extensionSeconds'] ?? 20,
+          maxExtensions: extra?['maxExtensions'] ?? 3,
+          nextExercises: extra?['nextExercises'] ?? defaultNextExercises,
+          onRestComplete: extra?['onRestComplete'],
+          onNextExercise: extra?['onNextExercise'],
+        );
+      },
     ),
   ],
 );
