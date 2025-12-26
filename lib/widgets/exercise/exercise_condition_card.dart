@@ -5,8 +5,8 @@ import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 
 /// 운동 설문에서 사용하는 선택 카드 위젯
-class ExerciseOptionCard extends StatelessWidget {
-  const ExerciseOptionCard({
+class ExerciseConditionCard extends StatelessWidget {
+  const ExerciseConditionCard({
     super.key,
     required this.label,
     required this.imagePath,
@@ -37,7 +37,7 @@ class ExerciseOptionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: borderColor, width: selected ? 2 : 1),
         ),
-        padding: const EdgeInsets.symmetric(vertical: AppDimens.space16),
+        padding: const EdgeInsets.symmetric(vertical: AppDimens.space8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -45,7 +45,7 @@ class ExerciseOptionCard extends StatelessWidget {
             const SizedBox(height: AppDimens.space12),
             Text(
               label,
-              style: AppTextStyles.body14Medium.copyWith(color: textColor),
+              style: AppTextStyles.body16Medium.copyWith(color: textColor),
               textAlign: TextAlign.center,
             ),
           ],

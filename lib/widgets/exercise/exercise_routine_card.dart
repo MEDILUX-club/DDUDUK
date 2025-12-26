@@ -142,7 +142,7 @@ class ExerciseRoutineCard extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
+                        color: const Color(0x4DC7F2E2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Row(
