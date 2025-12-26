@@ -10,21 +10,23 @@ import 'package:flutter/material.dart';
 class SurveyLayout extends StatelessWidget {
   const SurveyLayout({
     super.key,
-    this.appBarTitle = '셀프 설문',
-    required this.title,
+    this.appBarTitle,
+    this.title,
+    this.titleWidget,
     this.description,
-    required this.stepLabel,
-    required this.currentStep,
-    required this.totalSteps,
+    this.stepLabel,
+    this.currentStep = 0,
+    this.totalSteps = 0,
     required this.child,
     this.bottomButtons,
     this.showProgressBar = true,
   });
 
-  final String appBarTitle;
-  final String title;
+  final String? appBarTitle;
+  final String? title;
+  final Widget? titleWidget;
   final String? description;
-  final String stepLabel;
+  final String? stepLabel;
   final int currentStep;
   final int totalSteps;
   final Widget child;
@@ -34,7 +36,7 @@ class SurveyLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
-      title: appBarTitle,
+      title: appBarTitle ?? '',
       bottomNavigationBar: bottomButtons == null
           ? null
           : _BottomButtons(config: bottomButtons!),
@@ -49,9 +51,11 @@ class SurveyLayout extends StatelessWidget {
             ),
           ],
           const SizedBox(height: AppDimens.space24),
-          StepBadge(label: stepLabel),
-          const SizedBox(height: AppDimens.space12),
-          _SurveyTitle(title: title, description: description),
+          if (stepLabel != null) ...[
+            StepBadge(label: stepLabel!),
+            const SizedBox(height: AppDimens.space12),
+          ],
+          _SurveyTitle(title: title, titleWidget: titleWidget, description: description),
           const SizedBox(height: AppDimens.space12),
           Expanded(child: child),
         ],
@@ -140,9 +144,10 @@ class _BottomButtons extends StatelessWidget {
 }
 
 class _SurveyTitle extends StatelessWidget {
-  const _SurveyTitle({required this.title, this.description});
+  const _SurveyTitle({this.title, this.titleWidget, this.description});
 
-  final String title;
+  final String? title;
+  final Widget? titleWidget;
   final String? description;
 
   @override
@@ -150,7 +155,10 @@ class _SurveyTitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: AppTextStyles.body20Bold),
+        if (titleWidget != null)
+          titleWidget!
+        else if (title != null)
+          Text(title!, style: AppTextStyles.body20Bold),
         if (description != null) ...[
           const SizedBox(height: AppDimens.space8),
           Text(
