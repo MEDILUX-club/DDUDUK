@@ -26,7 +26,7 @@ class BottomNavBar extends StatelessWidget {
 
   static const List<BottomNavItem> defaultItems = [
     BottomNavItem(iconPath: 'assets/icons/ic_home.svg', label: '홈'),
-    BottomNavItem(iconPath: 'assets/icons/ic_fitness.svg', label: '운동'),
+    BottomNavItem(iconPath: 'assets/icons/ic_exercise.svg', label: '운동'),
     BottomNavItem(iconPath: 'assets/icons/ic_mypage.svg', label: '마이페이지'),
   ];
 

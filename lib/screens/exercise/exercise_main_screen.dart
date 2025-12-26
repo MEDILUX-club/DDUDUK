@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:dduduk_app/layouts/home_layout.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
-import 'package:dduduk_app/widgets/common/bottom_nav_bar.dart';
 import 'package:go_router/go_router.dart';
 
 /// 운동 메인 화면 (데이터 있음)
@@ -21,7 +21,7 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
     setState(() {
       _currentNavIndex = index;
     });
-    // TODO: 각 탭에 맞는 화면으로 라우팅
+    //TODO: 각 탭에 맞는 화면으로 라우팅
   }
 
   void _onStartExercise() {
@@ -30,44 +30,24 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.fillDefault,
-      appBar: AppBar(
-        title: const Text('운동하기'),
-        backgroundColor: AppColors.fillDefault,
-        foregroundColor: AppColors.textStrong,
-        elevation: 0,
-        centerTitle: false,
-        titleTextStyle: AppTextStyles.titleHeader.copyWith(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppDimens.screenPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 상단 그린 카드
-            _buildStartCard(),
-            const SizedBox(height: AppDimens.space24),
+    return HomeLayout(
+      title: '운동하기',
+      currentNavIndex: _currentNavIndex,
+      onNavTap: _onNavTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 상단 그린 카드
+          _buildStartCard(),
+          const SizedBox(height: AppDimens.space24),
 
-            // 이번 주 진행 상황
-            _buildWeeklyProgress(),
-            const SizedBox(height: AppDimens.space24),
+          // 이번 주 진행 상황
+          _buildWeeklyProgress(),
+          const SizedBox(height: AppDimens.space24),
 
-            // 다음 운동 루틴
-            _buildNextRoutineSection(),
-            const SizedBox(height: AppDimens.space24),
-
-            // 운동 루틴 보기
-            _buildRoutineHistorySection(),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _currentNavIndex,
-        onTap: _onNavTap,
+          // 다음 운동 루틴
+          _buildNextRoutineSection(),
+        ],
       ),
     );
   }
@@ -81,81 +61,80 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(AppDimens.space20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.primaryLight, AppColors.primarySecondary],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: AppColors.primaryLight,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  dateString,
-                  style: AppTextStyles.body14Medium.copyWith(
-                    color: AppColors.primary,
-                  ),
-                ),
-                const SizedBox(height: AppDimens.space8),
-                Text(
-                  '황두현님',
-                  style: AppTextStyles.body16Regular.copyWith(
-                    color: AppColors.textStrong,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  '오늘 운동 시작해볼까요?',
-                  style: AppTextStyles.body18SemiBold.copyWith(
-                    color: AppColors.textStrong,
-                  ),
-                ),
-                const SizedBox(height: AppDimens.space16),
-                // 시작하기 버튼
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _onStartExercise,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '시작하기',
-                          style: AppTextStyles.body16Regular.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Icon(Icons.arrow_forward, size: 20),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+          // 날짜
+          Text(
+            dateString,
+            style: AppTextStyles.body14Medium.copyWith(
+              color: AppColors.primary,
             ),
           ),
-          const SizedBox(width: AppDimens.space12),
-          // 아령 아이콘
-          SvgPicture.asset(
-            'assets/icons/ic_fitness.svg',
-            width: 64,
-            height: 64,
-            colorFilter: const ColorFilter.mode(
-              AppColors.primary,
-              BlendMode.srcIn,
+          const SizedBox(height: AppDimens.space8),
+          // 이름 + 질문 텍스트 + 아이콘
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '황두현님',
+                      style: AppTextStyles.body20Bold.copyWith(
+                        color: AppColors.textStrong,
+                      ),
+                    ),
+                    Text(
+                      '오늘 운동 시작해볼까요?',
+                      style: AppTextStyles.body20Bold.copyWith(
+                        color: AppColors.textStrong,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // 아령 아이콘 (두 줄 높이에 맞춤)
+              Icon(
+                Icons.fitness_center,
+                size: 56,
+                color: AppColors.primarySecondary,
+              ),
+            ],
+          ),
+          const SizedBox(height: AppDimens.space16),
+          // 시작하기 버튼 (가로 100%)
+          SizedBox(
+            width: double.infinity,
+            height: AppDimens.buttonHeight,
+            child: ElevatedButton(
+              onPressed: _onStartExercise,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '시작하기',
+                    style: AppTextStyles.body16Regular.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_forward, size: 20),
+                ],
+              ),
             ),
           ),
         ],
@@ -181,7 +160,7 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
             const SizedBox(width: 8),
             Text(
               '이번 주 진행 상황',
-              style: AppTextStyles.body18SemiBold.copyWith(
+              style: AppTextStyles.body16SemiBold.copyWith(
                 color: AppColors.textStrong,
               ),
             ),
@@ -196,7 +175,7 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
                 title: '운동 횟수',
                 value: '3회',
                 change: '+1',
-                changeLabel: '지난 주 대비',
+                changeLabel: '저번 주 대비',
                 isPositive: true,
               ),
             ),
@@ -207,7 +186,7 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
                 title: '총 시간',
                 value: '65분',
                 change: '+20분',
-                changeLabel: '지난 주 대비',
+                changeLabel: '저번 주 대비',
                 isPositive: true,
               ),
             ),
@@ -238,7 +217,7 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
                 const SizedBox(width: 8),
                 Text(
                   '다음 운동 루틴',
-                  style: AppTextStyles.body18SemiBold.copyWith(
+                  style: AppTextStyles.body16SemiBold.copyWith(
                     color: AppColors.textStrong,
                   ),
                 ),
@@ -255,71 +234,13 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
             ),
           ],
         ),
-        const SizedBox(height: AppDimens.space12),
+        const SizedBox(height: AppDimens.space12 ),
         // 운동 카드 리스트
         _ExerciseCard(name: '스쿼트', duration: '20분', sets: '3세트', difficulty: 1),
         const SizedBox(height: AppDimens.space8),
         _ExerciseCard(name: '스쿼트', duration: '20분', sets: '3세트', difficulty: 2),
         const SizedBox(height: AppDimens.space8),
         _ExerciseCard(name: '스쿼트', duration: '20분', sets: '3세트', difficulty: 3),
-      ],
-    );
-  }
-
-  Widget _buildRoutineHistorySection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                SvgPicture.asset(
-                  'assets/icons/ic_content.svg',
-                  width: 20,
-                  height: 20,
-                  colorFilter: const ColorFilter.mode(
-                    AppColors.primary,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '운동 루틴 보기',
-                  style: AppTextStyles.body18SemiBold.copyWith(
-                    color: AppColors.textStrong,
-                  ),
-                ),
-              ],
-            ),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                '전체보기',
-                style: AppTextStyles.body14Regular.copyWith(
-                  color: AppColors.textAssistive,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppDimens.space12),
-        // 히스토리 리스트
-        _RoutineHistoryCard(
-          date: '2025년 11월 11일',
-          description: '무릎 강화운동 · 70분',
-        ),
-        const SizedBox(height: AppDimens.space8),
-        _RoutineHistoryCard(
-          date: '2025년 11월 10일',
-          description: '하체근력 강화운동 · 40분',
-        ),
-        const SizedBox(height: AppDimens.space8),
-        _RoutineHistoryCard(
-          date: '2025년 11월 9일',
-          description: '하체근력 강화운동 · 50분',
-        ),
       ],
     );
   }
@@ -382,9 +303,16 @@ class _StatCard extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                '$change $changeLabel',
+                change,
                 style: AppTextStyles.body12Regular.copyWith(
                   color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                changeLabel,
+                style: AppTextStyles.body12Regular.copyWith(
+                  color: AppColors.textAssistive,
                 ),
               ),
             ],
@@ -407,7 +335,7 @@ class _ExerciseCard extends StatelessWidget {
   final String name;
   final String duration;
   final String sets;
-  final int difficulty; // 1-3
+  final int difficulty; // 1-4
 
   @override
   Widget build(BuildContext context) {
@@ -453,7 +381,7 @@ class _ExerciseCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        ...List.generate(3, (index) {
+                        ...List.generate(4, (index) {
                           return Container(
                             width: 8,
                             height: 8,
@@ -486,14 +414,10 @@ class _ExerciseCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    SvgPicture.asset(
-                      'assets/icons/ic_set.svg',
-                      width: 14,
-                      height: 14,
-                      colorFilter: const ColorFilter.mode(
-                        AppColors.textAssistive,
-                        BlendMode.srcIn,
-                      ),
+                    const Icon(
+                      Icons.fitness_center,
+                      size: 14,
+                      color: AppColors.textAssistive,
                     ),
                     const SizedBox(width: 4),
                     Text(
@@ -513,47 +437,3 @@ class _ExerciseCard extends StatelessWidget {
   }
 }
 
-/// 루틴 히스토리 카드 위젯
-class _RoutineHistoryCard extends StatelessWidget {
-  const _RoutineHistoryCard({required this.date, required this.description});
-
-  final String date;
-  final String description;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppDimens.space16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.lineNeutral),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                date,
-                style: AppTextStyles.body16Regular.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textStrong,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                description,
-                style: AppTextStyles.body12Regular.copyWith(
-                  color: AppColors.textAssistive,
-                ),
-              ),
-            ],
-          ),
-          const Icon(Icons.chevron_right, color: AppColors.textAssistive),
-        ],
-      ),
-    );
-  }
-}
