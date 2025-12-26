@@ -18,6 +18,11 @@ import 'package:dduduk_app/screens/survey/survey_completion_screen.dart';
 
 // Exercise screens
 import 'package:dduduk_app/screens/exercise/exercise_play_screen.dart';
+import 'package:dduduk_app/screens/exercise/exercise_survey_fixed_screen.dart';
+import 'package:dduduk_app/screens/exercise/exercise_survey1_screen.dart';
+import 'package:dduduk_app/screens/exercise/exercise_survey2_screen.dart';
+import 'package:dduduk_app/screens/exercise/exercise_survey3_screen.dart';
+import 'package:dduduk_app/screens/exercise/exercise_survey4_screen.dart';
 
 /// 앱 라우터 설정
 ///
@@ -120,6 +125,41 @@ final GoRouter appRouter = GoRouter(
           totalCount: extra?['totalCount'] ?? 1,
           onPreviousExercise: extra?['onPreviousExercise'],
           onNextExercise: extra?['onNextExercise'],
+        );
+      },
+    ),
+    GoRoute(
+      path: '/exercise/survey-fixed',
+      name: 'exerciseSurveyFixed',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return ExerciseSurveyFixedScreen(
+          onComplete: extra?['onComplete'],
+        );
+      },
+    ),
+    GoRoute(
+      path: '/exercise/survey1',
+      name: 'exerciseSurvey1',
+      builder: (context, state) => const ExerciseSurvey1Screen(),
+    ),
+    GoRoute(
+      path: '/exercise/survey2',
+      name: 'exerciseSurvey2',
+      builder: (context, state) => const ExerciseSurvey2Screen(),
+    ),
+    GoRoute(
+      path: '/exercise/survey3',
+      name: 'exerciseSurvey3',
+      builder: (context, state) => const ExerciseSurvey3Screen(),
+    ),
+    GoRoute(
+      path: '/exercise/survey4',
+      name: 'exerciseSurvey4',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return ExerciseSurvey4Screen(
+          onComplete: extra?['onComplete'],
         );
       },
     ),
