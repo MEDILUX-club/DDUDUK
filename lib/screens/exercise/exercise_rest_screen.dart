@@ -2,9 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
-import 'package:dduduk_app/widgets/exercise/rest_timer_circle.dart';
-import 'package:dduduk_app/widgets/exercise/exercise_next_card.dart';
+import 'package:dduduk_app/widgets/exercise/exercise_routine_card.dart';
 import 'package:dduduk_app/widgets/exercise/rest_alert_banner.dart';
+import 'package:dduduk_app/widgets/exercise/rest_timer_circle.dart';
+import 'package:dduduk_app/widgets/exercise/rest_exit_modal.dart';
 
 /// 운동 휴식 화면
 ///
@@ -30,7 +31,7 @@ class ExerciseRestScreen extends StatefulWidget {
   final int maxExtensions;
 
   /// 다음 운동 목록
-  final List<NextExerciseData> nextExercises;
+  final List<ExerciseRoutineData> nextExercises;
 
   /// 휴식 완료 시 호출되는 콜백
   final VoidCallback? onRestComplete;
@@ -109,12 +110,29 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
     widget.onNextExercise?.call();
   }
 
+  Future<void> _handleBack() async {
+    final shouldExit = await showDialog<bool>(
+      context: context,
+      builder: (context) => const RestExitModal(),
+    );
+
+    if (shouldExit == true && mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
+        if (didPop) return;
+        _handleBack();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
           children: [
             // AppBar
             _buildAppBar(),
@@ -153,6 +171,7 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
           ],
         ),
       ),
+      ),
     );
   }
 
@@ -165,7 +184,7 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
           IconButton(
             icon: const Icon(Icons.arrow_back_ios_new),
             color: AppColors.textNormal,
-            onPressed: () => Navigator.of(context).maybePop(),
+            onPressed: _handleBack,
           ),
           const Spacer(),
         ],
@@ -194,15 +213,7 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
           const SizedBox(height: 12),
           // 운동 카드 목록
           ...widget.nextExercises.map(
-            (exercise) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: ExerciseNextCard(
-                exerciseName: exercise.name,
-                sets: exercise.sets,
-                reps: exercise.reps,
-                imagePath: exercise.imagePath,
-              ),
-            ),
+            (exercise) => ExerciseRoutineCard(exercise: exercise),
           ),
         ],
       ),
@@ -216,20 +227,23 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
         children: [
           // 휴식 늘리기 버튼
           Expanded(
-            child: OutlinedButton(
-              onPressed: _handleExtendRest,
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                side: BorderSide(color: AppColors.linePrimary),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            child: SizedBox(
+              height: 56, // BaseButton height match
+              child: OutlinedButton(
+                onPressed: _handleExtendRest,
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: AppColors.linePrimary),
+                  backgroundColor: AppColors.fillBoxDefault,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  foregroundColor: AppColors.textNormal,
                 ),
-              ),
-              child: Text(
-                '휴식 늘리기',
-                style: AppTextStyles.body16Regular.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textStrong,
+                child: Text(
+                  '휴식 늘리기',
+                  style: AppTextStyles.body16Medium.copyWith(
+                    color: AppColors.textNormal,
+                  ),
                 ),
               ),
             ),
@@ -237,21 +251,23 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
           const SizedBox(width: 12),
           // 다음 운동 버튼
           Expanded(
-            child: ElevatedButton(
-              onPressed: _handleNextExercise,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            child: SizedBox(
+              height: 56, // BaseButton height match
+              child: ElevatedButton(
+                onPressed: _handleNextExercise,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  padding: EdgeInsets.zero, // BaseButton uses zero padding usually? Or default.
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
                 ),
-                elevation: 0,
-              ),
-              child: Text(
-                '다음 운동',
-                style: AppTextStyles.body16Regular.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                child: Text(
+                  '다음 운동',
+                  style: AppTextStyles.body16Medium.copyWith(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -262,17 +278,3 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
   }
 }
 
-/// 다음 운동 데이터 클래스
-class NextExerciseData {
-  const NextExerciseData({
-    required this.name,
-    required this.sets,
-    required this.reps,
-    this.imagePath,
-  });
-
-  final String name;
-  final int sets;
-  final int reps;
-  final String? imagePath;
-}

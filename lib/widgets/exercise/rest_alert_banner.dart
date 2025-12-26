@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 
@@ -111,14 +110,10 @@ class _RestAlertBannerState extends State<RestAlertBanner>
             mainAxisSize: MainAxisSize.min,
             children: [
               // 시계 아이콘
-              SvgPicture.asset(
-                'assets/icons/ic_clock.svg',
-                width: 20,
-                height: 20,
-                colorFilter: ColorFilter.mode(
-                  AppColors.textNeutral,
-                  BlendMode.srcIn,
-                ),
+              Icon(
+                Icons.access_time,
+                size: 20,
+                color: AppColors.primary,
               ),
               const SizedBox(width: 8),
               // 메시지 텍스트

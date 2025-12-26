@@ -30,6 +30,7 @@ import 'package:dduduk_app/screens/exercise/exercise_main_empty_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_main_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_rest_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_survey_fixed1_screen.dart';
+import 'package:dduduk_app/widgets/exercise/exercise_routine_card.dart';
 
 /// 앱 라우터 설정
 ///
@@ -43,7 +44,6 @@ final GoRouter appRouter = GoRouter(
   routes: [
     // =========================================================================
     // Auth Routes
-    // =========================================================================
     GoRoute(
       path: '/',
       name: 'splash',
@@ -211,8 +211,8 @@ final GoRouter appRouter = GoRouter(
 
         // 기본 테스트 데이터
         final defaultNextExercises = [
-          const NextExerciseData(name: '스쿼트', sets: 3, reps: 10),
-          const NextExerciseData(name: '스쿼트', sets: 3, reps: 10),
+          const ExerciseRoutineData(name: '스쿼트', sets: 3, reps: 10),
+          const ExerciseRoutineData(name: '스쿼트', sets: 3, reps: 10),
         ];
 
         return ExerciseRestScreen(

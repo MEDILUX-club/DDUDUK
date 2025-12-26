@@ -62,7 +62,7 @@ class ExerciseRoutineData {
     required this.name,
     required this.sets,
     required this.reps,
-    required this.difficulty,
+    this.difficulty,
     this.imagePath,
   });
 
@@ -76,7 +76,7 @@ class ExerciseRoutineData {
   final int reps;
 
   /// 난이도 (1~4)
-  final int difficulty;
+  final int? difficulty;
 
   /// 운동 이미지 경로 (optional)
   final String? imagePath;
@@ -134,45 +134,47 @@ class ExerciseRoutineCard extends StatelessWidget {
                         color: AppColors.textStrong,
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    // 난이도 라벨
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0x4DC7F2E2),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '난이도',
-                            style: AppTextStyles.body12Regular.copyWith(
-                              color: AppColors.primary,
-                              fontSize: 10,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          // 난이도 점
-                          ...List.generate(4, (index) {
-                            return Container(
-                              width: 6,
-                              height: 6,
-                              margin: const EdgeInsets.only(right: 2),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: index < exercise.difficulty
-                                    ? AppColors.primary
-                                    : AppColors.linePrimary,
+                    if (exercise.difficulty != null) ...[
+                      const SizedBox(width: 8),
+                      // 난이도 라벨
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0x4DC7F2E2),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '난이도',
+                              style: AppTextStyles.body12Regular.copyWith(
+                                color: AppColors.primary,
+                                fontSize: 10,
                               ),
-                            );
-                          }),
-                        ],
+                            ),
+                            const SizedBox(width: 4),
+                            // 난이도 점
+                            ...List.generate(4, (index) {
+                              return Container(
+                                width: 6,
+                                height: 6,
+                                margin: const EdgeInsets.only(right: 2),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: index < exercise.difficulty!
+                                      ? AppColors.primary
+                                      : AppColors.linePrimary,
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
                 const SizedBox(height: 8),

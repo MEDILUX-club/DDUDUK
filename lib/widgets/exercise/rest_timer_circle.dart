@@ -42,7 +42,7 @@ class RestTimerCircle extends StatelessWidget {
               // "휴식시간" 라벨
               Text(
                 '휴식시간',
-                style: AppTextStyles.body14Medium.copyWith(
+                style: AppTextStyles.body18Medium.copyWith(
                   color: AppColors.textNeutral,
                 ),
               ),
@@ -51,7 +51,7 @@ class RestTimerCircle extends StatelessWidget {
               Text(
                 _formatTime(remainingSeconds),
                 style: AppTextStyles.titleText1.copyWith(
-                  fontSize: 48,
+                  fontSize: 40,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textStrong,
                 ),

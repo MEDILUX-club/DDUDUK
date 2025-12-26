@@ -116,7 +116,7 @@ class _BottomButtons extends StatelessWidget {
                         ),
                         child: Text(
                           config.prevText!,
-                          style: AppTextStyles.body14Medium,
+                          style: AppTextStyles.body16Medium,
                         ),
                       ),
                     ),
