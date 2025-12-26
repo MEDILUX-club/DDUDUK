@@ -26,6 +26,8 @@ import 'package:dduduk_app/screens/exercise/exercise_survey4_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_feedback_screen1.dart';
 import 'package:dduduk_app/screens/exercise/exercise_feedback_screen2.dart';
 import 'package:dduduk_app/screens/exercise/exercise_feedback_screen3.dart';
+import 'package:dduduk_app/screens/exercise/exercise_main_empty_screen.dart';
+import 'package:dduduk_app/screens/exercise/exercise_main_screen.dart';
 
 /// 앱 라우터 설정
 ///
@@ -176,6 +178,16 @@ final GoRouter appRouter = GoRouter(
       path: '/exercise/feedback-3',
       name: 'exerciseFeedback3',
       builder: (context, state) => const ExerciseFeedbackScreen3(),
+    ),
+    GoRoute(
+      path: '/exercise/main-empty',
+      name: 'exerciseMainEmpty',
+      builder: (context, state) => const ExerciseMainEmptyScreen(),
+    ),
+    GoRoute(
+      path: '/exercise/main',
+      name: 'exerciseMain',
+      builder: (context, state) => const ExerciseMainScreen(),
     ),
   ],
 );
