@@ -1,11 +1,10 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
-import 'package:dduduk_app/widgets/common/bottom_nav_bar.dart';
+import 'package:dduduk_app/layouts/home_layout.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_start_card.dart';
 import 'package:go_router/go_router.dart';
 
@@ -26,48 +25,30 @@ class _ExerciseMainEmptyScreenState extends State<ExerciseMainEmptyScreen> {
     setState(() {
       _currentNavIndex = index;
     });
-    // TODO: 각 탭에 맞는 화면으로 라우팅
   }
 
   void _onStartExercise() {
-    // TODO: 운동 시작 화면으로 이동
     context.push('/exercise/survey1');
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.fillDefault,
-      appBar: AppBar(
-        title: const Text('운동하기'),
-        backgroundColor: AppColors.fillDefault,
-        foregroundColor: AppColors.textStrong,
-        elevation: 0,
-        centerTitle: false,
-        titleTextStyle: AppTextStyles.titleHeader.copyWith(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppDimens.screenPadding),
-        child: Column(
-          children: [
-            // 상단 그린 카드
-            ExerciseStartCard(
-              userName: _userName,
-              onStartPressed: _onStartExercise,
-            ),
-            const SizedBox(height: AppDimens.space24),
+    return HomeLayout(
+      title: '운동하기',
+      currentNavIndex: _currentNavIndex,
+      onNavTap: _onNavTap,
+      child: Column(
+        children: [
+          // 상단 그린 카드
+          ExerciseStartCard(
+            userName: _userName,
+            onStartPressed: _onStartExercise,
+          ),
+          const SizedBox(height: AppDimens.space24),
 
-            // 빈 상태 메시지
-            _buildEmptyState(),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _currentNavIndex,
-        onTap: _onNavTap,
+          // 빈 상태 메시지
+          _buildEmptyState(),
+        ],
       ),
     );
   }
