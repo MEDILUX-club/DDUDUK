@@ -13,6 +13,7 @@ class BaseButton extends StatelessWidget {
     this.icon,
     this.leading,
     this.fontWeight,
+    this.height = 56.0,
   });
 
   final String text;
@@ -23,6 +24,7 @@ class BaseButton extends StatelessWidget {
   final IconData? icon;
   final Widget? leading;
   final FontWeight? fontWeight;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class BaseButton extends StatelessWidget {
         leading ?? (icon != null ? Icon(icon, color: resolvedText) : null);
 
     return SizedBox(
-      height: 56,
+      height: height,
       width: double.infinity,
       child: ElevatedButton(
         onPressed: enabled ? onPressed : null,

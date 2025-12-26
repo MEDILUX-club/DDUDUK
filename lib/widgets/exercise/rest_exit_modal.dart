@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:dduduk_app/widgets/buttons/primary_button.dart';
 
 /// 운동을 중단하고 나갈지 확인하는 다이얼로그
 ///
@@ -55,7 +56,7 @@ class RestExitModal extends StatelessWidget {
                 // 계속하기 버튼 (취소)
                 Expanded(
                   child: SizedBox(
-                    height: 48, // 버튼 세로 길이 줄임 (56 -> 48)
+                    height: 48, // 버튼 세로 길이 줄임 
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(context).pop(false),
                       style: OutlinedButton.styleFrom(
@@ -77,24 +78,11 @@ class RestExitModal extends StatelessWidget {
                 const SizedBox(width: 12),
                 // 나가기 버튼 (확인)
                 Expanded(
-                  child: SizedBox(
-                    height: 48, // 버튼 세로 길이 줄임 (56 -> 48)
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(true),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        '나가기',
-                        style: AppTextStyles.body16Medium.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+                  child: BaseButton(
+                    text: '나가기',
+                    onPressed: () => Navigator.of(context).pop(true),
+                    fontWeight: FontWeight.w500,
+                    height: 48,
                   ),
                 ),
               ],

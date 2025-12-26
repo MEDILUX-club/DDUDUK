@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:dduduk_app/widgets/buttons/primary_button.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_routine_card.dart';
 import 'package:dduduk_app/widgets/exercise/rest_alert_banner.dart';
 import 'package:dduduk_app/widgets/exercise/rest_timer_circle.dart';
@@ -66,61 +68,6 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
     super.dispose();
   }
 
-  void _startTimer() {
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingSeconds > 0) {
-        setState(() {
-          _remainingSeconds--;
-        });
-      } else {
-        timer.cancel();
-        widget.onRestComplete?.call();
-      }
-    });
-  }
-
-  void _handleExtendRest() {
-    if (_extensionCount < widget.maxExtensions) {
-      // 연장 가능
-      setState(() {
-        _extensionCount++;
-        _remainingSeconds += widget.extensionSeconds;
-        _totalSeconds += widget.extensionSeconds;
-        _alertMessage = '${widget.extensionSeconds}초 늘어났어요';
-        _showAlert = true;
-      });
-    } else {
-      // 최대 연장 횟수 초과
-      setState(() {
-        _alertMessage = '휴식 연장은 최대 ${widget.maxExtensions}번까지 가능해요';
-        _showAlert = true;
-      });
-    }
-  }
-
-  void _dismissAlert() {
-    setState(() {
-      _showAlert = false;
-    });
-  }
-
-  void _handleNextExercise() {
-    _timer?.cancel();
-    widget.onNextExercise?.call();
-  }
-
-  Future<void> _handleBack() async {
-    final shouldExit = await showDialog<bool>(
-      context: context,
-      builder: (context) => const RestExitModal(),
-    );
-
-    if (shouldExit == true && mounted) {
-      Navigator.of(context).pop();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -133,44 +80,13 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Column(
-          children: [
-            // AppBar
-            _buildAppBar(),
-
-            // 알림 배너
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: _showAlert
-                    ? RestAlertBanner(
-                        key: ValueKey(_alertMessage),
-                        message: _alertMessage,
-                        isVisible: _showAlert,
-                        onDismiss: _dismissAlert,
-                      )
-                    : const SizedBox(height: 40),
-              ),
-            ),
-
-            // 타이머 원형
-            Expanded(
-              child: Center(
-                child: RestTimerCircle(
-                  remainingSeconds: _remainingSeconds,
-                  totalSeconds: _totalSeconds,
-                ),
-              ),
-            ),
-
-            // 다음 운동 섹션
-            _buildNextExerciseSection(),
-
-            // 하단 버튼들
-            _buildBottomButtons(),
-          ],
+            children: [
+              _buildAppBar(),
+              _buildBody(),
+              _buildBottomButtons(),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -192,6 +108,46 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
     );
   }
 
+  Widget _buildBody() {
+    return Expanded(
+      child: Column(
+        children: [
+          _buildAlertBanner(),
+          _buildTimerSection(),
+          _buildNextExerciseSection(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAlertBanner() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        child: _showAlert
+            ? RestAlertBanner(
+                key: ValueKey(_alertMessage),
+                message: _alertMessage,
+                isVisible: _showAlert,
+                onDismiss: _dismissAlert,
+              )
+            : const SizedBox(height: 40),
+      ),
+    );
+  }
+
+  Widget _buildTimerSection() {
+    return Expanded(
+      child: Center(
+        child: RestTimerCircle(
+          remainingSeconds: _remainingSeconds,
+          totalSeconds: _totalSeconds,
+        ),
+      ),
+    );
+  }
+
   Widget _buildNextExerciseSection() {
     if (widget.nextExercises.isEmpty) {
       return const SizedBox.shrink();
@@ -202,7 +158,6 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // "다음 운동" 헤더
           Text(
             '다음 운동',
             style: AppTextStyles.body16Regular.copyWith(
@@ -211,7 +166,6 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          // 운동 카드 목록
           ...widget.nextExercises.map(
             (exercise) => ExerciseRoutineCard(exercise: exercise),
           ),
@@ -225,10 +179,9 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
       child: Row(
         children: [
-          // 휴식 늘리기 버튼
           Expanded(
             child: SizedBox(
-              height: 56, // BaseButton height match
+              height: 56,
               child: OutlinedButton(
                 onPressed: _handleExtendRest,
                 style: OutlinedButton.styleFrom(
@@ -249,32 +202,69 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
             ),
           ),
           const SizedBox(width: 12),
-          // 다음 운동 버튼
           Expanded(
-            child: SizedBox(
-              height: 56, // BaseButton height match
-              child: ElevatedButton(
-                onPressed: _handleNextExercise,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  padding: EdgeInsets.zero, // BaseButton uses zero padding usually? Or default.
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  '다음 운동',
-                  style: AppTextStyles.body16Medium.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+            child: BaseButton(
+              text: '다음 운동',
+              onPressed: _handleNextExercise,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
       ),
     );
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingSeconds > 0) {
+        setState(() {
+          _remainingSeconds--;
+        });
+      } else {
+        timer.cancel();
+        widget.onRestComplete?.call();
+      }
+    });
+  }
+
+  void _handleExtendRest() {
+    if (_extensionCount < widget.maxExtensions) {
+      setState(() {
+        _extensionCount++;
+        _remainingSeconds += widget.extensionSeconds;
+        _totalSeconds += widget.extensionSeconds;
+        _alertMessage = '${widget.extensionSeconds}초 늘어났어요';
+        _showAlert = true;
+      });
+    } else {
+      setState(() {
+        _alertMessage = '휴식 연장은 최대 ${widget.maxExtensions}번까지 가능해요';
+        _showAlert = true;
+      });
+    }
+  }
+
+  void _handleNextExercise() {
+    _timer?.cancel();
+    widget.onNextExercise?.call();
+  }
+
+  Future<void> _handleBack() async {
+    final shouldExit = await showDialog<bool>(
+      context: context,
+      builder: (context) => const RestExitModal(),
+    );
+
+    if (shouldExit == true && mounted) {
+      context.go('/exercise/main');
+    }
+  }
+
+  void _dismissAlert() {
+    setState(() {
+      _showAlert = false;
+    });
   }
 }
 
