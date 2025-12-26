@@ -32,10 +32,10 @@ class PainLevelFace extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.primaryLight,
+        color: AppColors.primarySecondary,
         border: Border.all(color: AppColors.primary, width: 3),
       ),
-      padding: EdgeInsets.all(size * 0.2),
+      padding: EdgeInsets.all(size * 0.15),
       child: Image.asset(_getFaceImage(), fit: BoxFit.contain),
     );
   }

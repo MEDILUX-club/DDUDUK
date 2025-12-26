@@ -6,7 +6,6 @@ import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/buttons/primary_button.dart';
 import 'package:dduduk_app/widgets/common/step_badge.dart';
-import 'package:dduduk_app/widgets/common/step_progress_bar.dart';
 import 'package:dduduk_app/widgets/survey/pain_level_face.dart';
 
 /// 운동 전 통증 정도 설문 화면 (고정 설문)
@@ -47,24 +46,17 @@ class _ExerciseSurveyFixedScreenState extends State<ExerciseSurveyFixedScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 프로그레스 바
-          StepProgressBar(
-            currentStep: 1,
-            totalSteps: 1,
-            horizontalBleed: AppDimens.screenPadding,
-          ),
           const SizedBox(height: AppDimens.space24),
-
           // 스텝 배지
           const StepBadge(label: '통증 세부 정보'),
           const SizedBox(height: AppDimens.space12),
 
           // 타이틀 & 설명
-          Text('운동 전 현재 통증의 정도를 알려주세요', style: AppTextStyles.titleHeader),
+          Text('운동 전 현재 통증의 정도를 알려주세요', style: AppTextStyles.body20Bold),
           const SizedBox(height: AppDimens.space8),
           Text(
             '정확한 운동 프로그램을 위해 필요한 정보예요',
-            style: AppTextStyles.body14Regular.copyWith(
+            style: AppTextStyles.body16Regular.copyWith(
               color: AppColors.textNeutral,
             ),
           ),
