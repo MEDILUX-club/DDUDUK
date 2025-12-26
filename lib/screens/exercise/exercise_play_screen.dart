@@ -251,10 +251,10 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
                   shape: BoxShape.circle,
                 ),
                 child: Center(
-                  child: SvgPicture.asset(
-                    'assets/icons/ic_rotation.svg',
-                    width: 24,
-                    height: 24,
+                  child: const Icon(
+                    Icons.screen_rotation,
+                    color: Colors.white,
+                    size: 24,
                   ),
                 ),
               ),
@@ -380,10 +380,10 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: Center(
-                      child: SvgPicture.asset(
-                        'assets/icons/ic_rotation.svg',
-                        width: 24,
-                        height: 24,
+                      child: const Icon(
+                        Icons.screen_rotation,
+                        color: Colors.white,
+                        size: 24,
                       ),
                     ),
                   ),
