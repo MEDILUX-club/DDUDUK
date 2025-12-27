@@ -15,7 +15,8 @@ dependencies:
   syncfusion_flutter_core: ^31.2.12
   syncfusion_flutter_sliders: ^31.2.12
   flutter_svg: ^2.2.3
-  video_player: ^2.8.1
+
+  youtube_player_iframe: ^5.1.0
   go_router: ^14.6.3
 
 dev_dependencies:

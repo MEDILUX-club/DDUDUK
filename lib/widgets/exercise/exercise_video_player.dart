@@ -1,10 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 
-/// 운동 동영상 재생 위젯
+/// 운동 동영상 재생 위젯 (YouTube 전용 - Universal Support)
 ///
-/// [videoUrl] - 재생할 동영상 URL (네트워크 또는 로컬 경로)
+/// [videoUrl] - 재생할 YouTube URL
 /// [onPlayStateChanged] - 재생 상태 변경 콜백
 /// [onExpandPressed] - 확대 버튼 클릭 콜백
 /// [showExpandButton] - 확대 버튼 표시 여부
@@ -29,9 +30,12 @@ class ExerciseVideoPlayer extends StatefulWidget {
 }
 
 class ExerciseVideoPlayerState extends State<ExerciseVideoPlayer> {
-  late VideoPlayerController _controller;
+  late YoutubePlayerController _controller;
   bool _isInitialized = false;
+  
+  // 상태 관리를 위한 변수
   bool _isPlaying = false;
+  Timer? _positionTimer;
 
   @override
   void initState() {
@@ -39,116 +43,160 @@ class ExerciseVideoPlayerState extends State<ExerciseVideoPlayer> {
     _initializeVideo();
   }
 
-  Future<void> _initializeVideo() async {
-    // 네트워크 URL인지 로컬 파일인지 확인
-    if (widget.videoUrl.startsWith('http')) {
-      _controller = VideoPlayerController.networkUrl(
-        Uri.parse(widget.videoUrl),
+  void _initializeVideo() {
+    final videoId = YoutubePlayerController.convertUrlToId(widget.videoUrl);
+    
+    if (videoId != null) {
+      _controller = YoutubePlayerController.fromVideoId(
+        videoId: videoId,
+        autoPlay: true,
+        params: const YoutubePlayerParams(
+          showControls: false, // 커스텀 UI 사용
+          showFullscreenButton: false,
+          mute: false,
+          loop: false,
+          strictRelatedVideos: true,
+        ),
       );
-    } else {
-      _controller = VideoPlayerController.asset(widget.videoUrl);
-    }
 
-    await _controller.initialize();
-    _controller.addListener(_onVideoUpdate);
+      // 상태 리스너 등록
+      _controller.setFullScreenListener((isFullScreen) {
+        // 풀스크린 처리 (필요 시)
+      });
 
-    if (mounted) {
+      // 재생 상태 및 시간 변경 감지
+      _controller.videoStateStream.listen((state) {
+        // 영상 상태 업데이트
+        _updateState();
+      });
+
       setState(() {
         _isInitialized = true;
       });
+    } else {
+      debugPrint('Error: Invalid YouTube URL: ${widget.videoUrl}');
     }
   }
 
-  void _onVideoUpdate() {
+  void _updateState() async {
     if (!mounted) return;
-
-    final isPlaying = _controller.value.isPlaying;
+    
+    final state = await _controller.playerState;
+    final isPlaying = state == PlayerState.playing;
+    
     if (_isPlaying != isPlaying) {
       setState(() {
         _isPlaying = isPlaying;
       });
       widget.onPlayStateChanged?.call(isPlaying);
-    }
 
-    widget.onPositionChanged?.call(_controller.value.position);
+      if (isPlaying) {
+        _startPositionTimer();
+      } else {
+        _stopPositionTimer();
+      }
+    }
+  }
+
+  void _startPositionTimer() {
+    _positionTimer?.cancel();
+    _positionTimer = Timer.periodic(const Duration(milliseconds: 200), (timer) async {
+      if (!mounted) return;
+      final position = await _controller.currentTime;
+      widget.onPositionChanged?.call(Duration(milliseconds: (position * 1000).toInt()));
+    });
+  }
+
+  void _stopPositionTimer() {
+    _positionTimer?.cancel();
+    _positionTimer = null;
   }
 
   @override
   void dispose() {
-    _controller.removeListener(_onVideoUpdate);
-    _controller.dispose();
+    _stopPositionTimer();
+    _controller.close();
     super.dispose();
   }
 
   /// 재생/일시정지 토글
   void togglePlay() {
-    if (_controller.value.isPlaying) {
-      _controller.pause();
+    if (_isPlaying) {
+      _controller.pauseVideo();
     } else {
-      _controller.play();
+      _controller.playVideo();
     }
   }
 
   /// 재생
   void play() {
-    _controller.play();
+    _controller.playVideo();
   }
 
   /// 일시정지
   void pause() {
-    _controller.pause();
+    _controller.pauseVideo();
   }
 
-  /// 현재 재생 위치
-  Duration get position => _controller.value.position;
-
-  /// 총 길이
-  Duration get duration => _controller.value.duration;
-
+  /// 현재 재생 위치 (비동기라 즉시 반환 어려움, 타이머가 업데이트함)
+  Future<Duration> get position async {
+    final secs = await _controller.currentTime;
+    return Duration(milliseconds: (secs * 1000).toInt());
+  }
+ 
   /// 재생 중인지 여부
   bool get isPlaying => _isPlaying;
 
   @override
   Widget build(BuildContext context) {
+    if (!_isInitialized) {
+      return Container(
+        decoration: BoxDecoration(
+           color: AppColors.fillOption,
+           borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.fillOption,
-        borderRadius: BorderRadius.circular(12),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: AspectRatio(
-          aspectRatio: 16 / 9,
-          child: Stack(
-            children: [
-              // 비디오 플레이어
-              if (_isInitialized)
-                Positioned.fill(child: VideoPlayer(_controller)),
-
-              // 확대 버튼 (우측 하단)
-              if (widget.showExpandButton && widget.onExpandPressed != null)
-                Positioned(
-                  right: 12,
-                  bottom: 12,
-                  child: GestureDetector(
-                    onTap: widget.onExpandPressed,
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.4),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.fullscreen,
-                        color: Colors.white,
-                        size: 24,
-                      ),
+      child: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: YoutubePlayer(
+                controller: _controller,
+                aspectRatio: 16 / 9,
+              ),
+            ),
+            
+            // 확대 버튼 (우측 하단)
+            if (widget.showExpandButton && widget.onExpandPressed != null)
+              Positioned(
+                right: 12,
+                bottom: 12,
+                child: GestureDetector(
+                  onTap: widget.onExpandPressed,
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.4),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.fullscreen,
+                      color: Colors.white,
+                      size: 24,
                     ),
                   ),
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
       ),
     );

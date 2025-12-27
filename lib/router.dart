@@ -121,7 +121,7 @@ final GoRouter appRouter = GoRouter(
         return ExercisePlayScreen(
           videoUrl:
               extra?['videoUrl'] ??
-              'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+              'https://www.youtube.com/watch?v=akLRbdTtD7Y',
           exerciseName: extra?['exerciseName'] ?? '푸쉬업',
           exerciseDescription:
               extra?['exerciseDescription'] ??
