@@ -31,6 +31,7 @@ import 'package:dduduk_app/screens/exercise/exercise_main_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_rest_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_survey_fixed1_screen.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_routine_card.dart';
+import 'package:dduduk_app/screens/exercise/exercise_schedule_reservation_screen.dart';
 
 /// 앱 라우터 설정
 ///
@@ -224,6 +225,11 @@ final GoRouter appRouter = GoRouter(
           onNextExercise: extra?['onNextExercise'],
         );
       },
+    ),
+    GoRoute(
+      path: '/exercise/reservation',
+      name: 'exerciseReservation',
+      builder: (context, state) => const ExerciseScheduleReservationScreen(),
     ),
   ],
 );

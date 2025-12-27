@@ -4,8 +4,14 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/router.dart';
+import 'package:dduduk_app/services/notification_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize notification service
+  await NotificationService().init();
+
   usePathUrlStrategy(); // URL 기반 라우팅 활성화 (# 없이)
   runApp(const MyApp());
 }
