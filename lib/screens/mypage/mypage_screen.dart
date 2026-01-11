@@ -134,18 +134,14 @@ class _ProfileCard extends StatelessWidget {
                     const SizedBox(width: AppDimens.space8),
                     GestureDetector(
                       onTap: () {
-                        // TODO: 프로필 편집
+                        context.push('/mypage/profile-edit');
                       },
-                      child: Container(
+                      child: Padding(
                         padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: AppColors.fillDefault,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(
-                          Icons.edit_outlined,
-                          size: 18,
-                          color: AppColors.textAssistive,
+                        child: SvgPicture.asset(
+                          'assets/icons/ic_pencil.svg',
+                          width: 20,
+                          height: 20,
                         ),
                       ),
                     ),

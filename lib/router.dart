@@ -21,6 +21,7 @@ import 'package:dduduk_app/screens/home/home_screen.dart';
 
 // Mypage screens
 import 'package:dduduk_app/screens/mypage/mypage_screen.dart';
+import 'package:dduduk_app/screens/mypage/profile_edit_screen.dart';
 
 // Exercise screens
 import 'package:dduduk_app/screens/exercise/exercise_play_screen.dart';
@@ -88,6 +89,11 @@ final GoRouter appRouter = GoRouter(
       path: '/mypage',
       name: 'mypage',
       builder: (context, state) => const MypageScreen(),
+    ),
+    GoRoute(
+      path: '/mypage/profile-edit',
+      name: 'profileEdit',
+      builder: (context, state) => const ProfileEditScreen(),
     ),
 
     // =========================================================================

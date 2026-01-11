@@ -39,19 +39,21 @@ class _TermsAgreementScreenState extends State<TermsAgreementScreen> {
     return DefaultLayout(
       title: '',
       backgroundColor: AppColors.fillDefault,
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(AppDimens.space16),
-        child: BaseButton(
-          text: '다음으로',
-          onPressed: _allAgreed
-              ? () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const SurveyIntroScreen(),
-                    ),
-                  );
-                }
-              : null,
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppDimens.space16),
+          child: BaseButton(
+            text: '다음으로',
+            onPressed: _allAgreed
+                ? () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const SurveyIntroScreen(),
+                      ),
+                    );
+                  }
+                : null,
+          ),
         ),
       ),
       child: SingleChildScrollView(

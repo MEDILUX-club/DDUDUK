@@ -25,20 +25,6 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final suffix = icon != null
-        ? Icon(icon, size: AppDimens.iconSize, color: AppColors.textNormal)
-        : (suffixText != null
-              ? Padding(
-                  padding: const EdgeInsets.only(right: AppDimens.space4),
-                  child: Text(
-                    suffixText!,
-                    style: AppTextStyles.body14Regular.copyWith(
-                      color: AppColors.textNeutral,
-                    ),
-                  ),
-                )
-              : null);
-
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
@@ -56,7 +42,19 @@ class CustomTextField extends StatelessWidget {
           vertical: AppDimens.space14,
           horizontal: AppDimens.space16,
         ),
-        suffixIcon: suffix,
+        // 아이콘인 경우 suffixIcon 사용
+        suffixIcon: icon != null
+            ? Icon(icon, size: AppDimens.iconSize, color: AppColors.textNormal)
+            : null,
+        // 텍스트인 경우 suffix 사용 (세로 정렬 문제 해결)
+        suffix: suffixText != null
+            ? Text(
+                suffixText!,
+                style: AppTextStyles.body14Regular.copyWith(
+                  color: AppColors.textNeutral,
+                ),
+              )
+            : null,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.lineNeutral),

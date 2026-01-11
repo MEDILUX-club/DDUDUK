@@ -26,6 +26,7 @@ dependencies:
   flutter_naver_login: ^1.8.0         # 네이버 로그인
   sign_in_with_apple: ^6.1.4          # 애플 로그인
   crypto: ^3.0.6                       # 애플 로그인 nonce 생성용
+  image_picker: ^1.2.1
 
 dev_dependencies:
   flutter_test:
