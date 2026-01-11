@@ -19,6 +19,9 @@ import 'package:dduduk_app/screens/survey/survey_completion_screen.dart';
 // Home screens
 import 'package:dduduk_app/screens/home/home_screen.dart';
 
+// Mypage screens
+import 'package:dduduk_app/screens/mypage/mypage_screen.dart';
+
 // Exercise screens
 import 'package:dduduk_app/screens/exercise/exercise_play_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_survey_fixed_screen.dart';
@@ -76,6 +79,15 @@ final GoRouter appRouter = GoRouter(
       path: '/home',
       name: 'home',
       builder: (context, state) => const HomeScreen(),
+    ),
+
+    // =========================================================================
+    // Mypage Routes
+    // =========================================================================
+    GoRoute(
+      path: '/mypage',
+      name: 'mypage',
+      builder: (context, state) => const MypageScreen(),
     ),
 
     // =========================================================================

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/layouts/home_layout.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/widgets/home/recovery_status_card.dart';
@@ -15,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentNavIndex = 0;
+  final int _currentNavIndex = 0;
 
   // 예시 데이터: 운동한 날짜 (8월)
   final List<int> _exerciseDays = [1, 4, 8, 9, 10, 12];
@@ -100,9 +101,19 @@ class _HomeScreenState extends State<HomeScreen> {
   };
 
   void _onNavTap(int index) {
-    setState(() {
-      _currentNavIndex = index;
-    });
+    if (index == _currentNavIndex) return;
+
+    switch (index) {
+      case 0:
+        context.go('/home');
+        break;
+      case 1:
+        context.go('/exercise/main');
+        break;
+      case 2:
+        context.go('/mypage');
+        break;
+    }
   }
 
   void _onDateSelected(DateTime date) {
