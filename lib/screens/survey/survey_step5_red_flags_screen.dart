@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step6_result_screen.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
@@ -57,37 +57,31 @@ class _SurveyStep5WorkoutExpScreenState
           );
         },
       ),
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: AppDimens.space2),
-                  ..._riskOptions.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final text = entry.value;
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: index == _riskOptions.length - 1
-                            ? AppDimens.space4
-                            : AppDimens.space8,
-                      ),
-                      child: SelectableOptionCard(
-                        text: text,
-                        selected: _selectedRisk == text,
-                        onTap: () => _showRiskAlert(text),
-                        selectedTextColor: AppColors.primary,
-                        unselectedBorderColor: AppColors.linePrimary,
-                      ),
-                    );
-                  }),
-                ],
-              ),
-            ),
-          ),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: AppDimens.space2),
+            ..._riskOptions.asMap().entries.map((entry) {
+              final index = entry.key;
+              final text = entry.value;
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: index == _riskOptions.length - 1
+                      ? AppDimens.space4
+                      : AppDimens.space8,
+                ),
+                child: SelectableOptionCard(
+                  text: text,
+                  selected: _selectedRisk == text,
+                  onTap: () => _showRiskAlert(text),
+                  selectedTextColor: AppColors.primary,
+                  unselectedBorderColor: AppColors.linePrimary,
+                ),
+              );
+            }),
+          ],
+        ),
       ),
     );
   }

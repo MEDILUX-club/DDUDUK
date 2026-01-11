@@ -1,3 +1,4 @@
 {
-    "chatgpt.commentCodeLensEnabled": true
+    "chatgpt.commentCodeLensEnabled": true,
+    "cmake.ignoreCMakeListsMissing": true
 }

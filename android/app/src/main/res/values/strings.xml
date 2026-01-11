@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">뚜둑</string>
+    
+    <!-- 네이버 로그인 설정 -->
+    <string name="naver_client_id">VUbt2N03YPpIBpU6Q1P4</string>
+    <string name="naver_client_secret">mSXkMPhMm0</string>
+    <string name="naver_client_name">뚜둑</string>
+</resources>

@@ -84,128 +84,113 @@ class _SurveyStep4LifestyleScreenState
           );
         },
       ),
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 1. 현재 무릎 통증의 정도 (항상 표시)
-                  const SizedBox(height: AppDimens.space16),
-                  Text(
-                    '1. 현재 무릎 통증의 정도를 알고 싶어요.',
-                    style: AppTextStyles.body18SemiBold,
-                  ),
-                  PainLevelSelector(
-                    value: _painLevel,
-                    onChanged: (value) =>
-                        setState(() => _painLevel = value as double),
-                  ),
-                  // 2. 언제 통증이 더 심해지나요? (항상 표시)
-                  const SizedBox(height: AppDimens.space24),
-                  Text(
-                    '2. 언제 통증이 더 심해지나요?',
-                    style: AppTextStyles.body18SemiBold,
-                  ),
-                  const SizedBox(height: AppDimens.space4),
-                  Text(
-                    '(중복선택 가능)',
-                    style: AppTextStyles.body12Regular.copyWith(
-                      color: AppColors.textDisabled,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimens.space12),
-                  Wrap(
-                    spacing: AppDimens.space8,
-                    runSpacing: AppDimens.space8,
-                    children: _painTriggerOptions
-                        .map(
-                          (option) => _SelectableChip(
-                            label: option,
-                            selected: _selectedPainTriggers.contains(option),
-                            onTap: () => _togglePainTrigger(option),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                  // 3. 통증 느낌이 어떤가요? (2번 선택 시 표시)
-                  if (_selectedPainTriggers.isNotEmpty) ...[
-                    const SizedBox(height: AppDimens.space24),
-                    Text(
-                      '3. 통증 느낌이 어떤가요?',
-                      style: AppTextStyles.body18SemiBold,
-                    ),
-                    const SizedBox(height: AppDimens.space8),
-                    Text(
-                      '최근 자주 느끼는 통증 양상을 선택해주세요',
-                      style: AppTextStyles.body14Regular.copyWith(
-                        color: AppColors.textNeutral,
-                      ),
-                    ),
-                    const SizedBox(height: AppDimens.space12),
-                    ..._painPatternOptions.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final text = entry.value;
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          bottom: index == _painPatternOptions.length - 1
-                              ? 0
-                              : AppDimens.space8,
-                        ),
-                        child: SelectableOptionCard(
-                          text: text,
-                          selected: _selectedPainPattern == text,
-                          onTap: () => _selectPainPattern(text),
-                          selectedTextColor: AppColors.primary,
-                          unselectedBorderColor: AppColors.linePrimary,
-                        ),
-                      );
-                    }),
-                  ],
-                  // 4. 통증이 얼마나 지속되나요? ("아침에 일어나면 뻣뻣해요" 선택 시 표시)
-                  if (_selectedPainPattern == '아침에 일어나면 뻣뻣해요') ...[
-                    const SizedBox(height: AppDimens.space24),
-                    Text(
-                      '4. 통증이 얼마나 지속되나요?',
-                      style: AppTextStyles.body18SemiBold,
-                    ),
-                    const SizedBox(height: AppDimens.space12),
-                    Row(
-                      children: _painDurationOptions.map((option) {
-                        return Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              right: option == _painDurationOptions.last
-                                  ? 0
-                                  : AppDimens.itemSpacing,
-                            ),
-                            child: SelectableOptionCard(
-                              selected: _selectedPainDuration == option,
-                              onTap: () => _selectPainDuration(option),
-                              unselectedBorderColor: AppColors.linePrimary,
-                              child: Center(
-                                child: Text(
-                                  option,
-                                  style: AppTextStyles.body16Regular.copyWith(
-                                    color: _selectedPainDuration == option
-                                        ? AppColors.primary
-                                        : AppColors.textNormal,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                  const SizedBox(height: AppDimens.space16),
-                ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 1. 현재 무릎 통증의 정도 (항상 표시)
+            const SizedBox(height: AppDimens.space16),
+            Text(
+              '1. 현재 무릎 통증의 정도를 알고 싶어요.',
+              style: AppTextStyles.body18SemiBold,
+            ),
+            PainLevelSelector(
+              value: _painLevel,
+              onChanged: (value) =>
+                  setState(() => _painLevel = value as double),
+            ),
+            // 2. 언제 통증이 더 심해지나요? (항상 표시)
+            const SizedBox(height: AppDimens.space24),
+            Text('2. 언제 통증이 더 심해지나요?', style: AppTextStyles.body18SemiBold),
+            const SizedBox(height: AppDimens.space4),
+            Text(
+              '(중복선택 가능)',
+              style: AppTextStyles.body12Regular.copyWith(
+                color: AppColors.textDisabled,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: AppDimens.space12),
+            Wrap(
+              spacing: AppDimens.space8,
+              runSpacing: AppDimens.space8,
+              children: _painTriggerOptions
+                  .map(
+                    (option) => _SelectableChip(
+                      label: option,
+                      selected: _selectedPainTriggers.contains(option),
+                      onTap: () => _togglePainTrigger(option),
+                    ),
+                  )
+                  .toList(),
+            ),
+            // 3. 통증 느낌이 어떤가요? (2번 선택 시 표시)
+            if (_selectedPainTriggers.isNotEmpty) ...[
+              const SizedBox(height: AppDimens.space24),
+              Text('3. 통증 느낌이 어떤가요?', style: AppTextStyles.body18SemiBold),
+              const SizedBox(height: AppDimens.space8),
+              Text(
+                '최근 자주 느끼는 통증 양상을 선택해주세요',
+                style: AppTextStyles.body14Regular.copyWith(
+                  color: AppColors.textNeutral,
+                ),
+              ),
+              const SizedBox(height: AppDimens.space12),
+              ..._painPatternOptions.asMap().entries.map((entry) {
+                final index = entry.key;
+                final text = entry.value;
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: index == _painPatternOptions.length - 1
+                        ? 0
+                        : AppDimens.space8,
+                  ),
+                  child: SelectableOptionCard(
+                    text: text,
+                    selected: _selectedPainPattern == text,
+                    onTap: () => _selectPainPattern(text),
+                    selectedTextColor: AppColors.primary,
+                    unselectedBorderColor: AppColors.linePrimary,
+                  ),
+                );
+              }),
+            ],
+            // 4. 통증이 얼마나 지속되나요? ("아침에 일어나면 뻣뻣해요" 선택 시 표시)
+            if (_selectedPainPattern == '아침에 일어나면 뻣뻣해요') ...[
+              const SizedBox(height: AppDimens.space24),
+              Text('4. 통증이 얼마나 지속되나요?', style: AppTextStyles.body18SemiBold),
+              const SizedBox(height: AppDimens.space12),
+              Row(
+                children: _painDurationOptions.map((option) {
+                  return Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        right: option == _painDurationOptions.last
+                            ? 0
+                            : AppDimens.itemSpacing,
+                      ),
+                      child: SelectableOptionCard(
+                        selected: _selectedPainDuration == option,
+                        onTap: () => _selectPainDuration(option),
+                        unselectedBorderColor: AppColors.linePrimary,
+                        child: Center(
+                          child: Text(
+                            option,
+                            style: AppTextStyles.body16Regular.copyWith(
+                              color: _selectedPainDuration == option
+                                  ? AppColors.primary
+                                  : AppColors.textNormal,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
+            const SizedBox(height: AppDimens.space16),
+          ],
+        ),
       ),
     );
   }
@@ -252,5 +237,3 @@ class _SelectableChip extends StatelessWidget {
     );
   }
 }
-
-

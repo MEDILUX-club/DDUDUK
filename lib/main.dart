@@ -1,6 +1,8 @@
 // lib/main.dart
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/router.dart';
@@ -8,7 +10,16 @@ import 'package:dduduk_app/services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
+  // 카카오 SDK 초기화
+  KakaoSdk.init(nativeAppKey: 'ab5d133eb445dd76f3c31a7c9250b2e9');
+
+  // 디버그 모드에서 키 해시 출력 (개발자 콘솔에 등록할 때 사용)
+  if (kDebugMode) {
+    final keyHash = await KakaoSdk.origin;
+    debugPrint('🔑 카카오 키 해시: $keyHash');
+  }
+
   // Initialize notification service
   await NotificationService().init();
 

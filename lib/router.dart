@@ -16,6 +16,9 @@ import 'package:dduduk_app/screens/survey/survey_step5_red_flags_screen.dart';
 import 'package:dduduk_app/screens/survey/survey_step6_result_screen.dart';
 import 'package:dduduk_app/screens/survey/survey_completion_screen.dart';
 
+// Home screens
+import 'package:dduduk_app/screens/home/home_screen.dart';
+
 // Exercise screens
 import 'package:dduduk_app/screens/exercise/exercise_play_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_survey_fixed_screen.dart';
@@ -64,6 +67,15 @@ final GoRouter appRouter = GoRouter(
       path: '/terms',
       name: 'terms',
       builder: (context, state) => const TermsAgreementScreen(),
+    ),
+
+    // =========================================================================
+    // Home Routes
+    // =========================================================================
+    GoRoute(
+      path: '/home',
+      name: 'home',
+      builder: (context, state) => const HomeScreen(),
     ),
 
     // =========================================================================

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dduduk_app/layouts/default_layout.dart';
+import 'package:dduduk_app/screens/home/home_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
@@ -87,7 +88,10 @@ class SurveyCompletionScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const HomeScreen()),
+                    (route) => false,
+                  );
                 },
                 child: Text(
                   '확인',

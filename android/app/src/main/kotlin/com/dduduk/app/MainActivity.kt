@@ -1,4 +1,4 @@
-package com.example.dduduk_app
+package com.dduduk.app
 
 import io.flutter.embedding.android.FlutterActivity
 
