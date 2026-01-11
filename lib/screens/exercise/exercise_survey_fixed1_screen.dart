@@ -82,8 +82,8 @@ class ExerciseFixed1Screen extends StatelessWidget {
         nextText: '시작하기',
         onNext: onStartPressed ??
             () {
-              // 기본: exercise_rest 화면으로 이동
-              context.push('/exercise/rest');
+              // exercise_play 화면으로 이동
+              context.push('/exercise/play');
             },
       ),
       child: Column(

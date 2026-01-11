@@ -23,12 +23,93 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   File? _profileImage;
 
+  // 닉네임 유효성 검사 관련 상태
+  String? _nicknameError;
+  bool _isCheckingNickname = false;
+
+  // 닉네임 제한 상수
+  static const int _minNicknameLength = 2;
+  static const int _maxNicknameLength = 14;
+
+  @override
+  void initState() {
+    super.initState();
+    _nicknameController.addListener(_onNicknameChanged);
+  }
+
   @override
   void dispose() {
+    _nicknameController.removeListener(_onNicknameChanged);
     _nicknameController.dispose();
     _heightController.dispose();
     _weightController.dispose();
     super.dispose();
+  }
+
+  /// 닉네임 입력 변경 시 호출
+  void _onNicknameChanged() {
+    final nickname = _nicknameController.text;
+
+    // 길이 유효성 검사
+    if (nickname.isNotEmpty) {
+      if (nickname.length < _minNicknameLength) {
+        setState(() {
+          _nicknameError = '닉네임은 $_minNicknameLength자 이상이어야 합니다.';
+        });
+        return;
+      } else if (nickname.length > _maxNicknameLength) {
+        setState(() {
+          _nicknameError = '닉네임은 $_maxNicknameLength자 이하여야 합니다.';
+        });
+        return;
+      }
+    }
+
+    // 유효한 길이인 경우 에러 초기화
+    setState(() {
+      _nicknameError = null;
+    });
+  }
+
+  /// 닉네임 글자수가 유효한지 확인
+  bool get _isNicknameLengthValid {
+    final length = _nicknameController.text.length;
+    return length >= _minNicknameLength && length <= _maxNicknameLength;
+  }
+
+  /// 서버에서 닉네임 중복 확인
+  Future<void> _checkNicknameDuplicate() async {
+    if (!_isNicknameLengthValid) return;
+
+    setState(() {
+      _isCheckingNickname = true;
+    });
+
+    try {
+      // TODO: 실제 서버 API 연결
+      // 예시: final isDuplicate = await api.checkNicknameDuplicate(_nicknameController.text);
+      
+      // 임시 시뮬레이션: 'johnDoe'는 중복된 닉네임으로 처리
+      await Future.delayed(const Duration(milliseconds: 500));
+      final isDuplicate = _nicknameController.text.toLowerCase() == 'johndoe';
+
+      if (isDuplicate) {
+        setState(() {
+          _nicknameError = '이미 사용중인 닉네임이에요!';
+        });
+      } else {
+        setState(() {
+          _nicknameError = null;
+        });
+      }
+    } catch (e) {
+      // 에러 처리
+      debugPrint('닉네임 중복 확인 오류: $e');
+    } finally {
+      setState(() {
+        _isCheckingNickname = false;
+      });
+    }
   }
 
   @override
@@ -65,6 +146,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   Widget _buildNicknameSection() {
+    final bool hasError = _nicknameError != null;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -75,30 +158,62 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           ),
         ),
         const SizedBox(height: AppDimens.space12),
-        CustomTextField(
-          controller: _nicknameController,
-          hintText: '닉네임을 입력하세요',
+        Focus(
+          onFocusChange: (hasFocus) {
+            // 포커스를 잃었을 때 서버에서 닉네임 중복 확인
+            if (!hasFocus && _isNicknameLengthValid) {
+              _checkNicknameDuplicate();
+            }
+          },
+          child: CustomTextField(
+            controller: _nicknameController,
+            hintText: '닉네임을 입력하세요',
+            maxLength: _maxNicknameLength,
+            hasError: hasError,
+          ),
         ),
         const SizedBox(height: AppDimens.space8),
-        Row(
-          children: [
-            Container(
-              width: 4,
-              height: 4,
-              margin: const EdgeInsets.only(right: 8),
-              decoration: const BoxDecoration(
-                color: AppColors.textAssistive,
-                shape: BoxShape.circle,
+        // 에러 메시지 표시
+        if (hasError)
+          Row(
+            children: [
+              Container(
+                width: 4,
+                height: 4,
+                margin: const EdgeInsets.only(right: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.statusDestructive,
+                  shape: BoxShape.circle,
+                ),
               ),
-            ),
-            Text(
-              '2~14자 이내로 입력해주세요.',
-              style: AppTextStyles.body14Regular.copyWith(
-                color: AppColors.textAssistive,
+              Text(
+                _nicknameError!,
+                style: AppTextStyles.body14Regular.copyWith(
+                  color: AppColors.statusDestructive,
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          )
+        else
+          Row(
+            children: [
+              Container(
+                width: 4,
+                height: 4,
+                margin: const EdgeInsets.only(right: 8),
+                decoration: const BoxDecoration(
+                  color: AppColors.textAssistive,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              Text(
+                '2~14자 이내로 입력해주세요.',
+                style: AppTextStyles.body14Regular.copyWith(
+                  color: AppColors.textAssistive,
+                ),
+              ),
+            ],
+          ),
       ],
     );
   }
@@ -138,6 +253,10 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   Widget _buildBottomButton() {
+    // 닉네임이 유효하고 에러가 없으며 확인 중이 아닐 때만 버튼 활성화
+    final bool isButtonEnabled =
+        _isNicknameLengthValid && _nicknameError == null && !_isCheckingNickname;
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(AppDimens.space16),
@@ -145,22 +264,36 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           width: double.infinity,
           height: AppDimens.buttonHeight,
           child: ElevatedButton(
-            onPressed: () {
-              // TODO: 저장 로직
-              context.pop();
-            },
+            onPressed: isButtonEnabled
+                ? () {
+                    // TODO: 저장 로직
+                    context.pop();
+                  }
+                : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor:
+                  isButtonEnabled ? AppColors.primary : AppColors.interactionDisabled,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
               elevation: 0,
             ),
-            child: Text(
-              '다음으로',
-              style: AppTextStyles.body16SemiBold.copyWith(color: Colors.white),
-            ),
+            child: _isCheckingNickname
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Text(
+                    '다음으로',
+                    style: AppTextStyles.body16SemiBold.copyWith(
+                      color: isButtonEnabled ? Colors.white : AppColors.textDisabled,
+                    ),
+                  ),
           ),
         ),
       ),

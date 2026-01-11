@@ -13,6 +13,8 @@ class CustomTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.readOnly = false,
     this.onTap,
+    this.maxLength,
+    this.hasError = false,
   });
 
   final TextEditingController controller;
@@ -22,6 +24,8 @@ class CustomTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final bool readOnly;
   final VoidCallback? onTap;
+  final int? maxLength;
+  final bool hasError;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +34,7 @@ class CustomTextField extends StatelessWidget {
       keyboardType: keyboardType,
       readOnly: readOnly,
       onTap: onTap,
+      maxLength: maxLength,
       style: AppTextStyles.body14Regular,
       decoration: InputDecoration(
         hintText: hintText,
@@ -42,6 +47,7 @@ class CustomTextField extends StatelessWidget {
           vertical: AppDimens.space14,
           horizontal: AppDimens.space16,
         ),
+        counterText: '', // maxLength 카운터 숨김
         // 아이콘인 경우 suffixIcon 사용
         suffixIcon: icon != null
             ? Icon(icon, size: AppDimens.iconSize, color: AppColors.textNormal)
@@ -57,11 +63,16 @@ class CustomTextField extends StatelessWidget {
             : null,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.lineNeutral),
+          borderSide: BorderSide(
+            color: hasError ? AppColors.statusDestructive : AppColors.lineNeutral,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.primary, width: 1.2),
+          borderSide: BorderSide(
+            color: hasError ? AppColors.statusDestructive : AppColors.primary,
+            width: 1.2,
+          ),
         ),
       ),
     );

@@ -54,7 +54,7 @@ class _MypageScreenState extends State<MypageScreen> {
             icon: Icons.schedule_outlined,
             title: '다음 운동 일정 변경',
             onTap: () {
-              // TODO: 운동 일정 변경 화면으로 이동
+              context.push('/exercise/reservation');
             },
           ),
           const SizedBox(height: AppDimens.space12),
