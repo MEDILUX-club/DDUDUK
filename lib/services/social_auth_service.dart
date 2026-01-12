@@ -10,8 +10,8 @@ import 'package:dduduk_app/models/auth/post_auth_login.dart';
 
 /// 소셜 로그인 결과를 담는 클래스
 class SocialLoginResult {
-  final String provider;
-  final String id;
+  final String provider;  // kakao, naver, apple
+  final String id;        // 소셜 서비스 사용자 ID
   final String? email;
   final String? nickname;
   final String? profileImage;
@@ -34,12 +34,8 @@ class SocialLoginResult {
   /// LoginRequest로 변환 (API 호출용)
   LoginRequest toLoginRequest() {
     return LoginRequest(
-      provider: provider,
-      providerId: id,
-      email: email,
-      nickname: nickname,
-      profileImage: profileImage,
-      accessToken: accessToken,
+      socialType: provider.toUpperCase(),  // KAKAO, NAVER, APPLE
+      socialId: id,
     );
   }
 }

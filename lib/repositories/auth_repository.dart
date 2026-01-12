@@ -1,6 +1,7 @@
 import 'package:dduduk_app/api/api_client.dart';
 import 'package:dduduk_app/api/endpoints.dart';
 import 'package:dduduk_app/models/auth/post_auth_login.dart';
+import 'package:dduduk_app/models/auth/post_auth_refresh.dart';
 import 'package:dduduk_app/services/token_service.dart';
 
 /// 인증 관련 API Repository
@@ -28,38 +29,43 @@ class AuthRepository {
     await tokenService.saveTokens(
       accessToken: loginResponse.accessToken,
       refreshToken: loginResponse.refreshToken,
-      userId: loginResponse.user.id,
+      userId: loginResponse.userId,
     );
 
     return loginResponse;
   }
 
   /// 토큰 갱신
-  Future<LoginResponse> refresh() async {
+  Future<RefreshResponse> refresh() async {
     final tokenService = await TokenService.getInstance();
-    final refreshToken = tokenService.getRefreshToken();
+    final currentRefreshToken = tokenService.getRefreshToken();
 
-    if (refreshToken == null) {
+    if (currentRefreshToken == null) {
       throw Exception('Refresh token not found');
     }
 
+    final request = RefreshRequest(refreshToken: currentRefreshToken);
     final response = await _apiClient.post(
       Endpoints.refresh,
-      data: {'refreshToken': refreshToken},
+      data: request.toJson(),
     );
 
-    final loginResponse = LoginResponse.fromJson(
+    final refreshResponse = RefreshResponse.fromJson(
       response.data as Map<String, dynamic>,
     );
 
     // 새 토큰 저장
+    final currentUserId = tokenService.getUserId();
+    if (currentUserId == null) {
+      throw Exception('User ID not found');
+    }
     await tokenService.saveTokens(
-      accessToken: loginResponse.accessToken,
-      refreshToken: loginResponse.refreshToken,
-      userId: loginResponse.user.id,
+      accessToken: refreshResponse.accessToken,
+      refreshToken: refreshResponse.refreshToken,
+      userId: currentUserId,
     );
 
-    return loginResponse;
+    return refreshResponse;
   }
 
   /// 로그아웃

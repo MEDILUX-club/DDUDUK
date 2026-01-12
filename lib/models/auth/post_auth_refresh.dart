@@ -1,25 +1,20 @@
-// POST /api/auth/login - 소셜 로그인
+// POST /api/auth/refresh - 토큰 재발급
 //
-// Request: LoginRequest
-// Response: LoginResponse
+// Request: RefreshRequest
+// Response: RefreshResponse
 
 // ──────────────────────────────────────
 // Request
 // ──────────────────────────────────────
 
-/// 소셜 로그인 요청
-class LoginRequest {
-  final String socialType;  // KAKAO, NAVER, APPLE
-  final String socialId;    // 소셜 서비스에서 발급받은 사용자 ID
+/// 토큰 갱신 요청
+class RefreshRequest {
+  final String refreshToken;
 
-  LoginRequest({
-    required this.socialType,
-    required this.socialId,
-  });
+  RefreshRequest({required this.refreshToken});
 
   Map<String, dynamic> toJson() => {
-        'socialType': socialType.toUpperCase(),
-        'socialId': socialId,
+        'refreshToken': refreshToken,
       };
 }
 
@@ -27,24 +22,18 @@ class LoginRequest {
 // Response
 // ──────────────────────────────────────
 
-/// 소셜 로그인 응답
-class LoginResponse {
-  final int userId;
-  final String nickname;
+/// 토큰 갱신 응답
+class RefreshResponse {
   final String accessToken;
   final String refreshToken;
 
-  LoginResponse({
-    required this.userId,
-    required this.nickname,
+  RefreshResponse({
     required this.accessToken,
     required this.refreshToken,
   });
 
-  factory LoginResponse.fromJson(Map<String, dynamic> json) {
-    return LoginResponse(
-      userId: json['userId'] as int,
-      nickname: json['nickname'] as String? ?? '',
+  factory RefreshResponse.fromJson(Map<String, dynamic> json) {
+    return RefreshResponse(
       accessToken: json['accessToken'] as String,
       refreshToken: json['refreshToken'] as String,
     );

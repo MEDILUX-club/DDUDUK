@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/screens/auth/terms_agreement_screen.dart';
 import 'package:dduduk_app/services/social_auth_service.dart';
 import 'package:dduduk_app/repositories/auth_repository.dart';
+import 'package:dduduk_app/repositories/pain_survey_repository.dart';
 import 'package:dduduk_app/api/api_exception.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
@@ -22,6 +23,7 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   bool _isLoading = false;
   final AuthRepository _authRepository = AuthRepository();
+  final PainSurveyRepository _painSurveyRepository = PainSurveyRepository();
 
   /// 로딩 상태 표시
   void _setLoading(bool loading) {
@@ -49,19 +51,20 @@ class _SignInScreenState extends State<SignInScreen> {
       final loginResponse = await _authRepository.login(
         socialResult.toLoginRequest(),
       );
-      debugPrint('서버 로그인 성공: userId=${loginResponse.user.id}');
+      debugPrint('서버 로그인 성공: userId=${loginResponse.userId}');
 
       if (!mounted) return;
 
-      // 3. 사용자 상태에 따라 화면 이동
-      if (loginResponse.isNewUser) {
-        // 신규 유저: 약관 동의 → 초기 설문
+      // 3. Pain Survey 존재 여부로 사용자 상태 판단
+      final painSurvey = await _painSurveyRepository.getPainSurvey();
+      
+      if (!mounted) return;
+
+      if (painSurvey == null) {
+        // 설문 미완료: 약관 동의 → 초기 설문
         _navigateToTerms();
-      } else if (loginResponse.user.isInitialUser) {
-        // 기존 유저지만 초기 설문 미완료: exercise_main_empty
-        context.go('/exercise-main-empty');
       } else {
-        // 기존 유저 (초기 설문 완료): exercise_main
+        // 설문 완료: 메인 화면
         context.go('/exercise-main');
       }
     } on ApiException catch (e) {
