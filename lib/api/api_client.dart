@@ -215,9 +215,9 @@ class _LoggingInterceptor extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (kDebugMode) {
       debugPrint('┌─────────────────────────────────────');
-      debugPrint('│ 📤 REQUEST: ${options.method} ${options.uri}');
+      debugPrint('│  REQUEST: ${options.method} ${options.uri}');
       if (options.data != null) {
-        debugPrint('│ 📦 Body: ${options.data}');
+        debugPrint('│  Body: ${options.data}');
       }
       debugPrint('└─────────────────────────────────────');
     }
@@ -228,8 +228,8 @@ class _LoggingInterceptor extends Interceptor {
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     if (kDebugMode) {
       debugPrint('┌─────────────────────────────────────');
-      debugPrint('│ 📥 RESPONSE: ${response.statusCode} ${response.requestOptions.uri}');
-      debugPrint('│ 📦 Data: ${response.data}');
+      debugPrint('│  RESPONSE: ${response.statusCode} ${response.requestOptions.uri}');
+      debugPrint('│  Data: ${response.data}');
       debugPrint('└─────────────────────────────────────');
     }
     handler.next(response);
@@ -239,10 +239,10 @@ class _LoggingInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     if (kDebugMode) {
       debugPrint('┌─────────────────────────────────────');
-      debugPrint('│ ❌ ERROR: ${err.response?.statusCode} ${err.requestOptions.uri}');
-      debugPrint('│ 💬 Message: ${err.message}');
+      debugPrint('│  ERROR: ${err.response?.statusCode} ${err.requestOptions.uri}');
+      debugPrint('│  Message: ${err.message}');
       if (err.response?.data != null) {
-        debugPrint('│ 📦 Data: ${err.response?.data}');
+        debugPrint('│ Data: ${err.response?.data}');
       }
       debugPrint('└─────────────────────────────────────');
     }

@@ -7,6 +7,7 @@ import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/common/custom_text_field.dart';
 import 'package:dduduk_app/widgets/mypage/profile_photo_picker.dart';
+import 'package:dduduk_app/repositories/user_repository.dart';
 
 /// 프로필 설정 화면
 class ProfileEditScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   final _nicknameController = TextEditingController(text: 'johnDoe');
   final _heightController = TextEditingController(text: '160');
   final _weightController = TextEditingController(text: '160');
+  final _userRepository = UserRepository();
 
   File? _profileImage;
 
@@ -86,14 +88,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     });
 
     try {
-      // TODO: 실제 서버 API 연결
-      // 예시: final isDuplicate = await api.checkNicknameDuplicate(_nicknameController.text);
-      
-      // 임시 시뮬레이션: 'johnDoe'는 중복된 닉네임으로 처리
-      await Future.delayed(const Duration(milliseconds: 500));
-      final isDuplicate = _nicknameController.text.toLowerCase() == 'johndoe';
+      // 실제 서버 API 호출
+      final isAvailable = await _userRepository.checkNicknameDuplicate(
+        _nicknameController.text,
+      );
 
-      if (isDuplicate) {
+      if (!isAvailable) {
         setState(() {
           _nicknameError = '이미 사용중인 닉네임이에요!';
         });
@@ -105,6 +105,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     } catch (e) {
       // 에러 처리
       debugPrint('닉네임 중복 확인 오류: $e');
+      setState(() {
+        _nicknameError = '닉네임 확인 중 오류가 발생했습니다.';
+      });
     } finally {
       setState(() {
         _isCheckingNickname = false;

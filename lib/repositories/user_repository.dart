@@ -1,6 +1,7 @@
 import 'package:dduduk_app/api/api_client.dart';
 import 'package:dduduk_app/api/endpoints.dart';
 import 'package:dduduk_app/models/user/put_users_profile.dart';
+import 'package:dduduk_app/models/user/get_users_check_nickname.dart';
 import 'package:dduduk_app/services/token_service.dart';
 
 /// 사용자 프로필 API Repository
@@ -65,5 +66,21 @@ class UserRepository {
       height: height,
       weight: weight,
     ));
+  }
+
+  /// 닉네임 중복 확인
+  ///
+  /// 사용 가능하면 true, 이미 사용 중이면 false 반환
+  Future<bool> checkNicknameDuplicate(String nickname) async {
+    final response = await _apiClient.get(
+      Endpoints.checkNickname,
+      queryParameters: {'nickname': nickname},
+    );
+
+    final result = CheckNicknameResponse.fromJson(
+      response.data as Map<String, dynamic>,
+    );
+
+    return result.available;
   }
 }
