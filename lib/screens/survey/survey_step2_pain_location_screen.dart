@@ -9,10 +9,12 @@ class SurveyStep2PainLocationScreen extends StatefulWidget {
     super.key,
     this.readOnly = false,
     this.initialSelectedParts,
+    this.isChangePart = false,
   });
 
   final bool readOnly;
   final Set<String>? initialSelectedParts;
+  final bool isChangePart;
 
   @override
   State<SurveyStep2PainLocationScreen> createState() =>
@@ -71,6 +73,7 @@ class _SurveyStep2PainLocationScreenState
             MaterialPageRoute(
               builder: (_) => SurveyStep3PainLevelScreen(
                 readOnly: widget.readOnly,
+                isChangePart: widget.isChangePart,
               ),
             ),
           );

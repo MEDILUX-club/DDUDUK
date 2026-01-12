@@ -14,12 +14,14 @@ class SurveyStep3PainLevelScreen extends StatefulWidget {
     this.initialKnee,
     this.initialPainAreas,
     this.initialPainSince,
+    this.isChangePart = false,
   });
 
   final bool readOnly;
   final String? initialKnee;
   final List<String>? initialPainAreas;
   final String? initialPainSince;
+  final bool isChangePart;
 
   @override
   State<SurveyStep3PainLevelScreen> createState() =>
@@ -100,6 +102,7 @@ class _SurveyStep3PainLevelScreenState
             MaterialPageRoute(
               builder: (_) => SurveyStep4LifestyleScreen(
                 readOnly: widget.readOnly,
+                isChangePart: widget.isChangePart,
               ),
             ),
           );

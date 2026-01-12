@@ -15,6 +15,7 @@ class SurveyStep4LifestyleScreen extends StatefulWidget {
     this.initialPainPattern,
     this.initialPainTriggers,
     this.initialPainDuration,
+    this.isChangePart = false,
   });
 
   final bool readOnly;
@@ -22,6 +23,7 @@ class SurveyStep4LifestyleScreen extends StatefulWidget {
   final String? initialPainPattern;
   final Set<String>? initialPainTriggers;
   final String? initialPainDuration;
+  final bool isChangePart;
 
   @override
   State<SurveyStep4LifestyleScreen> createState() =>
@@ -107,6 +109,7 @@ class _SurveyStep4LifestyleScreenState
             MaterialPageRoute(
               builder: (_) => SurveyStep5WorkoutExpScreen(
                 readOnly: widget.readOnly,
+                isChangePart: widget.isChangePart,
               ),
             ),
           );

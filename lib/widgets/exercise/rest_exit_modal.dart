@@ -4,13 +4,24 @@ import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/buttons/primary_button.dart';
 
-/// 운동을 중단하고 나갈지 확인하는 다이얼로그
+/// 경고/확인 다이얼로그
 ///
 /// [Navigator.pop]을 통해 결과 반환:
-/// - true: 나가기
-/// - false: 계속하기 (또는 null)
+/// - true: 확인 (나가기/변경하기 등)
+/// - false: 취소 (계속하기 등)
 class RestExitModal extends StatelessWidget {
-  const RestExitModal({super.key});
+  const RestExitModal({
+    super.key,
+    this.title = '운동을 중단하고 나가시겠어요?',
+    this.description = '',
+    this.cancelText = '계속하기',
+    this.confirmText = '나가기',
+  });
+
+  final String title;
+  final String description;
+  final String cancelText;
+  final String confirmText;
 
   @override
   Widget build(BuildContext context) {
@@ -34,21 +45,23 @@ class RestExitModal extends StatelessWidget {
             const SizedBox(height: 12), // 간격 축소
             // 제목
             Text(
-              '운동을 중단하고 나가시겠어요?',
+              title,
               style: AppTextStyles.body18SemiBold.copyWith(
                 color: AppColors.textStrong,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 4),
-            // 내용
-            Text(
-              '언제든 다시 이어서 진행할 수 있어요',
-              style: AppTextStyles.body14Medium.copyWith(
-                color: AppColors.textNeutral,
+            if (description.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              // 내용
+              Text(
+                description,
+                style: AppTextStyles.body14Medium.copyWith(
+                  color: AppColors.textNeutral,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
+            ],
             const SizedBox(height: 20), // 간격 축소
             // 버튼 영역
             Row(
@@ -67,7 +80,7 @@ class RestExitModal extends StatelessWidget {
                         backgroundColor: Colors.white,
                       ),
                       child: Text(
-                        '계속하기',
+                        cancelText,
                         style: AppTextStyles.body16Medium.copyWith(
                           color: AppColors.textNormal,
                         ),
@@ -79,7 +92,7 @@ class RestExitModal extends StatelessWidget {
                 // 나가기 버튼 (확인)
                 Expanded(
                   child: BaseButton(
-                    text: '나가기',
+                    text: confirmText,
                     onPressed: () => Navigator.of(context).pop(true),
                     fontWeight: FontWeight.w500,
                     height: 48,

@@ -6,6 +6,8 @@ import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/screens/survey/survey_step1_basic_info_screen.dart';
+import 'package:dduduk_app/screens/survey/survey_step2_pain_location_screen.dart';
+import 'package:dduduk_app/widgets/exercise/rest_exit_modal.dart';
 
 /// 마이페이지 화면
 class MypageScreen extends StatefulWidget {
@@ -76,8 +78,24 @@ class _MypageScreenState extends State<MypageScreen> {
           _MenuItemCard(
             svgIconPath: 'assets/icons/ic_profile.svg',
             title: '운동 부위 변경하기',
-            onTap: () {
-              // TODO: 운동 부위 변경 화면으로 이동
+            onTap: () async {
+              final result = await showDialog<bool>(
+                context: context,
+                builder: (_) => const RestExitModal(
+                  title: '부위 변경 시 통증 설문을 다시 진행하며,\n운동 루틴이 새로 설정돼요.',
+                  cancelText: '취소하기',
+                  confirmText: '변경하기',
+                ),
+              );
+              if (result == true) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const SurveyStep2PainLocationScreen(
+                      isChangePart: true,
+                    ),
+                  ),
+                );
+              }
             },
           ),
           const SizedBox(height: AppDimens.space24),

@@ -11,10 +11,12 @@ class SurveyStep5WorkoutExpScreen extends StatefulWidget {
     super.key,
     this.readOnly = false,
     this.initialRisk,
+    this.isChangePart = false,
   });
 
   final bool readOnly;
   final String? initialRisk;
+  final bool isChangePart;
 
   @override
   State<SurveyStep5WorkoutExpScreen> createState() =>
@@ -53,6 +55,9 @@ class _SurveyStep5WorkoutExpScreenState
 
   @override
   Widget build(BuildContext context) {
+    final bool shouldPopToMypage = widget.readOnly || widget.isChangePart;
+    final String nextButtonText = shouldPopToMypage ? '닫기' : '다음으로';
+    
     return SurveyLayout(
       readOnly: widget.readOnly,
       title:
@@ -65,12 +70,12 @@ class _SurveyStep5WorkoutExpScreenState
       bottomButtons: SurveyButtonsConfig(
         prevText: '이전으로',
         onPrev: () => Navigator.of(context).pop(),
-        nextText: widget.readOnly ? '닫기' : '다음으로',
+        nextText: nextButtonText,
         onNext: () {
-          if (widget.readOnly) {
-            // Pop all 5 survey screens back to mypage
+          if (shouldPopToMypage) {
+            // Pop all survey screens back to mypage
             int count = 0;
-            Navigator.of(context).popUntil((_) => count++ >= 5);
+            Navigator.of(context).popUntil((_) => count++ >= (widget.isChangePart ? 4 : 5));
           } else {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const SurveyStep6ResultScreen()),
