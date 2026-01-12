@@ -194,24 +194,29 @@ class _Badge extends StatelessWidget {
 
   final String code;
 
+  String get _imagePath {
+    switch (code) {
+      case 'OA':
+        return 'assets/images/img_OA.png';
+      case 'INF':
+        return 'assets/images/img_INF.png';
+      case 'TRM':
+        return 'assets/images/img_TRM.png';
+      case 'OVR':
+        return 'assets/images/img_OVR.png';
+      default:
+        return 'assets/images/img_OA.png';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 160,
-      height: 160,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: AppColors.primaryLight,
-        border: Border.all(color: AppColors.primary, width: 5),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        code,
-        style: AppTextStyles.titleText1.copyWith(
-          fontSize: 60,
-          fontWeight: FontWeight.w800,
-          color: AppColors.textStrong,
-        ),
+    return ClipOval(
+      child: Image.asset(
+        _imagePath,
+        width: 160,
+        height: 160,
+        fit: BoxFit.cover,
       ),
     );
   }
