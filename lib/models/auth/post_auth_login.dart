@@ -17,10 +17,12 @@ class LoginRequest {
     required this.socialId,
   });
 
-  Map<String, dynamic> toJson() => {
-        'socialType': socialType.toUpperCase(),
-        'socialId': socialId,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      'socialType': socialType.toUpperCase(),
+      'socialId': socialId,
+    };
+  }
 }
 
 // ──────────────────────────────────────

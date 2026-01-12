@@ -100,6 +100,16 @@ class _SurveyStep3PainLevelScreenState
         onPrev: () => Navigator.of(context).pop(),
         nextText: '다음으로',
         onNext: () {
+          // 유효성 검사
+          if (_selectedKnee == null ||
+              _selectedPainAreas.isEmpty ||
+              _painSince == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('모든 항목을 선택해주세요')),
+            );
+            return;
+          }
+
           // Save to provider
           ref.read(surveyProvider.notifier).updatePainBasicInfo(
                 affectedSide: _selectedKnee,

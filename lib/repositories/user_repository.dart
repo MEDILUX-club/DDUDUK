@@ -83,4 +83,17 @@ class UserRepository {
 
     return result.available;
   }
+
+  /// 모든 설문 초기화
+  ///
+  /// 통증설문, 운동능력평가, 일일통증기록, 운동피드백을 모두 삭제
+  /// 통증 부위 변경 시 사용
+  Future<void> resetSurveys() async {
+    final userId = TokenService.instance.getUserId();
+    if (userId == null) {
+      throw Exception('User not logged in');
+    }
+
+    await _apiClient.delete(Endpoints.resetSurveys(userId));
+  }
 }

@@ -107,6 +107,21 @@ class _SurveyStep4LifestyleScreenState
         onPrev: () => Navigator.of(context).pop(),
         nextText: '다음으로',
         onNext: () {
+          // 유효성 검사
+          if (_selectedPainTriggers.isEmpty || _selectedPainPattern == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('모든 항목을 선택해주세요')),
+            );
+            return;
+          }
+          if (_selectedPainPattern == '아침에 일어나면 뻣뻣해요' &&
+              _selectedPainDuration == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('통증 지속시간을 선택해주세요')),
+            );
+            return;
+          }
+
           // Save to provider
           ref.read(surveyProvider.notifier).updatePainDetailInfo(
                 painLevel: _painLevel,

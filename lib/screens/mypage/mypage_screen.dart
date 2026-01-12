@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/screens/survey/survey_step1_basic_info_screen.dart';
 import 'package:dduduk_app/screens/survey/survey_step2_pain_location_screen.dart';
 import 'package:dduduk_app/widgets/exercise/rest_exit_modal.dart';
+import 'package:dduduk_app/repositories/user_repository.dart';
 
 /// 마이페이지 화면
 class MypageScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class MypageScreen extends StatefulWidget {
 
 class _MypageScreenState extends State<MypageScreen> {
   final int _currentNavIndex = 2; // 마이페이지 탭 선택
+  final _userRepository = UserRepository();
 
   void _onNavTap(int index) {
     if (index == _currentNavIndex) return;
@@ -87,14 +89,32 @@ class _MypageScreenState extends State<MypageScreen> {
                   confirmText: '변경하기',
                 ),
               );
-              if (result == true) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const SurveyStep2PainLocationScreen(
-                      isChangePart: true,
-                    ),
-                  ),
-                );
+              if (result == true && mounted) {
+                try {
+                  // 기존 설문 데이터 삭제
+                  await _userRepository.resetSurveys();
+
+                  // 설문 화면으로 이동
+                  if (mounted) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const SurveyStep2PainLocationScreen(
+                          isChangePart: true,
+                        ),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  // 에러 처리
+                  debugPrint('설문 초기화 오류: $e');
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('설문 초기화 중 오류가 발생했습니다.'),
+                      ),
+                    );
+                  }
+                }
               }
             },
           ),

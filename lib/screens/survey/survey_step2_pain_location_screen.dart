@@ -62,7 +62,7 @@ class _SurveyStep2PainLocationScreenState
     return SurveyLayout(
       readOnly: widget.readOnly,
       title: '어디가 아프신가요?',
-      description: '통증이 있는 부위를 모두 선택해주세요.',
+      description: '통증이 있는 부위를 선택해주세요.',
       stepLabel: '2. 통증부위',
       currentStep: 2,
       totalSteps: 6,
@@ -71,10 +71,16 @@ class _SurveyStep2PainLocationScreenState
         onPrev: () => Navigator.of(context).pop(),
         nextText: '다음으로',
         onNext: () {
-          // Save to provider
-          if (selectedParts.isNotEmpty) {
-            ref.read(surveyProvider.notifier).updatePainArea(selectedParts.first);
+          // 유효성 검사
+          if (selectedParts.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('통증 부위를 선택해주세요')),
+            );
+            return;
           }
+
+          // Save to provider
+          ref.read(surveyProvider.notifier).updatePainArea(selectedParts.first);
 
           Navigator.of(context).push(
             MaterialPageRoute(

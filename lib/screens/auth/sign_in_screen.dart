@@ -51,21 +51,34 @@ class _SignInScreenState extends State<SignInScreen> {
       final loginResponse = await _authRepository.login(
         socialResult.toLoginRequest(),
       );
-      debugPrint('서버 로그인 성공: userId=${loginResponse.userId}');
+      debugPrint('서버 로그인 성공: userId=${loginResponse.userId}, nickname=${loginResponse.nickname}');
 
       if (!mounted) return;
 
-      // 3. Pain Survey 존재 여부로 사용자 상태 판단
-      final painSurvey = await _painSurveyRepository.getPainSurvey();
-      
-      if (!mounted) return;
-
-      if (painSurvey == null) {
-        // 설문 미완료: 약관 동의 → 초기 설문
+      // 3. 프로필 정보 존재 여부로 사용자 상태 판단
+      if (loginResponse.nickname.isEmpty) {
+        // 프로필 미설정: 약관 동의 → 초기 설문
         _navigateToTerms();
       } else {
-        // 설문 완료: 메인 화면
-        context.go('/exercise-main');
+        // 프로필 설정 완료: Pain Survey 확인
+        try {
+          final painSurvey = await _painSurveyRepository.getPainSurvey();
+
+          if (!mounted) return;
+
+          if (painSurvey == null) {
+            // 설문 미완료: 초기 설문으로 이동
+            _navigateToTerms();
+          } else {
+            // 설문 완료: 메인 화면
+            context.go('/exercise-main');
+          }
+        } catch (e) {
+          // Pain Survey 조회 실패 (403 등): 초기 설문으로 이동
+          debugPrint('Pain Survey 조회 오류: $e');
+          if (!mounted) return;
+          _navigateToTerms();
+        }
       }
     } on ApiException catch (e) {
       debugPrint('API 에러: $e');

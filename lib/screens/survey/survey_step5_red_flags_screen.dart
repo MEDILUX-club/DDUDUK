@@ -74,6 +74,14 @@ class _SurveyStep5WorkoutExpScreenState
         onPrev: () => Navigator.of(context).pop(),
         nextText: nextButtonText,
         onNext: () async {
+          // 유효성 검사
+          if (_selectedRisk == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('위험 신호를 선택해주세요')),
+            );
+            return;
+          }
+
           if (shouldPopToMypage) {
             // Pop all survey screens back to mypage
             int count = 0;
@@ -82,11 +90,11 @@ class _SurveyStep5WorkoutExpScreenState
             // Save red flags and submit survey
             final notifier = ref.read(surveyProvider.notifier);
             notifier.updateRedFlags(_selectedRisk ?? '해당 사항 없음');
-            
+
             // Submit to API
             final success = await notifier.submitSurvey();
             if (!context.mounted) return;
-            
+
             if (success) {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const SurveyStep6ResultScreen()),

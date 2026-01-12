@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:dduduk_app/api/api_client.dart';
 import 'package:dduduk_app/api/endpoints.dart';
 import 'package:dduduk_app/models/survey/post_users_pain_survey.dart';
@@ -17,6 +18,13 @@ class PainSurveyRepository {
   /// Returns AI 진단 결과가 포함된 응답
   Future<PainSurveyResponse> createPainSurvey(SurveyData surveyData) async {
     final userId = TokenService.instance.getUserId();
+    final accessToken = TokenService.instance.getAccessToken();
+
+    debugPrint('📝 Pain Survey 제출 시도');
+    debugPrint('  - User ID: $userId');
+    debugPrint('  - Access Token 존재: ${accessToken != null}');
+    debugPrint('  - Token 길이: ${accessToken?.length ?? 0}');
+
     if (userId == null) {
       throw Exception('User not logged in');
     }

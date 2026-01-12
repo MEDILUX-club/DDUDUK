@@ -92,6 +92,17 @@ class _SurveyStep1BasicInfoScreenState
       bottomButtons: SurveyButtonsConfig(
         nextText: '다음으로',
         onNext: () {
+          // 유효성 검사
+          if (_birthController.text.isEmpty ||
+              _heightController.text.isEmpty ||
+              _weightController.text.isEmpty ||
+              _selectedGender == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('모든 항목을 입력해주세요')),
+            );
+            return;
+          }
+
           // Save to provider
           ref.read(surveyProvider.notifier).updateBasicInfo(
                 birthDate: _birthController.text,
