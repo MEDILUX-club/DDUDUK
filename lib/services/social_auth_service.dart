@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:dduduk_app/models/auth/post_auth_login.dart';
 
 /// 소셜 로그인 결과를 담는 클래스
 class SocialLoginResult {
@@ -28,6 +29,18 @@ class SocialLoginResult {
   @override
   String toString() {
     return 'SocialLoginResult(provider: $provider, id: $id, email: $email, nickname: $nickname)';
+  }
+
+  /// LoginRequest로 변환 (API 호출용)
+  LoginRequest toLoginRequest() {
+    return LoginRequest(
+      provider: provider,
+      providerId: id,
+      email: email,
+      nickname: nickname,
+      profileImage: profileImage,
+      accessToken: accessToken,
+    );
   }
 }
 

@@ -2,8 +2,11 @@
     show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/screens/auth/terms_agreement_screen.dart';
 import 'package:dduduk_app/services/social_auth_service.dart';
+import 'package:dduduk_app/repositories/auth_repository.dart';
+import 'package:dduduk_app/api/api_exception.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
@@ -18,6 +21,7 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   bool _isLoading = false;
+  final AuthRepository _authRepository = AuthRepository();
 
   /// 로딩 상태 표시
   void _setLoading(bool loading) {
@@ -26,58 +30,73 @@ class _SignInScreenState extends State<SignInScreen> {
     }
   }
 
-  /// 카카오 로그인
-  Future<void> _signInWithKakao() async {
+  /// 통합 로그인 처리: 소셜 로그인 → 서버 로그인 → 화면 이동
+  Future<void> _handleSocialLogin(
+    Future<SocialLoginResult?> Function() socialLoginFn,
+    String providerName,
+  ) async {
     _setLoading(true);
     try {
-      final result = await SocialAuthService.signInWithKakao();
-      if (result != null && mounted) {
-        debugPrint('카카오 로그인 성공: $result');
-        _navigateToTerms();
-      } else {
-        _showError('카카오 로그인에 실패했습니다.');
+      // 1. 소셜 로그인
+      final socialResult = await socialLoginFn();
+      if (socialResult == null) {
+        _showError('$providerName 로그인에 실패했습니다.');
+        return;
       }
+      debugPrint('$providerName 소셜 로그인 성공: $socialResult');
+
+      // 2. 서버 로그인 (JWT 토큰 발급)
+      final loginResponse = await _authRepository.login(
+        socialResult.toLoginRequest(),
+      );
+      debugPrint('서버 로그인 성공: userId=${loginResponse.user.id}');
+
+      if (!mounted) return;
+
+      // 3. 사용자 상태에 따라 화면 이동
+      if (loginResponse.isNewUser) {
+        // 신규 유저: 약관 동의 → 초기 설문
+        _navigateToTerms();
+      } else if (loginResponse.user.isInitialUser) {
+        // 기존 유저지만 초기 설문 미완료: exercise_main_empty
+        context.go('/exercise-main-empty');
+      } else {
+        // 기존 유저 (초기 설문 완료): exercise_main
+        context.go('/exercise-main');
+      }
+    } on ApiException catch (e) {
+      debugPrint('API 에러: $e');
+      _showError(e.userMessage);
     } catch (e) {
-      _showError('카카오 로그인 중 오류가 발생했습니다.');
+      debugPrint('$providerName 로그인 중 오류: $e');
+      _showError('$providerName 로그인 중 오류가 발생했습니다.');
     } finally {
       _setLoading(false);
     }
+  }
+
+  /// 카카오 로그인
+  Future<void> _signInWithKakao() async {
+    await _handleSocialLogin(
+      SocialAuthService.signInWithKakao,
+      '카카오',
+    );
   }
 
   /// 네이버 로그인
   Future<void> _signInWithNaver() async {
-    _setLoading(true);
-    try {
-      final result = await SocialAuthService.signInWithNaver();
-      if (result != null && mounted) {
-        debugPrint('네이버 로그인 성공: $result');
-        _navigateToTerms();
-      } else {
-        _showError('네이버 로그인에 실패했습니다.');
-      }
-    } catch (e) {
-      _showError('네이버 로그인 중 오류가 발생했습니다.');
-    } finally {
-      _setLoading(false);
-    }
+    await _handleSocialLogin(
+      SocialAuthService.signInWithNaver,
+      '네이버',
+    );
   }
 
   /// 애플 로그인
   Future<void> _signInWithApple() async {
-    _setLoading(true);
-    try {
-      final result = await SocialAuthService.signInWithApple();
-      if (result != null && mounted) {
-        debugPrint('애플 로그인 성공: $result');
-        _navigateToTerms();
-      } else {
-        _showError('애플 로그인에 실패했습니다.');
-      }
-    } catch (e) {
-      _showError('애플 로그인 중 오류가 발생했습니다.');
-    } finally {
-      _setLoading(false);
-    }
+    await _handleSocialLogin(
+      SocialAuthService.signInWithApple,
+      '애플',
+    );
   }
 
   /// 약관 동의 화면으로 이동

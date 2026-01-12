@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dduduk_app/layouts/default_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step1_basic_info_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:dduduk_app/providers/survey_provider.dart';
 
-class SurveyIntroScreen extends StatelessWidget {
+class SurveyIntroScreen extends ConsumerWidget {
   const SurveyIntroScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return DefaultLayout(
       title: '',
       backgroundColor: AppColors.fillDefault,
@@ -117,6 +119,9 @@ class SurveyIntroScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
+                    // Reset survey data for new survey
+                    ref.read(surveyProvider.notifier).reset();
+
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => const SurveyStep1BasicInfoScreen(),

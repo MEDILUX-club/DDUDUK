@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step3_pain_basic_screen.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/widgets/survey/pain_location_card.dart';
+import 'package:dduduk_app/providers/survey_provider.dart';
 
-class SurveyStep2PainLocationScreen extends StatefulWidget {
+class SurveyStep2PainLocationScreen extends ConsumerStatefulWidget {
   const SurveyStep2PainLocationScreen({
     super.key,
     this.readOnly = false,
@@ -17,12 +19,12 @@ class SurveyStep2PainLocationScreen extends StatefulWidget {
   final bool isChangePart;
 
   @override
-  State<SurveyStep2PainLocationScreen> createState() =>
+  ConsumerState<SurveyStep2PainLocationScreen> createState() =>
       _SurveyStep2PainLocationScreenState();
 }
 
 class _SurveyStep2PainLocationScreenState
-    extends State<SurveyStep2PainLocationScreen> {
+    extends ConsumerState<SurveyStep2PainLocationScreen> {
   late Set<String> selectedParts;
 
   final List<Map<String, String>> _parts = [
@@ -69,6 +71,11 @@ class _SurveyStep2PainLocationScreenState
         onPrev: () => Navigator.of(context).pop(),
         nextText: '다음으로',
         onNext: () {
+          // Save to provider
+          if (selectedParts.isNotEmpty) {
+            ref.read(surveyProvider.notifier).updatePainArea(selectedParts.first);
+          }
+
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (_) => SurveyStep3PainLevelScreen(

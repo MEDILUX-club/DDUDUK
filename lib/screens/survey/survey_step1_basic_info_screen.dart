@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step2_pain_location_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/common/custom_text_field.dart';
+import 'package:dduduk_app/providers/survey_provider.dart';
 
-class SurveyStep1BasicInfoScreen extends StatefulWidget {
+class SurveyStep1BasicInfoScreen extends ConsumerStatefulWidget {
   const SurveyStep1BasicInfoScreen({
     super.key,
     this.readOnly = false,
@@ -23,12 +25,12 @@ class SurveyStep1BasicInfoScreen extends StatefulWidget {
   final String? initialGender;
 
   @override
-  State<SurveyStep1BasicInfoScreen> createState() =>
+  ConsumerState<SurveyStep1BasicInfoScreen> createState() =>
       _SurveyStep1BasicInfoScreenState();
 }
 
 class _SurveyStep1BasicInfoScreenState
-    extends State<SurveyStep1BasicInfoScreen> {
+    extends ConsumerState<SurveyStep1BasicInfoScreen> {
   final TextEditingController _birthController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
@@ -90,6 +92,14 @@ class _SurveyStep1BasicInfoScreenState
       bottomButtons: SurveyButtonsConfig(
         nextText: '다음으로',
         onNext: () {
+          // Save to provider
+          ref.read(surveyProvider.notifier).updateBasicInfo(
+                birthDate: _birthController.text,
+                height: int.tryParse(_heightController.text),
+                weight: int.tryParse(_weightController.text),
+                gender: _selectedGender,
+              );
+
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (_) => SurveyStep2PainLocationScreen(

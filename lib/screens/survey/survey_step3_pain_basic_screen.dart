@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step4_pain_detail_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
@@ -6,8 +7,9 @@ import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/widgets/common/selectable_option_card.dart';
+import 'package:dduduk_app/providers/survey_provider.dart';
 
-class SurveyStep3PainLevelScreen extends StatefulWidget {
+class SurveyStep3PainLevelScreen extends ConsumerStatefulWidget {
   const SurveyStep3PainLevelScreen({
     super.key,
     this.readOnly = false,
@@ -24,12 +26,12 @@ class SurveyStep3PainLevelScreen extends StatefulWidget {
   final bool isChangePart;
 
   @override
-  State<SurveyStep3PainLevelScreen> createState() =>
+  ConsumerState<SurveyStep3PainLevelScreen> createState() =>
       _SurveyStep3PainLevelScreenState();
 }
 
 class _SurveyStep3PainLevelScreenState
-    extends State<SurveyStep3PainLevelScreen> {
+    extends ConsumerState<SurveyStep3PainLevelScreen> {
   String? _selectedKnee;
   late List<String> _selectedPainAreas;
   String? _painSince;
@@ -98,6 +100,13 @@ class _SurveyStep3PainLevelScreenState
         onPrev: () => Navigator.of(context).pop(),
         nextText: '다음으로',
         onNext: () {
+          // Save to provider
+          ref.read(surveyProvider.notifier).updatePainBasicInfo(
+                affectedSide: _selectedKnee,
+                painAreaDetails: _selectedPainAreas,
+                painStartedDate: _painSince,
+              );
+
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (_) => SurveyStep4LifestyleScreen(

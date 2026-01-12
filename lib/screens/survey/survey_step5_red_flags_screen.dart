@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step6_result_screen.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/widgets/survey/alert_modal.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/widgets/common/selectable_option_card.dart';
+import 'package:dduduk_app/providers/survey_provider.dart';
 
-class SurveyStep5WorkoutExpScreen extends StatefulWidget {
+class SurveyStep5WorkoutExpScreen extends ConsumerStatefulWidget {
   const SurveyStep5WorkoutExpScreen({
     super.key,
     this.readOnly = false,
@@ -19,12 +21,12 @@ class SurveyStep5WorkoutExpScreen extends StatefulWidget {
   final bool isChangePart;
 
   @override
-  State<SurveyStep5WorkoutExpScreen> createState() =>
+  ConsumerState<SurveyStep5WorkoutExpScreen> createState() =>
       _SurveyStep5WorkoutExpScreenState();
 }
 
 class _SurveyStep5WorkoutExpScreenState
-    extends State<SurveyStep5WorkoutExpScreen> {
+    extends ConsumerState<SurveyStep5WorkoutExpScreen> {
   String? _selectedRisk;
 
   static const List<String> _riskOptions = [
@@ -71,15 +73,33 @@ class _SurveyStep5WorkoutExpScreenState
         prevText: '이전으로',
         onPrev: () => Navigator.of(context).pop(),
         nextText: nextButtonText,
-        onNext: () {
+        onNext: () async {
           if (shouldPopToMypage) {
             // Pop all survey screens back to mypage
             int count = 0;
             Navigator.of(context).popUntil((_) => count++ >= (widget.isChangePart ? 4 : 5));
           } else {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SurveyStep6ResultScreen()),
-            );
+            // Save red flags and submit survey
+            final notifier = ref.read(surveyProvider.notifier);
+            notifier.updateRedFlags(_selectedRisk ?? '해당 사항 없음');
+            
+            // Submit to API
+            final success = await notifier.submitSurvey();
+            if (!context.mounted) return;
+            
+            if (success) {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SurveyStep6ResultScreen()),
+              );
+            } else {
+              final state = ref.read(surveyProvider);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.error ?? '설문 제출에 실패했습니다.'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
           }
         },
       ),

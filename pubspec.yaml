@@ -1,6 +1,6 @@
 name: dduduk_app
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
@@ -22,11 +22,18 @@ dependencies:
   timezone: ^0.10.1
 
   # 소셜 로그인
-  kakao_flutter_sdk_user: ^1.9.6      # 카카오 로그인
-  flutter_naver_login: ^1.8.0         # 네이버 로그인
-  sign_in_with_apple: ^6.1.4          # 애플 로그인
-  crypto: ^3.0.6                       # 애플 로그인 nonce 생성용
+  kakao_flutter_sdk_user: ^1.9.6 # 카카오 로그인
+  flutter_naver_login: ^1.8.0 # 네이버 로그인
+  sign_in_with_apple: ^6.1.4 # 애플 로그인
+  crypto: ^3.0.6 # 애플 로그인 nonce 생성용
   image_picker: ^1.2.1
+
+  # API
+  dio: ^5.4.0
+  shared_preferences: ^2.2.2
+
+  # State Management
+  flutter_riverpod: ^2.4.9
 
 dev_dependencies:
   flutter_test:

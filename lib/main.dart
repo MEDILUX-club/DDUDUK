@@ -3,10 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/router.dart';
 import 'package:dduduk_app/services/notification_service.dart';
+import 'package:dduduk_app/services/token_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,11 +22,14 @@ void main() async {
     debugPrint('🔑 카카오 키 해시: $keyHash');
   }
 
+  // Initialize TokenService
+  await TokenService.getInstance();
+
   // Initialize notification service
   await NotificationService().init();
 
   usePathUrlStrategy(); // URL 기반 라우팅 활성화 (# 없이)
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -65,3 +70,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
