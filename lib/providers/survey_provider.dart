@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dduduk_app/models/survey/survey_data.dart';
 import 'package:dduduk_app/models/survey/post_users_pain_survey.dart';
 import 'package:dduduk_app/repositories/pain_survey_repository.dart';
+import 'package:dduduk_app/repositories/user_repository.dart';
 import 'package:dduduk_app/api/api_exception.dart';
 
 /// 설문 상태
@@ -35,10 +36,14 @@ class SurveyState {
 
 /// 설문 상태 관리 Notifier
 class SurveyNotifier extends StateNotifier<SurveyState> {
-  final PainSurveyRepository _repository;
+  final PainSurveyRepository _painSurveyRepository;
+  final UserRepository _userRepository;
 
-  SurveyNotifier({PainSurveyRepository? repository})
-      : _repository = repository ?? PainSurveyRepository(),
+  SurveyNotifier({
+    PainSurveyRepository? painSurveyRepository,
+    UserRepository? userRepository,
+  })  : _painSurveyRepository = painSurveyRepository ?? PainSurveyRepository(),
+        _userRepository = userRepository ?? UserRepository(),
         super(SurveyState(surveyData: SurveyData()));
 
   // ──────────────────────────────────────
@@ -113,11 +118,41 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
   // ──────────────────────────────────────
 
   /// 설문 데이터를 API에 제출
+  /// 1. 사용자 기본 정보(생년월일, 성별, 키, 몸무게) 먼저 저장
+  /// 2. pain-survey API 호출
   Future<bool> submitSurvey() async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      final result = await _repository.createPainSurvey(state.surveyData);
+      // 1. 사용자 기본 정보 저장 (PUT /api/users/{userId})
+      final surveyData = state.surveyData;
+      if (surveyData.birthDate != null &&
+          surveyData.gender != null &&
+          surveyData.height != null &&
+          surveyData.weight != null) {
+        // 성별 변환: 남성 -> MALE, 여성 -> FEMALE, 비공개 -> PREFER_NOT_TO_SAY
+        String genderCode;
+        switch (surveyData.gender) {
+          case '남성':
+            genderCode = 'MALE';
+            break;
+          case '여성':
+            genderCode = 'FEMALE';
+            break;
+          default:
+            genderCode = 'PREFER_NOT_TO_SAY';
+        }
+
+        await _userRepository.saveInitialInfo(
+          birthDate: surveyData.birthDate!,
+          gender: genderCode,
+          height: surveyData.height!,
+          weight: surveyData.weight!,
+        );
+      }
+
+      // 2. pain-survey API 호출 (POST /api/users/{userId}/pain-survey)
+      final result = await _painSurveyRepository.createPainSurvey(surveyData);
       state = state.copyWith(isLoading: false, result: result);
       return true;
     } on ApiException catch (e) {

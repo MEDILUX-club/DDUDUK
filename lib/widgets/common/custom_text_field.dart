@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
@@ -15,6 +16,7 @@ class CustomTextField extends StatelessWidget {
     this.onTap,
     this.maxLength,
     this.hasError = false,
+    this.inputFormatters,
   });
 
   final TextEditingController controller;
@@ -26,6 +28,7 @@ class CustomTextField extends StatelessWidget {
   final VoidCallback? onTap;
   final int? maxLength;
   final bool hasError;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +38,7 @@ class CustomTextField extends StatelessWidget {
       readOnly: readOnly,
       onTap: onTap,
       maxLength: maxLength,
+      inputFormatters: inputFormatters,
       style: AppTextStyles.body14Regular,
       decoration: InputDecoration(
         hintText: hintText,

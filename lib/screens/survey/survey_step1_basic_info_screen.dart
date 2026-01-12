@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show FilteringTextInputFormatter;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/screens/survey/survey_step2_pain_location_screen.dart';
@@ -148,6 +149,8 @@ class _SurveyStep1BasicInfoScreenState
                           hintText: '160',
                           suffixText: 'cm',
                           keyboardType: TextInputType.number,
+                          maxLength: 3,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         ),
                       ),
                       const SizedBox(width: AppDimens.itemSpacing),
@@ -157,6 +160,8 @@ class _SurveyStep1BasicInfoScreenState
                           hintText: '60',
                           suffixText: 'kg',
                           keyboardType: TextInputType.number,
+                          maxLength: 3,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         ),
                       ),
                     ],
