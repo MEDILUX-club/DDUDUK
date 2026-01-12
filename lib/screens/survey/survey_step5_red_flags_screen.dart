@@ -7,7 +7,14 @@ import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/widgets/common/selectable_option_card.dart';
 
 class SurveyStep5WorkoutExpScreen extends StatefulWidget {
-  const SurveyStep5WorkoutExpScreen({super.key});
+  const SurveyStep5WorkoutExpScreen({
+    super.key,
+    this.readOnly = false,
+    this.initialRisk,
+  });
+
+  final bool readOnly;
+  final String? initialRisk;
 
   @override
   State<SurveyStep5WorkoutExpScreen> createState() =>
@@ -28,7 +35,14 @@ class _SurveyStep5WorkoutExpScreenState
     '다리가 전체적으로 저리거나\n허리에서 다리로 뻗치는 느낌이 있어요',
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _selectedRisk = widget.initialRisk;
+  }
+
   Future<void> _showRiskAlert(String value) async {
+    if (widget.readOnly) return;
     setState(() => _selectedRisk = value);
     await showDialog<void>(
       context: context,
@@ -40,6 +54,7 @@ class _SurveyStep5WorkoutExpScreenState
   @override
   Widget build(BuildContext context) {
     return SurveyLayout(
+      readOnly: widget.readOnly,
       title:
           '다음은 중요한 위험신호예요\n'
           '해당사항이 있나요?',
@@ -50,11 +65,17 @@ class _SurveyStep5WorkoutExpScreenState
       bottomButtons: SurveyButtonsConfig(
         prevText: '이전으로',
         onPrev: () => Navigator.of(context).pop(),
-        nextText: '다음으로',
+        nextText: widget.readOnly ? '닫기' : '다음으로',
         onNext: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const SurveyStep6ResultScreen()),
-          );
+          if (widget.readOnly) {
+            // Pop all 5 survey screens back to mypage
+            int count = 0;
+            Navigator.of(context).popUntil((_) => count++ >= 5);
+          } else {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const SurveyStep6ResultScreen()),
+            );
+          }
         },
       ),
       child: SingleChildScrollView(

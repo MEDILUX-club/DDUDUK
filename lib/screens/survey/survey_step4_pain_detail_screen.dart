@@ -8,7 +8,20 @@ import 'package:dduduk_app/widgets/survey/pain_level_face.dart';
 import 'package:dduduk_app/widgets/common/selectable_option_card.dart';
 
 class SurveyStep4LifestyleScreen extends StatefulWidget {
-  const SurveyStep4LifestyleScreen({super.key});
+  const SurveyStep4LifestyleScreen({
+    super.key,
+    this.readOnly = false,
+    this.initialPainLevel,
+    this.initialPainPattern,
+    this.initialPainTriggers,
+    this.initialPainDuration,
+  });
+
+  final bool readOnly;
+  final double? initialPainLevel;
+  final String? initialPainPattern;
+  final Set<String>? initialPainTriggers;
+  final String? initialPainDuration;
 
   @override
   State<SurveyStep4LifestyleScreen> createState() =>
@@ -19,7 +32,7 @@ class _SurveyStep4LifestyleScreenState
     extends State<SurveyStep4LifestyleScreen> {
   double _painLevel = 0;
   String? _selectedPainPattern;
-  final Set<String> _selectedPainTriggers = {};
+  late Set<String> _selectedPainTriggers;
   String? _selectedPainDuration;
 
   static const List<String> _painPatternOptions = [
@@ -42,13 +55,24 @@ class _SurveyStep4LifestyleScreenState
 
   static const List<String> _painDurationOptions = ['30분 미만', '30분 이상'];
 
+  @override
+  void initState() {
+    super.initState();
+    _painLevel = widget.initialPainLevel ?? 0;
+    _selectedPainPattern = widget.initialPainPattern;
+    _selectedPainTriggers = widget.initialPainTriggers ?? {};
+    _selectedPainDuration = widget.initialPainDuration;
+  }
+
   void _selectPainPattern(String value) {
+    if (widget.readOnly) return;
     setState(() {
       _selectedPainPattern = value;
     });
   }
 
   void _togglePainTrigger(String value) {
+    if (widget.readOnly) return;
     setState(() {
       if (_selectedPainTriggers.contains(value)) {
         _selectedPainTriggers.remove(value);
@@ -59,6 +83,7 @@ class _SurveyStep4LifestyleScreenState
   }
 
   void _selectPainDuration(String value) {
+    if (widget.readOnly) return;
     setState(() {
       _selectedPainDuration = value;
     });
@@ -67,6 +92,7 @@ class _SurveyStep4LifestyleScreenState
   @override
   Widget build(BuildContext context) {
     return SurveyLayout(
+      readOnly: widget.readOnly,
       title: '통증에 대한 세부 정보가 필요해요',
       description: '정확한 운동 프로그램을 위해 필요한 정보예요',
       stepLabel: '4. 통증 세부 정보',
@@ -79,7 +105,9 @@ class _SurveyStep4LifestyleScreenState
         onNext: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => const SurveyStep5WorkoutExpScreen(),
+              builder: (_) => SurveyStep5WorkoutExpScreen(
+                readOnly: widget.readOnly,
+              ),
             ),
           );
         },

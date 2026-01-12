@@ -5,6 +5,7 @@ import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:dduduk_app/screens/survey/survey_step1_basic_info_screen.dart';
 
 /// 마이페이지 화면
 class MypageScreen extends StatefulWidget {
@@ -62,7 +63,13 @@ class _MypageScreenState extends State<MypageScreen> {
             icon: Icons.description_outlined,
             title: '셀프 설문 응답 확인',
             onTap: () {
-              // TODO: 셀프 설문 응답 확인 화면으로 이동
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const SurveyStep1BasicInfoScreen(
+                    readOnly: true,
+                  ),
+                ),
+              );
             },
           ),
           const SizedBox(height: AppDimens.space12),

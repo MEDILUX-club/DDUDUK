@@ -7,7 +7,20 @@ import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/common/custom_text_field.dart';
 
 class SurveyStep1BasicInfoScreen extends StatefulWidget {
-  const SurveyStep1BasicInfoScreen({super.key});
+  const SurveyStep1BasicInfoScreen({
+    super.key,
+    this.readOnly = false,
+    this.initialBirthDate,
+    this.initialHeight,
+    this.initialWeight,
+    this.initialGender,
+  });
+
+  final bool readOnly;
+  final String? initialBirthDate;
+  final String? initialHeight;
+  final String? initialWeight;
+  final String? initialGender;
 
   @override
   State<SurveyStep1BasicInfoScreen> createState() =>
@@ -23,6 +36,17 @@ class _SurveyStep1BasicInfoScreenState
   String? _selectedGender;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.readOnly) {
+      _birthController.text = widget.initialBirthDate ?? '';
+      _heightController.text = widget.initialHeight ?? '';
+      _weightController.text = widget.initialWeight ?? '';
+      _selectedGender = widget.initialGender;
+    }
+  }
+
+  @override
   void dispose() {
     _birthController.dispose();
     _heightController.dispose();
@@ -31,6 +55,7 @@ class _SurveyStep1BasicInfoScreenState
   }
 
   Future<void> _pickBirthDate() async {
+    if (widget.readOnly) return;
     final DateTime now = DateTime.now();
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -47,6 +72,7 @@ class _SurveyStep1BasicInfoScreenState
   }
 
   void _selectGender(String gender) {
+    if (widget.readOnly) return;
     setState(() {
       _selectedGender = gender;
     });
@@ -55,6 +81,7 @@ class _SurveyStep1BasicInfoScreenState
   @override
   Widget build(BuildContext context) {
     return SurveyLayout(
+      readOnly: widget.readOnly,
       title: '기본 정보를 입력해주세요',
       description: '정확한 운동 프로그램을 위해 필요해요',
       stepLabel: '1. 기본정보',
@@ -65,7 +92,9 @@ class _SurveyStep1BasicInfoScreenState
         onNext: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => const SurveyStep2PainLocationScreen(),
+              builder: (_) => SurveyStep2PainLocationScreen(
+                readOnly: widget.readOnly,
+              ),
             ),
           );
         },

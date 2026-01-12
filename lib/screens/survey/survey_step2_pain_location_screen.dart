@@ -5,7 +5,14 @@ import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/widgets/survey/pain_location_card.dart';
 
 class SurveyStep2PainLocationScreen extends StatefulWidget {
-  const SurveyStep2PainLocationScreen({super.key});
+  const SurveyStep2PainLocationScreen({
+    super.key,
+    this.readOnly = false,
+    this.initialSelectedParts,
+  });
+
+  final bool readOnly;
+  final Set<String>? initialSelectedParts;
 
   @override
   State<SurveyStep2PainLocationScreen> createState() =>
@@ -14,7 +21,7 @@ class SurveyStep2PainLocationScreen extends StatefulWidget {
 
 class _SurveyStep2PainLocationScreenState
     extends State<SurveyStep2PainLocationScreen> {
-  final Set<String> selectedParts = {};
+  late Set<String> selectedParts;
 
   final List<Map<String, String>> _parts = [
     {'label': '목', 'iconPath': 'assets/icons/ic_neck.svg'},
@@ -27,7 +34,14 @@ class _SurveyStep2PainLocationScreenState
     {'label': '발목', 'iconPath': 'assets/icons/ic_ankle.svg'},
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    selectedParts = widget.initialSelectedParts ?? {};
+  }
+
   void _togglePart(String label) {
+    if (widget.readOnly) return;
     setState(() {
       if (selectedParts.contains(label)) {
         selectedParts.clear();
@@ -42,6 +56,7 @@ class _SurveyStep2PainLocationScreenState
   @override
   Widget build(BuildContext context) {
     return SurveyLayout(
+      readOnly: widget.readOnly,
       title: '어디가 아프신가요?',
       description: '통증이 있는 부위를 모두 선택해주세요.',
       stepLabel: '2. 통증부위',
@@ -54,7 +69,9 @@ class _SurveyStep2PainLocationScreenState
         onNext: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => const SurveyStep3PainLevelScreen(),
+              builder: (_) => SurveyStep3PainLevelScreen(
+                readOnly: widget.readOnly,
+              ),
             ),
           );
         },

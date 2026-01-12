@@ -20,6 +20,7 @@ class SurveyLayout extends StatelessWidget {
     required this.child,
     this.bottomButtons,
     this.showProgressBar = true,
+    this.readOnly = false,
   });
 
   final String? appBarTitle;
@@ -32,11 +33,15 @@ class SurveyLayout extends StatelessWidget {
   final Widget child;
   final SurveyButtonsConfig? bottomButtons;
   final bool showProgressBar;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
+    final String displayAppBarTitle = readOnly
+        ? '설문 응답 확인'
+        : (appBarTitle ?? '');
     return DefaultLayout(
-      title: appBarTitle ?? '',
+      title: displayAppBarTitle,
       bottomNavigationBar: bottomButtons == null
           ? null
           : _BottomButtons(config: bottomButtons!),

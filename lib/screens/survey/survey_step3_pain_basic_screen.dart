@@ -8,7 +8,18 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/widgets/common/selectable_option_card.dart';
 
 class SurveyStep3PainLevelScreen extends StatefulWidget {
-  const SurveyStep3PainLevelScreen({super.key});
+  const SurveyStep3PainLevelScreen({
+    super.key,
+    this.readOnly = false,
+    this.initialKnee,
+    this.initialPainAreas,
+    this.initialPainSince,
+  });
+
+  final bool readOnly;
+  final String? initialKnee;
+  final List<String>? initialPainAreas;
+  final String? initialPainSince;
 
   @override
   State<SurveyStep3PainLevelScreen> createState() =>
@@ -18,7 +29,7 @@ class SurveyStep3PainLevelScreen extends StatefulWidget {
 class _SurveyStep3PainLevelScreenState
     extends State<SurveyStep3PainLevelScreen> {
   String? _selectedKnee;
-  final List<String> _selectedPainAreas = [];
+  late List<String> _selectedPainAreas;
   String? _painSince;
 
   final List<_KneePainArea> _kneePainAreas = const [
@@ -37,13 +48,23 @@ class _SurveyStep3PainLevelScreenState
     '무리하게 운동한 후부터 아파요',
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _selectedKnee = widget.initialKnee;
+    _selectedPainAreas = widget.initialPainAreas ?? [];
+    _painSince = widget.initialPainSince;
+  }
+
   void _selectKnee(String knee) {
+    if (widget.readOnly) return;
     setState(() {
       _selectedKnee = knee;
     });
   }
 
   void _togglePainArea(String area) {
+    if (widget.readOnly) return;
     setState(() {
       if (_selectedPainAreas.contains(area)) {
         _selectedPainAreas.remove(area);
@@ -55,6 +76,7 @@ class _SurveyStep3PainLevelScreenState
   }
 
   void _selectPainSince(String value) {
+    if (widget.readOnly) return;
     setState(() {
       _painSince = value;
     });
@@ -63,6 +85,7 @@ class _SurveyStep3PainLevelScreenState
   @override
   Widget build(BuildContext context) {
     return SurveyLayout(
+      readOnly: widget.readOnly,
       title: '통증 정보를 알려주세요',
       description: '정확한 운동 프로그램을 위해 필요해요',
       stepLabel: '3. 통증 기본 정보',
@@ -75,7 +98,9 @@ class _SurveyStep3PainLevelScreenState
         onNext: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => const SurveyStep4LifestyleScreen(),
+              builder: (_) => SurveyStep4LifestyleScreen(
+                readOnly: widget.readOnly,
+              ),
             ),
           );
         },
