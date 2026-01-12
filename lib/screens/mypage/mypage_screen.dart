@@ -89,13 +89,13 @@ class _MypageScreenState extends State<MypageScreen> {
                   confirmText: '변경하기',
                 ),
               );
-              if (result == true && mounted) {
+              if (result == true && context.mounted) {
                 try {
                   // 기존 설문 데이터 삭제
                   await _userRepository.resetSurveys();
 
                   // 설문 화면으로 이동
-                  if (mounted) {
+                  if (context.mounted) {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => const SurveyStep2PainLocationScreen(
@@ -107,7 +107,7 @@ class _MypageScreenState extends State<MypageScreen> {
                 } catch (e) {
                   // 에러 처리
                   debugPrint('설문 초기화 오류: $e');
-                  if (mounted) {
+                  if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('설문 초기화 중 오류가 발생했습니다.'),

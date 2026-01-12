@@ -202,7 +202,6 @@ class _AuthInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     // 401 에러 시 토큰 갱신 시도
     if (err.response?.statusCode == 401) {
-      // TODO: 토큰 갱신 로직 구현
       // 현재는 그냥 에러 전달
     }
     handler.next(err);
