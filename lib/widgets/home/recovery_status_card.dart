@@ -41,25 +41,21 @@ class RecoveryStatusCard extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: AppColors.textWhite.withValues(alpha: 0.2),
+                        color: AppColors.primaryLight,
                         shape: BoxShape.circle,
                       ),
                       child: Center(
                         child: SvgPicture.asset(
                           'assets/icons/ic_heartbeat.svg',
-                          width: 24,
-                          height: 24,
-                          colorFilter: const ColorFilter.mode(
-                            AppColors.textWhite,
-                            BlendMode.srcIn,
-                          ),
+                          width: 30,
+                          height: 30,
                         ),
                       ),
                     ),
-                    const SizedBox(width: AppDimens.space8),
+                    const SizedBox(width:AppDimens.space8),
                     Text(
                       '회복상태',
-                      style: AppTextStyles.body14Medium.copyWith(
+                      style: AppTextStyles.body16SemiBold.copyWith(
                         color: AppColors.textWhite,
                       ),
                     ),
@@ -69,7 +65,7 @@ class RecoveryStatusCard extends StatelessWidget {
                 // 회복 메시지
                 Text(
                   '$userName님의 무릎 회복정도는',
-                  style: AppTextStyles.body14Regular.copyWith(
+                  style: AppTextStyles.body16SemiBold.copyWith(
                     color: AppColors.textWhite.withValues(alpha: 0.9),
                   ),
                 ),
@@ -82,14 +78,13 @@ class RecoveryStatusCard extends StatelessWidget {
                       '$recoveryPercent%',
                       style: AppTextStyles.body20Bold.copyWith(
                         color: AppColors.textWhite,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 24,
                       ),
                     ),
                     const SizedBox(width: AppDimens.space8),
                     Text(
                       '입니다',
-                      style: AppTextStyles.body16Medium.copyWith(
+                      style: AppTextStyles.body18Medium.copyWith(
                         color: AppColors.textWhite,
                       ),
                     ),
@@ -99,7 +94,10 @@ class RecoveryStatusCard extends StatelessWidget {
             ),
           ),
           // 오른쪽: 원형 프로그레스
-          _CircularProgress(percent: recoveryPercent),
+          Transform.translate(
+            offset: const Offset(0, 20),
+            child: _CircularProgress(percent: recoveryPercent),
+          ),
         ],
       ),
     );
@@ -122,35 +120,35 @@ class _CircularProgress extends StatelessWidget {
         children: [
           // 배경 원
           SizedBox(
-            width: 100,
-            height: 100,
+            width: 75,
+            height: 75,
             child: CircularProgressIndicator(
               value: 1.0,
-              strokeWidth: 10,
+              strokeWidth: 11,
               backgroundColor: Colors.transparent,
               valueColor: AlwaysStoppedAnimation<Color>(
-                AppColors.textWhite.withValues(alpha: 0.2),
+                AppColors.primaryDark,
               ),
             ),
           ),
           // 진행 원
           SizedBox(
-            width: 100,
-            height: 100,
+            width: 75,
+            height: 75,
             child: CircularProgressIndicator(
               value: percent / 100,
-              strokeWidth: 10,
+              strokeWidth: 11,
               strokeCap: StrokeCap.round,
               backgroundColor: Colors.transparent,
               valueColor: const AlwaysStoppedAnimation<Color>(
-                AppColors.textWhite,
+                AppColors.primaryLight,
               ),
             ),
           ),
           // 퍼센트 텍스트
           Text(
             '$percent%',
-            style: AppTextStyles.body18SemiBold.copyWith(
+            style: AppTextStyles.body20SemiBold.copyWith(
               color: AppColors.textWhite,
               fontWeight: FontWeight.w700,
             ),

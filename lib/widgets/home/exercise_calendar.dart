@@ -268,18 +268,19 @@ class _DayCell extends StatelessWidget {
       textColor = AppColors.textNormal;
     }
 
-    return Container(
-      width: 36,
-      height: 36,
-      margin: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Center(
-        child: Text(
-          '$day',
-          style: AppTextStyles.body14Medium.copyWith(color: textColor),
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Container(
+        margin: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
+          child: Text(
+            '$day',
+            style: AppTextStyles.body14Medium.copyWith(color: textColor),
+          ),
         ),
       ),
     );
