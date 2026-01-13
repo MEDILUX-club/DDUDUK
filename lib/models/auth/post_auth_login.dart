@@ -11,17 +11,23 @@
 class LoginRequest {
   final String socialType;  // KAKAO, NAVER, APPLE
   final String socialId;    // 소셜 서비스에서 발급받은 사용자 ID
+  final String? nickname;   // 소셜 서비스에서 가져온 닉네임 (선택)
 
   LoginRequest({
     required this.socialType,
     required this.socialId,
+    this.nickname,
   });
 
   Map<String, dynamic> toJson() {
-    return {
+    final json = <String, dynamic>{
       'socialType': socialType.toUpperCase(),
       'socialId': socialId,
     };
+    if (nickname != null && nickname!.isNotEmpty) {
+      json['nickname'] = nickname;
+    }
+    return json;
   }
 }
 

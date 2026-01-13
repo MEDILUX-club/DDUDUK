@@ -51,11 +51,13 @@ class PainSurveyRequest {
 // ──────────────────────────────────────
 
 class PainSurveyResponse {
-  final String diagnosisType;        // AI 진단 유형 (예: "퇴행성형", "염증형", "외상형", "과사용형")
-  final int diagnosisPercentage;     // 진단 확률 (0-100)
-  final String diagnosisDescription; // 진단 설명
+  final String? painArea;              // 통증 부위 (GET 응답에 포함)
+  final String diagnosisType;          // AI 진단 유형 (예: "퇴행성형", "염증형", "외상형", "과사용형")
+  final int diagnosisPercentage;       // 진단 확률 (0-100)
+  final String diagnosisDescription;   // 진단 설명
 
   PainSurveyResponse({
+    this.painArea,
     required this.diagnosisType,
     required this.diagnosisPercentage,
     required this.diagnosisDescription,
@@ -63,6 +65,7 @@ class PainSurveyResponse {
 
   factory PainSurveyResponse.fromJson(Map<String, dynamic> json) {
     return PainSurveyResponse(
+      painArea: json['painArea'] as String?,
       diagnosisType: json['diagnosisType'] as String? ?? '',
       diagnosisPercentage: json['diagnosisPercentage'] as int? ?? 0,
       diagnosisDescription: json['diagnosisDescription'] as String? ?? '',

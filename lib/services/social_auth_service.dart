@@ -36,6 +36,7 @@ class SocialLoginResult {
     return LoginRequest(
       socialType: provider.toUpperCase(),  // KAKAO, NAVER, APPLE
       socialId: id,
+      nickname: nickname,  // 소셜 서비스에서 가져온 닉네임
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:dduduk_app/widgets/home/exercise_calendar.dart';
 import 'package:dduduk_app/widgets/home/exercise_record_modal.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_routine_card.dart';
 import 'package:dduduk_app/services/token_service.dart';
+import 'package:dduduk_app/repositories/user_repository.dart';
 
 /// 홈 화면
 class HomeScreen extends StatefulWidget {
@@ -18,6 +19,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final int _currentNavIndex = 0;
+  final _userRepository = UserRepository();
+  
+  String _userName = '사용자';
 
   // 예시 데이터: 운동한 날짜 (8월)
   final List<int> _exerciseDays = [1, 4, 8, 9, 10, 12];
@@ -101,6 +105,25 @@ class _HomeScreenState extends State<HomeScreen> {
     ],
   };
 
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    try {
+      final profile = await _userRepository.getProfile();
+      if (mounted) {
+        setState(() {
+          _userName = profile.nickname.isNotEmpty ? profile.nickname : '사용자';
+        });
+      }
+    } catch (e) {
+      debugPrint('닉네임 로딩 오류: $e');
+    }
+  }
+
   void _onNavTap(int index) {
     if (index == _currentNavIndex) return;
 
@@ -144,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const SizedBox(height: AppDimens.space16),
           // 회복상태 카드
-          const RecoveryStatusCard(userName: '황두현', recoveryPercent: 72),
+          RecoveryStatusCard(userName: _userName, recoveryPercent: 72),
           const SizedBox(height: AppDimens.space24),
           // 운동 캘린더
           ExerciseCalendar(

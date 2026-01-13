@@ -7,6 +7,7 @@ import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/layouts/home_layout.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_start_card.dart';
 import 'package:dduduk_app/services/token_service.dart';
+import 'package:dduduk_app/repositories/user_repository.dart';
 import 'package:go_router/go_router.dart';
 
 /// 운동 메인 화면 (빈 상태)
@@ -20,7 +21,29 @@ class ExerciseMainEmptyScreen extends StatefulWidget {
 
 class _ExerciseMainEmptyScreenState extends State<ExerciseMainEmptyScreen> {
   int _currentNavIndex = 1; // 운동 탭 선택됨
-  final String _userName = '황두현님'; // 사용자 이름 (추후 API 연동 시 변경)
+  String _userName = '사용자님';
+  final _userRepository = UserRepository();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    try {
+      final profile = await _userRepository.getProfile();
+      if (mounted) {
+        setState(() {
+          _userName = profile.nickname.isNotEmpty 
+              ? '${profile.nickname}님' 
+              : '사용자님';
+        });
+      }
+    } catch (e) {
+      debugPrint('닉네임 로딩 오류: $e');
+    }
+  }
 
   void _onNavTap(int index) {
     if (index == _currentNavIndex) return;

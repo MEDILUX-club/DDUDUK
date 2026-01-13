@@ -9,6 +9,7 @@ import 'package:dduduk_app/screens/survey/survey_step1_basic_info_screen.dart';
 import 'package:dduduk_app/screens/survey/survey_step2_pain_location_screen.dart';
 import 'package:dduduk_app/widgets/exercise/rest_exit_modal.dart';
 import 'package:dduduk_app/repositories/user_repository.dart';
+import 'package:dduduk_app/repositories/pain_survey_repository.dart';
 import 'package:dduduk_app/services/token_service.dart';
 
 /// 마이페이지 화면
@@ -22,6 +23,70 @@ class MypageScreen extends StatefulWidget {
 class _MypageScreenState extends State<MypageScreen> {
   final int _currentNavIndex = 2; // 마이페이지 탭 선택
   final _userRepository = UserRepository();
+  final _painSurveyRepository = PainSurveyRepository();
+  
+  // 프로필 데이터
+  String _userName = '';
+  bool _isLoading = true;
+  
+  // 진단 결과 데이터
+  int _diagnosisPercentage = 0;
+  String _painArea = '';
+  String _diagnosisType = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    try {
+      // 프로필 및 진단 결과 동시 로드
+      final results = await Future.wait([
+        _userRepository.getProfile(),
+        _painSurveyRepository.getPainSurvey(),
+      ]);
+
+      final profile = results[0];
+      final painSurvey = results[1];
+
+      if (mounted) {
+        setState(() {
+          _userName = (profile as dynamic).nickname.isNotEmpty 
+              ? (profile as dynamic).nickname 
+              : '사용자';
+          
+          if (painSurvey != null) {
+            _diagnosisPercentage = (painSurvey as dynamic).diagnosisPercentage;
+            _painArea = (painSurvey as dynamic).painArea ?? '';
+            _diagnosisType = _getDiagnosisTypeName((painSurvey as dynamic).diagnosisType);
+          }
+          
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('프로필 로딩 오류: $e');
+      if (mounted) {
+        setState(() {
+          _userName = '사용자';
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  /// 진단 유형 코드를 한글 이름으로 변환
+  String _getDiagnosisTypeName(String type) {
+    switch (type) {
+      case 'DEG': return '퇴행성 유형';
+      case 'INF': return '염증형 유형';
+      case 'TRM': return '외상형 유형';
+      case 'OVU': return '과사용성 유형';
+      default: return type;
+    }
+  }
 
   void _onNavTap(int index) {
     if (index == _currentNavIndex) return;
@@ -55,10 +120,16 @@ class _MypageScreenState extends State<MypageScreen> {
         children: [
           const SizedBox(height: AppDimens.space16),
           // 프로필 카드
-          const _ProfileCard(
-            userName: 'johnDoe',
-            recoveryPercent: 70,
-            conditionType: '무릎 과사용성 유형',
+          _ProfileCard(
+            userName: _isLoading ? '로딩 중...' : _userName,
+            recoveryPercent: _diagnosisPercentage,
+            painArea: _painArea,
+            conditionType: _diagnosisType.isNotEmpty ? _diagnosisType : '진단 정보 없음',
+            onEditPressed: () async {
+              // 프로필 편집 화면으로 이동하고 돌아오면 새로고침
+              await context.push('/mypage/profile-edit');
+              _loadProfile();
+            },
           ),
           const SizedBox(height: AppDimens.space16),
           // 메뉴 항목들
@@ -132,17 +203,22 @@ class _MypageScreenState extends State<MypageScreen> {
   }
 }
 
+
 /// 프로필 카드 위젯
 class _ProfileCard extends StatelessWidget {
   const _ProfileCard({
     required this.userName,
     required this.recoveryPercent,
+    required this.painArea,
     required this.conditionType,
+    this.onEditPressed,
   });
 
   final String userName;
   final int recoveryPercent;
+  final String painArea;
   final String conditionType;
+  final VoidCallback? onEditPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -185,9 +261,7 @@ class _ProfileCard extends StatelessWidget {
                     ),
                     const SizedBox(width: AppDimens.space8),
                     GestureDetector(
-                      onTap: () {
-                        context.push('/mypage/profile-edit');
-                      },
+                      onTap: onEditPressed,
                       child: Padding(
                         padding: const EdgeInsets.all(6),
                         child: SvgPicture.asset(
@@ -211,7 +285,7 @@ class _ProfileCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    '$recoveryPercent% $conditionType',
+                    '$recoveryPercent% $painArea $conditionType',
                     style: AppTextStyles.body14Medium.copyWith(
                       color: AppColors.primaryDark,
                     ),

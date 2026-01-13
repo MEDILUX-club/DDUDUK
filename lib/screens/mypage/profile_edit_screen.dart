@@ -18,12 +18,14 @@ class ProfileEditScreen extends StatefulWidget {
 }
 
 class _ProfileEditScreenState extends State<ProfileEditScreen> {
-  final _nicknameController = TextEditingController(text: 'johnDoe');
-  final _heightController = TextEditingController(text: '160');
-  final _weightController = TextEditingController(text: '160');
+  final _nicknameController = TextEditingController();
+  final _heightController = TextEditingController();
+  final _weightController = TextEditingController();
   final _userRepository = UserRepository();
 
   File? _profileImage;
+  bool _isLoading = true;
+  bool _isSaving = false;
 
   // 닉네임 유효성 검사 관련 상태
   String? _nicknameError;
@@ -37,6 +39,62 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   void initState() {
     super.initState();
     _nicknameController.addListener(_onNicknameChanged);
+    _loadProfile();
+  }
+
+  /// 서버에서 프로필 정보 로드
+  Future<void> _loadProfile() async {
+    try {
+      final profile = await _userRepository.getProfile();
+      if (mounted) {
+        setState(() {
+          _nicknameController.text = profile.nickname;
+          _heightController.text = profile.height?.toString() ?? '';
+          _weightController.text = profile.weight?.toString() ?? '';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('프로필 로딩 오류: $e');
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  /// 프로필 저장 (닉네임만 수정 가능)
+  Future<void> _saveProfile() async {
+    if (_isSaving) return;
+    
+    setState(() => _isSaving = true);
+
+    try {
+      await _userRepository.updateDisplayInfo(
+        nickname: _nicknameController.text,
+        // profileImageUrl: 이미지 업로드 후 URL 전달 필요 (추후 구현)
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('프로필이 저장되었습니다.')),
+        );
+        context.pop();
+      }
+    } catch (e) {
+      debugPrint('프로필 저장 오류: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('프로필 저장 중 오류가 발생했습니다.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
   }
 
   @override
@@ -256,9 +314,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   Widget _buildBottomButton() {
-    // 닉네임이 유효하고 에러가 없으며 확인 중이 아닐 때만 버튼 활성화
+    // 닉네임이 유효하고 에러가 없으며 확인/저장 중이 아닐 때만 버튼 활성화
     final bool isButtonEnabled =
-        _isNicknameLengthValid && _nicknameError == null && !_isCheckingNickname;
+        _isNicknameLengthValid && _nicknameError == null && !_isCheckingNickname && !_isSaving && !_isLoading;
 
     return SafeArea(
       child: Padding(
@@ -267,11 +325,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           width: double.infinity,
           height: AppDimens.buttonHeight,
           child: ElevatedButton(
-            onPressed: isButtonEnabled
-                ? () {
-                    context.pop();
-                  }
-                : null,
+            onPressed: isButtonEnabled ? _saveProfile : null,
             style: ElevatedButton.styleFrom(
               backgroundColor:
                   isButtonEnabled ? AppColors.primary : AppColors.interactionDisabled,
@@ -281,7 +335,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               ),
               elevation: 0,
             ),
-            child: _isCheckingNickname
+            child: (_isCheckingNickname || _isSaving)
                 ? const SizedBox(
                     width: 20,
                     height: 20,
@@ -291,7 +345,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     ),
                   )
                 : Text(
-                    '다음으로',
+                    '저장하기',
                     style: AppTextStyles.body16SemiBold.copyWith(
                       color: isButtonEnabled ? Colors.white : AppColors.textDisabled,
                     ),
