@@ -25,6 +25,7 @@ import 'package:dduduk_app/screens/mypage/profile_edit_screen.dart';
 
 // Exercise screens
 import 'package:dduduk_app/screens/exercise/exercise_play_screen.dart';
+import 'package:dduduk_app/screens/exercise/exercise_complete_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_survey_fixed_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_survey1_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_survey2_screen.dart';
@@ -231,6 +232,11 @@ final GoRouter appRouter = GoRouter(
       path: '/exercise/main',
       name: 'exerciseMain',
       builder: (context, state) => const ExerciseMainScreen(),
+    ),
+    GoRoute(
+      path: '/exercise/complete',
+      name: 'exerciseComplete',
+      builder: (context, state) => const ExerciseCompleteScreen(),
     ),
     GoRoute(
       path: '/exercise/rest',

@@ -69,8 +69,9 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
 
   @override
   void dispose() {
-    // 앱 종료(화면 이탈) 시 세로 모드로 복원
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    // 주의: 여기서 세로 모드로 복원하지 않음!
+    // 운동 간 전환 시에도 가로 모드 유지 필요
+    // 세로 모드 복원은 onNextExercise에서 마지막 운동 완료 시에만 수행
     super.dispose();
   }
 

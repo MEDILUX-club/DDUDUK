@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
@@ -7,6 +8,7 @@ import 'package:dduduk_app/widgets/exercise/exercise_routine_card.dart';
 import 'package:dduduk_app/repositories/exercise_repository.dart';
 import 'package:dduduk_app/models/exercise/exercise_recommendation.dart';
 import 'package:dduduk_app/screens/exercise/exercise_play_screen.dart';
+import 'package:dduduk_app/screens/exercise/exercise_rest_screen.dart';
 
 /// 운동 루틴 목록 화면 (exercise_fixed_screen 다음 화면)
 class ExerciseFixed1Screen extends StatefulWidget {
@@ -187,6 +189,8 @@ class _ExerciseFixed1ScreenState extends State<ExerciseFixed1Screen> {
 }
 
 /// 운동 재생 플로우 관리 위젯 (순차 재생)
+/// 
+/// 운동 → 휴식 → 운동 → 휴식 → ... → 완료
 class ExercisePlayFlow extends StatefulWidget {
   final List<RecommendedExercise> exercises;
 
@@ -198,26 +202,68 @@ class ExercisePlayFlow extends StatefulWidget {
 
 class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
   int _currentIndex = 0;
+  bool _showingRest = false; // true: 휴식 화면, false: 운동 화면
 
-  void _nextExercise() {
-    if (_currentIndex < widget.exercises.length - 1) {
-      setState(() {
-        _currentIndex++;
-      });
+  /// 다음 단계로 이동
+  void _goToNext() {
+    if (_showingRest) {
+      // 휴식 화면에서 → 다음 운동으로 (가로모드)
+      if (_currentIndex < widget.exercises.length - 1) {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]);
+        setState(() {
+          _currentIndex++;
+          _showingRest = false;
+        });
+      } else {
+        // 모든 운동 완료 (세로모드로 복원)
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+        context.go('/exercise/complete');
+      }
     } else {
-      // 모든 운동 완료 시 메인으로 이동
-      context.go('/exercise/main');
+      // 운동 화면에서 → 휴식 화면으로 (세로모드)
+      if (_currentIndex < widget.exercises.length - 1) {
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+        setState(() {
+          _showingRest = true;
+        });
+      } else {
+        // 마지막 운동이면 휴식 없이 완료
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+        context.go('/exercise/complete');
+      }
     }
   }
 
   void _prevExercise() {
-    if (_currentIndex > 0) {
+    if (_showingRest) {
+      // 휴식 화면에서 뒤로 → 현재 운동으로 (가로모드)
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+      setState(() {
+        _showingRest = false;
+      });
+    } else if (_currentIndex > 0) {
+      // 운동 화면에서 뒤로 → 이전 운동으로 (가로모드 유지)
       setState(() {
         _currentIndex--;
       });
     } else {
+      // 첫 번째 운동에서 뒤로가면 세로모드로 복원 후 종료
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
       Navigator.of(context).pop();
     }
+  }
+
+  @override
+  void dispose() {
+    // 플로우 종료 시 세로 모드로 복원 (안전장치)
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    super.dispose();
   }
 
   @override
@@ -225,10 +271,33 @@ class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
     if (widget.exercises.isEmpty) return const SizedBox.shrink();
 
     final exercise = widget.exercises[_currentIndex];
-    
+
+    // 휴식 화면 표시 (세로모드)
+    if (_showingRest) {
+      // 다음 운동 목록 생성
+      final nextExercises = <ExerciseRoutineData>[];
+      for (int i = _currentIndex + 1; i < widget.exercises.length && nextExercises.length < 2; i++) {
+        final next = widget.exercises[i];
+        nextExercises.add(ExerciseRoutineData(
+          name: next.nameKo,
+          sets: next.recommendedSets,
+          reps: next.recommendedReps,
+        ));
+      }
+
+      return ExerciseRestScreen(
+        initialRestSeconds: 30,
+        extensionSeconds: 20,
+        maxExtensions: 3,
+        nextExercises: nextExercises,
+        onNextExercise: _goToNext,
+        onRestComplete: _goToNext,
+      );
+    }
+
+    // 운동 화면 표시 (가로모드)
     return ExercisePlayScreen(
-      // key를 변경하여 위젯이 완전히 다시 빌드되도록 함 (비디오 플레이어 초기화)
-      key: ValueKey(exercise.exerciseId + _currentIndex.toString()), 
+      key: ValueKey('exercise_${exercise.exerciseId}_$_currentIndex'), 
       videoUrl: exercise.videoUrl,
       exerciseName: exercise.nameKo,
       exerciseDescription: exercise.description ?? '',
@@ -236,7 +305,7 @@ class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
       reps: exercise.recommendedReps,
       currentIndex: _currentIndex,
       totalCount: widget.exercises.length,
-      onNextExercise: _nextExercise,
+      onNextExercise: _goToNext,
       onPreviousExercise: _prevExercise,
     );
   }
