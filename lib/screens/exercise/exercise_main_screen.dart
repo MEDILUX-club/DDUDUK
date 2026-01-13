@@ -36,7 +36,8 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
   }
 
   void _onStartExercise() {
-    context.push('/exercise/survey1');
+    // 컨디션 체크 화면으로 이동 (여기서 신규/기존 유저 분기)
+    context.push('/exercise/fixed');
   }
 
   @override

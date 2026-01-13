@@ -42,7 +42,8 @@ class _ExerciseMainEmptyScreenState extends State<ExerciseMainEmptyScreen> {
     // 운동을 시작했으므로 플래그 설정 (다음 로그인부터 exercise_main_screen 표시)
     await TokenService.instance.setHasStartedExercise(true);
     if (mounted) {
-      context.push('/exercise/survey1');
+      // 컨디션 체크 화면으로 이동 (여기서 신규/기존 유저 분기)
+      context.push('/exercise/fixed');
     }
   }
 

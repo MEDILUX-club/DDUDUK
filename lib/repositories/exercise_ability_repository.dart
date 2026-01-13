@@ -17,7 +17,7 @@ class ExerciseAbilityRepository {
   ) async {
     final userId = TokenService.instance.getUserId();
 
-    debugPrint('📝 Exercise Ability 제출 시도');
+    debugPrint('Exercise Ability 제출 시도');
     debugPrint('  - User ID: $userId');
 
     if (userId == null) {
@@ -46,11 +46,17 @@ class ExerciseAbilityRepository {
         Endpoints.exerciseAbility(userId),
       );
 
-      return ExerciseAbilityResponse.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      debugPrint('Exercise Ability 응답 타입: ${response.data.runtimeType}');
+      
+      // API 응답이 Map인 경우에만 파싱
+      if (response.data is Map<String, dynamic>) {
+        return ExerciseAbilityResponse.fromJson(response.data as Map<String, dynamic>);
+      }
+      
+      return null;
     } catch (e) {
-      // 평가가 없는 경우 null 반환
+      // 평가가 없는 경우 (404 등) null 반환
+      debugPrint('Exercise Ability 조회 오류: $e');
       return null;
     }
   }
