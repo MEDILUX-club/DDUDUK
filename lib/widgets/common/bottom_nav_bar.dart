@@ -50,15 +50,27 @@ class BottomNavBar extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(navItems.length, (index) {
               final item = navItems[index];
               final isSelected = index == currentIndex;
-              return _NavItem(
-                iconPath: item.iconPath,
-                label: item.label,
-                isSelected: isSelected,
-                onTap: () => onTap(index),
+              return Expanded(
+                child: index == 1
+                    ? Padding(
+                        // 운동 탭을 오른쪽으로 8px 이동
+                        padding: const EdgeInsets.only(left: 8),
+                        child: _NavItem(
+                          iconPath: item.iconPath,
+                          label: item.label,
+                          isSelected: isSelected,
+                          onTap: () => onTap(index),
+                        ),
+                      )
+                    : _NavItem(
+                        iconPath: item.iconPath,
+                        label: item.label,
+                        isSelected: isSelected,
+                        onTap: () => onTap(index),
+                      ),
               );
             }),
           ),
