@@ -51,67 +51,27 @@ class PainSurveyRequest {
 // ──────────────────────────────────────
 
 class PainSurveyResponse {
-  final int id;
-  final int userId;
-  final String painArea;
-  final String affectedSide;
-  final String painStartedDate;
-  final int painLevel;
-  final String painTrigger;
-  final String painSensation;
-  final String painDuration;
-  final String redFlags;
-  final String? diagnosis;         // AI 진단 결과
-  final String? recommendation;    // AI 추천
-  final DateTime createdAt;
+  final String diagnosisType;        // AI 진단 유형 (예: "퇴행성형", "염증형", "외상형", "과사용형")
+  final int diagnosisPercentage;     // 진단 확률 (0-100)
+  final String diagnosisDescription; // 진단 설명
 
   PainSurveyResponse({
-    required this.id,
-    required this.userId,
-    required this.painArea,
-    required this.affectedSide,
-    required this.painStartedDate,
-    required this.painLevel,
-    required this.painTrigger,
-    required this.painSensation,
-    required this.painDuration,
-    required this.redFlags,
-    this.diagnosis,
-    this.recommendation,
-    required this.createdAt,
+    required this.diagnosisType,
+    required this.diagnosisPercentage,
+    required this.diagnosisDescription,
   });
 
   factory PainSurveyResponse.fromJson(Map<String, dynamic> json) {
     return PainSurveyResponse(
-      id: json['id'] as int,
-      userId: json['userId'] as int,
-      painArea: json['painArea'] as String? ?? '',
-      affectedSide: json['affectedSide'] as String? ?? '',
-      painStartedDate: json['painStartedDate'] as String? ?? '',
-      painLevel: json['painLevel'] as int? ?? 0,
-      painTrigger: json['painTrigger'] as String? ?? '',
-      painSensation: json['painSensation'] as String? ?? '',
-      painDuration: json['painDuration'] as String? ?? '',
-      redFlags: json['redFlags'] as String? ?? '',
-      diagnosis: json['diagnosis'] as String?,
-      recommendation: json['recommendation'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      diagnosisType: json['diagnosisType'] as String? ?? '',
+      diagnosisPercentage: json['diagnosisPercentage'] as int? ?? 0,
+      diagnosisDescription: json['diagnosisDescription'] as String? ?? '',
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'userId': userId,
-        'painArea': painArea,
-        'affectedSide': affectedSide,
-        'painStartedDate': painStartedDate,
-        'painLevel': painLevel,
-        'painTrigger': painTrigger,
-        'painSensation': painSensation,
-        'painDuration': painDuration,
-        'redFlags': redFlags,
-        'diagnosis': diagnosis,
-        'recommendation': recommendation,
-        'createdAt': createdAt.toIso8601String(),
+        'diagnosisType': diagnosisType,
+        'diagnosisPercentage': diagnosisPercentage,
+        'diagnosisDescription': diagnosisDescription,
       };
 }

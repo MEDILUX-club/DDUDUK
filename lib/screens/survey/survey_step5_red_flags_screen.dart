@@ -96,8 +96,9 @@ class _SurveyStep5WorkoutExpScreenState
             if (!context.mounted) return;
 
             if (success) {
+              final result = ref.read(surveyProvider).result;
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SurveyStep6ResultScreen()),
+                MaterialPageRoute(builder: (_) => SurveyStep6ResultScreen(result: result)),
               );
             } else {
               final state = ref.read(surveyProvider);

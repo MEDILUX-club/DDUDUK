@@ -4,6 +4,7 @@ import 'package:dduduk_app/screens/survey/survey_completion_screen.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
+import 'package:dduduk_app/models/survey/post_users_pain_survey.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 enum SurveyResultType { inflammation, degeneration, trauma, overuse }
@@ -56,15 +57,35 @@ const Map<SurveyResultType, _SurveyResultData> _resultData = {
 class SurveyStep6ResultScreen extends StatelessWidget {
   const SurveyStep6ResultScreen({
     super.key,
-    this.resultType = SurveyResultType.degeneration,
+    this.result,
   });
 
-  final SurveyResultType resultType;
+  final PainSurveyResponse? result;
+
+  /// diagnosisType 문자열에서 SurveyResultType 추출
+  SurveyResultType _parseResultType(String? diagnosisType) {
+    if (diagnosisType == null || diagnosisType.isEmpty) {
+      return SurveyResultType.degeneration;
+    }
+    
+    final lower = diagnosisType.toLowerCase();
+    if (lower.contains('염증') || lower.contains('inf') || lower.contains('inflammation')) {
+      return SurveyResultType.inflammation;
+    } else if (lower.contains('퇴행') || lower.contains('oa') || lower.contains('degen')) {
+      return SurveyResultType.degeneration;
+    } else if (lower.contains('외상') || lower.contains('trm') || lower.contains('trauma')) {
+      return SurveyResultType.trauma;
+    } else if (lower.contains('과사용') || lower.contains('ovr') || lower.contains('overuse')) {
+      return SurveyResultType.overuse;
+    }
+    return SurveyResultType.degeneration;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final SurveyResultType resultType = _parseResultType(result?.diagnosisType);
     final _SurveyResultData data = _resultData[resultType]!;
-    const int probability = 72;
+    final int probability = result?.diagnosisPercentage ?? 72;
 
     return DefaultLayout(
       title: '설문 결과',
