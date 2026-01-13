@@ -55,4 +55,16 @@ class RecommendedExercise {
       description: json['description'] as String?,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'exerciseId': exerciseId,
+      'nameKo': nameKo,
+      'exerciseOrder': exerciseOrder,
+      'difficulty': difficulty,
+      'recommendedReps': recommendedReps,
+      'recommendedSets': recommendedSets,
+      'videoUrl': videoUrl,
+    };
+  }
 }

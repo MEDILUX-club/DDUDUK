@@ -38,7 +38,36 @@ class _ExerciseFixed1ScreenState extends State<ExerciseFixed1Screen> {
       final now = DateTime.now();
       final dateStr = '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
       
-      // 오직 GET API만 호출 (생성 시도 로직 제거)
+      // 1차: GET으로 루틴 조회 시도
+      try {
+        final response = await _exerciseRepository.getRoutineByDate(dateStr);
+        
+        if (mounted) {
+          setState(() {
+            _exercises = response.exercises;
+            _isLoading = false;
+          });
+        }
+        return; // 성공 시 종료
+      } catch (e) {
+        debugPrint('GET 루틴 조회 실패, 폴백 시도: $e');
+      }
+
+      // 2차: GET 실패 시 POST로 생성 후 저장
+      debugPrint('📍 AI 운동 추천 생성 및 저장 시도...');
+      
+      // 2-1. AI 운동 추천 생성
+      final recommendation = await _exerciseRepository.createInitialRecommendation(dateStr);
+      debugPrint('✅ AI 운동 추천 생성 완료: ${recommendation.exercises.length}개 운동');
+      
+      // 2-2. 추천 운동 저장
+      await _exerciseRepository.saveRoutines(
+        routineDate: dateStr,
+        exercises: recommendation.exercises,
+      );
+      debugPrint('✅ 추천 운동 저장 완료');
+      
+      // 2-3. 다시 GET으로 조회 (저장된 데이터 확인)
       final response = await _exerciseRepository.getRoutineByDate(dateStr);
       
       if (mounted) {
@@ -48,7 +77,7 @@ class _ExerciseFixed1ScreenState extends State<ExerciseFixed1Screen> {
         });
       }
     } catch (e) {
-      debugPrint('운동 추천 로딩 오류: $e');
+      debugPrint('운동 추천 로딩 최종 오류: $e');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -57,7 +86,7 @@ class _ExerciseFixed1ScreenState extends State<ExerciseFixed1Screen> {
         // 에러 상황 사용자에게 알림
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('운동 루틴을 불러오지 못했습니다. (오류: ${e.toString()})'),
+            content: Text('운동 루틴을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.'),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 3),
           ),

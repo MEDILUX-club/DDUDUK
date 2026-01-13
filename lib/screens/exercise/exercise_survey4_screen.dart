@@ -5,6 +5,7 @@ import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_condition_card.dart';
 import 'package:dduduk_app/providers/exercise_ability_provider.dart';
+import 'package:dduduk_app/repositories/exercise_repository.dart';
 import 'package:go_router/go_router.dart';
 
 /// 운동 설문 4 - 플랭크 시간 설문
@@ -66,6 +67,28 @@ class _ExerciseSurvey4ScreenState extends ConsumerState<ExerciseSurvey4Screen> {
       if (!mounted) return;
 
       if (success) {
+        // 4가지 데이터(유저정보, 통증진단, 일일통증, 운동능력평가) 모두 저장됨
+        // → AI 운동 추천 생성 및 저장
+        try {
+          final exerciseRepo = ExerciseRepository();
+          final now = DateTime.now();
+          final routineDate = '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+          
+          // 1. AI 운동 추천 생성 요청
+          final recommendation = await exerciseRepo.createInitialRecommendation(routineDate);
+          debugPrint('✅ AI 운동 추천 생성 완료: ${recommendation.exercises.length}개 운동');
+          
+          // 2. 추천 운동 저장
+          await exerciseRepo.saveRoutines(
+            routineDate: routineDate,
+            exercises: recommendation.exercises,
+          );
+          debugPrint('✅ 추천 운동 저장 완료');
+        } catch (e) {
+          debugPrint('⚠️ AI 운동 추천/저장 실패: $e');
+          // 실패해도 화면 이동은 진행
+        }
+        
         widget.onComplete?.call();
         // 설문 완료 후 운동 루틴 화면(1일차)으로 이동
         context.go('/exercise/fixed1');
