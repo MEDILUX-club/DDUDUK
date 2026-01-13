@@ -20,9 +20,19 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
   final String _userName = '황두현님'; // 사용자 이름 (추후 API 연동 시 변경)
 
   void _onNavTap(int index) {
-    setState(() {
-      _currentNavIndex = index;
-    });
+    if (index == _currentNavIndex) return;
+
+    switch (index) {
+      case 0:
+        context.go('/home');
+        break;
+      case 1:
+        // 이미 운동 탭에 있으므로 유지
+        break;
+      case 2:
+        context.go('/mypage');
+        break;
+    }
   }
 
   void _onStartExercise() {

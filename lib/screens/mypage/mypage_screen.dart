@@ -9,6 +9,7 @@ import 'package:dduduk_app/screens/survey/survey_step1_basic_info_screen.dart';
 import 'package:dduduk_app/screens/survey/survey_step2_pain_location_screen.dart';
 import 'package:dduduk_app/widgets/exercise/rest_exit_modal.dart';
 import 'package:dduduk_app/repositories/user_repository.dart';
+import 'package:dduduk_app/services/token_service.dart';
 
 /// 마이페이지 화면
 class MypageScreen extends StatefulWidget {
@@ -30,7 +31,13 @@ class _MypageScreenState extends State<MypageScreen> {
         context.go('/home');
         break;
       case 1:
-        context.go('/exercise/main');
+        // 운동 시작 여부에 따라 다른 화면으로 이동
+        final hasStarted = TokenService.instance.getHasStartedExercise();
+        if (hasStarted) {
+          context.go('/exercise/main');
+        } else {
+          context.go('/exercise/main-empty');
+        }
         break;
       case 2:
         context.go('/mypage');

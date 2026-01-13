@@ -5,6 +5,7 @@ class TokenService {
   static const String _accessTokenKey = 'access_token';
   static const String _refreshTokenKey = 'refresh_token';
   static const String _userIdKey = 'user_id';
+  static const String _hasStartedExerciseKey = 'has_started_exercise';
 
   static TokenService? _instance;
   static SharedPreferences? _prefs;
@@ -86,6 +87,25 @@ class TokenService {
   }
 
   // ──────────────────────────────────────
+  // 운동 시작 여부 (첫 운동 진입 확인용)
+  // ──────────────────────────────────────
+
+  /// 운동 시작 여부 저장
+  Future<void> setHasStartedExercise(bool value) async {
+    await _prefs?.setBool(_hasStartedExerciseKey, value);
+  }
+
+  /// 운동 시작 여부 조회 (기본값: false)
+  bool getHasStartedExercise() {
+    return _prefs?.getBool(_hasStartedExerciseKey) ?? false;
+  }
+
+  /// 운동 시작 여부 삭제
+  Future<void> deleteHasStartedExercise() async {
+    await _prefs?.remove(_hasStartedExerciseKey);
+  }
+
+  // ──────────────────────────────────────
   // 전체 토큰 관리
   // ──────────────────────────────────────
 
@@ -108,6 +128,7 @@ class TokenService {
       deleteAccessToken(),
       deleteRefreshToken(),
       deleteUserId(),
+      deleteHasStartedExercise(),
     ]);
   }
 

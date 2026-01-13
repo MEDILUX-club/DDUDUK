@@ -6,6 +6,7 @@ import 'package:dduduk_app/widgets/home/recovery_status_card.dart';
 import 'package:dduduk_app/widgets/home/exercise_calendar.dart';
 import 'package:dduduk_app/widgets/home/exercise_record_modal.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_routine_card.dart';
+import 'package:dduduk_app/services/token_service.dart';
 
 /// 홈 화면
 class HomeScreen extends StatefulWidget {
@@ -108,7 +109,13 @@ class _HomeScreenState extends State<HomeScreen> {
         context.go('/home');
         break;
       case 1:
-        context.go('/exercise/main');
+        // 운동 시작 여부에 따라 다른 화면으로 이동
+        final hasStarted = TokenService.instance.getHasStartedExercise();
+        if (hasStarted) {
+          context.go('/exercise/main');
+        } else {
+          context.go('/exercise/main-empty');
+        }
         break;
       case 2:
         context.go('/mypage');

@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/screens/auth/terms_agreement_screen.dart';
 import 'package:dduduk_app/services/social_auth_service.dart';
+import 'package:dduduk_app/services/token_service.dart';
 import 'package:dduduk_app/repositories/auth_repository.dart';
 import 'package:dduduk_app/repositories/pain_survey_repository.dart';
 import 'package:dduduk_app/api/api_exception.dart';
@@ -55,30 +56,27 @@ class _SignInScreenState extends State<SignInScreen> {
 
       if (!mounted) return;
 
-      // 3. 프로필 정보 존재 여부로 사용자 상태 판단
-      if (loginResponse.nickname.isEmpty) {
-        // 프로필 미설정: 약관 동의 → 초기 설문
-        _navigateToTerms();
-      } else {
-        // 프로필 설정 완료: Pain Survey 확인
-        try {
-          final painSurvey = await _painSurveyRepository.getPainSurvey();
+      // 3. Pain Survey 존재 여부로 기존 사용자인지 판단
+      try {
+        final painSurvey = await _painSurveyRepository.getPainSurvey();
 
-          if (!mounted) return;
+        if (!mounted) return;
 
-          if (painSurvey == null) {
-            // 설문 미완료: 초기 설문으로 이동
-            _navigateToTerms();
-          } else {
-            // 설문 완료: 메인 화면
-            context.go('/exercise-main');
+        if (painSurvey != null) {
+          // 설문 완료된 기존 사용자: 운동 메인 화면으로 이동
+          await TokenService.instance.setHasStartedExercise(true);
+          if (mounted) {
+            context.go('/exercise/main');
           }
-        } catch (e) {
-          // Pain Survey 조회 실패 (403 등): 초기 설문으로 이동
-          debugPrint('Pain Survey 조회 오류: $e');
-          if (!mounted) return;
+        } else {
+          // 설문 미완료: 약관 동의 → 초기 설문으로 이동
           _navigateToTerms();
         }
+      } catch (e) {
+        // Pain Survey 조회 실패: 초기 설문으로 이동
+        debugPrint('Pain Survey 조회 오류: $e');
+        if (!mounted) return;
+        _navigateToTerms();
       }
     } on ApiException catch (e) {
       debugPrint('API 에러: $e');

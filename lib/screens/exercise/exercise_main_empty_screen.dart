@@ -6,6 +6,7 @@ import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/layouts/home_layout.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_start_card.dart';
+import 'package:dduduk_app/services/token_service.dart';
 import 'package:go_router/go_router.dart';
 
 /// 운동 메인 화면 (빈 상태)
@@ -22,13 +23,27 @@ class _ExerciseMainEmptyScreenState extends State<ExerciseMainEmptyScreen> {
   final String _userName = '황두현님'; // 사용자 이름 (추후 API 연동 시 변경)
 
   void _onNavTap(int index) {
-    setState(() {
-      _currentNavIndex = index;
-    });
+    if (index == _currentNavIndex) return;
+
+    switch (index) {
+      case 0:
+        context.go('/home');
+        break;
+      case 1:
+        // 이미 운동 탭에 있으므로 유지
+        break;
+      case 2:
+        context.go('/mypage');
+        break;
+    }
   }
 
-  void _onStartExercise() {
-    context.push('/exercise/survey1');
+  void _onStartExercise() async {
+    // 운동을 시작했으므로 플래그 설정 (다음 로그인부터 exercise_main_screen 표시)
+    await TokenService.instance.setHasStartedExercise(true);
+    if (mounted) {
+      context.push('/exercise/survey1');
+    }
   }
 
   @override
