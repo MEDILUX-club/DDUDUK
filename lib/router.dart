@@ -181,8 +181,6 @@ final GoRouter appRouter = GoRouter(
         final extra = state.extra as Map<String, dynamic>?;
         return ExerciseFixed1Screen(
           dayNumber: extra?['dayNumber'] ?? 1,
-          exercises: extra?['exercises'] ?? [],
-          onStartPressed: extra?['onStartPressed'],
         );
       },
     ),

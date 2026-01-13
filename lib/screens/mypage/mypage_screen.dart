@@ -27,6 +27,7 @@ class _MypageScreenState extends State<MypageScreen> {
   
   // 프로필 데이터
   String _userName = '';
+  String? _profileImageUrl;
   bool _isLoading = true;
   
   // 진단 결과 데이터
@@ -56,6 +57,20 @@ class _MypageScreenState extends State<MypageScreen> {
           _userName = (profile as dynamic).nickname.isNotEmpty 
               ? (profile as dynamic).nickname 
               : '사용자';
+          
+          // 상대 경로인 경우 Base URL 붙이기
+          final imageUrl = (profile as dynamic).profileImageUrl as String?;
+          if (imageUrl != null && imageUrl.isNotEmpty) {
+            if (imageUrl.startsWith('/')) {
+              _profileImageUrl = 'http://43.201.28.83:8080$imageUrl';
+            } else {
+              _profileImageUrl = imageUrl;
+            }
+          } else {
+            _profileImageUrl = null;
+          }
+          
+          debugPrint('프로필 이미지 URL: $_profileImageUrl');
           
           if (painSurvey != null) {
             _diagnosisPercentage = (painSurvey as dynamic).diagnosisPercentage;
@@ -122,6 +137,7 @@ class _MypageScreenState extends State<MypageScreen> {
           // 프로필 카드
           _ProfileCard(
             userName: _isLoading ? '로딩 중...' : _userName,
+            profileImageUrl: _profileImageUrl,
             recoveryPercent: _diagnosisPercentage,
             painArea: _painArea,
             conditionType: _diagnosisType.isNotEmpty ? _diagnosisType : '진단 정보 없음',
@@ -208,6 +224,7 @@ class _MypageScreenState extends State<MypageScreen> {
 class _ProfileCard extends StatelessWidget {
   const _ProfileCard({
     required this.userName,
+    this.profileImageUrl,
     required this.recoveryPercent,
     required this.painArea,
     required this.conditionType,
@@ -215,6 +232,7 @@ class _ProfileCard extends StatelessWidget {
   });
 
   final String userName;
+  final String? profileImageUrl;
   final int recoveryPercent;
   final String painArea;
   final String conditionType;
@@ -237,12 +255,20 @@ class _ProfileCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.linePrimary,
               shape: BoxShape.circle,
+              image: profileImageUrl != null && profileImageUrl!.isNotEmpty
+                  ? DecorationImage(
+                      image: NetworkImage(profileImageUrl!),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
             ),
-            child: const Icon(
-              Icons.person,
-              size: 40,
-              color: AppColors.textDisabled,
-            ),
+            child: profileImageUrl == null || profileImageUrl!.isEmpty
+                ? const Icon(
+                    Icons.person,
+                    size: 40,
+                    color: AppColors.textDisabled,
+                  )
+                : null,
           ),
           const SizedBox(width: AppDimens.space16),
           // 사용자 정보

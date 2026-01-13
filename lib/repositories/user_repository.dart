@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:dduduk_app/api/api_client.dart';
 import 'package:dduduk_app/api/endpoints.dart';
 import 'package:dduduk_app/models/user/put_users_profile.dart';
@@ -42,14 +44,14 @@ class UserRepository {
     );
   }
 
-  /// 닉네임과 프로필 이미지만 업데이트 (마이페이지용)
+  /// 닉네임만 업데이트 (마이페이지용)
+  /// 
+  /// 프로필 이미지는 [uploadProfileImage]로 별도 업로드
   Future<UserProfileResponse> updateDisplayInfo({
     String? nickname,
-    String? profileImageUrl,
   }) async {
     return updateProfile(UpdateUserRequest(
       nickname: nickname,
-      profileImageUrl: profileImageUrl,
     ));
   }
 
@@ -95,5 +97,40 @@ class UserRepository {
     }
 
     await _apiClient.delete(Endpoints.resetSurveys(userId));
+  }
+
+  /// 프로필 이미지 업로드/업데이트
+  /// 
+  /// POST /api/users/{userId}/profile-image
+  /// Multipart/FormData로 파일 전송
+  /// 반환값: 업로드된 이미지 URL
+  Future<String?> uploadProfileImage(File imageFile) async {
+    final userId = TokenService.instance.getUserId();
+    if (userId == null) {
+      throw Exception('User not logged in');
+    }
+
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(
+        imageFile.path,
+        filename: 'profile_image.jpg',
+      ),
+    });
+
+    final response = await _apiClient.post(
+      '/api/users/$userId/profile-image',
+      data: formData,
+      options: Options(
+        contentType: 'multipart/form-data',
+      ),
+    );
+
+    // 응답에서 URL 추출 (API 응답 형태에 따라 조정 필요)
+    if (response.data is Map<String, dynamic>) {
+      final data = response.data as Map<String, dynamic>;
+      // additionalProp1, additionalProp2 등 키가 어떤 것인지 확인 필요
+      return data.values.firstOrNull?.toString();
+    }
+    return null;
   }
 }

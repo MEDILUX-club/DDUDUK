@@ -62,16 +62,21 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     }
   }
 
-  /// 프로필 저장 (닉네임만 수정 가능)
+  /// 프로필 저장 (닉네임 + 이미지)
   Future<void> _saveProfile() async {
     if (_isSaving) return;
     
     setState(() => _isSaving = true);
 
     try {
+      // 1. 프로필 이미지가 있으면 먼저 업로드
+      if (_profileImage != null) {
+        await _userRepository.uploadProfileImage(_profileImage!);
+      }
+
+      // 2. 닉네임 업데이트
       await _userRepository.updateDisplayInfo(
         nickname: _nicknameController.text,
-        // profileImageUrl: 이미지 업로드 후 URL 전달 필요 (추후 구현)
       );
 
       if (mounted) {
