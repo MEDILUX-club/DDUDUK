@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_condition_card.dart';
+import 'package:dduduk_app/providers/exercise_ability_provider.dart';
 import 'package:go_router/go_router.dart';
 
 /// 운동 설문 2 - 푸쉬업 개수 설문
-class ExerciseSurvey2Screen extends StatefulWidget {
+class ExerciseSurvey2Screen extends ConsumerStatefulWidget {
   const ExerciseSurvey2Screen({super.key});
 
   @override
-  State<ExerciseSurvey2Screen> createState() => _ExerciseSurvey2ScreenState();
+  ConsumerState<ExerciseSurvey2Screen> createState() => _ExerciseSurvey2ScreenState();
 }
 
-class _ExerciseSurvey2ScreenState extends State<ExerciseSurvey2Screen> {
+class _ExerciseSurvey2ScreenState extends ConsumerState<ExerciseSurvey2Screen> {
   int? _selectedValue;
 
   static const List<ExerciseOption> _options = [
@@ -45,8 +47,18 @@ class _ExerciseSurvey2ScreenState extends State<ExerciseSurvey2Screen> {
 
   void _onNextPressed() {
     if (_selectedValue != null) {
+      // Provider에 푸쉬업 응답 저장
+      ref.read(exerciseAbilityProvider.notifier).updatePushupResponse(
+        _getResponseLabel(_selectedValue!),
+      );
       context.push('/exercise/survey3');
     }
+  }
+
+  /// 선택된 값의 라벨 반환
+  String _getResponseLabel(int value) {
+    final option = _options.firstWhere((o) => o.value == value);
+    return option.label;
   }
 
   @override

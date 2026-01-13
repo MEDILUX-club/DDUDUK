@@ -72,14 +72,14 @@ class SurveyLayout extends StatelessWidget {
 class SurveyButtonsConfig {
   const SurveyButtonsConfig({
     required this.nextText,
-    required this.onNext,
+    this.onNext,
     this.prevText,
     this.onPrev,
     this.isNextEnabled = true,
   });
 
   final String nextText;
-  final VoidCallback onNext;
+  final VoidCallback? onNext;
   final String? prevText;
   final VoidCallback? onPrev;
   final bool isNextEnabled;

@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_condition_card.dart';
+import 'package:dduduk_app/providers/exercise_ability_provider.dart';
 import 'package:go_router/go_router.dart';
+
 /// 운동 설문 4 - 플랭크 시간 설문
-class ExerciseSurvey4Screen extends StatefulWidget {
+class ExerciseSurvey4Screen extends ConsumerStatefulWidget {
   const ExerciseSurvey4Screen({super.key, this.onComplete});
 
   /// 설문 완료 시 콜백
   final VoidCallback? onComplete;
 
   @override
-  State<ExerciseSurvey4Screen> createState() => _ExerciseSurvey4ScreenState();
+  ConsumerState<ExerciseSurvey4Screen> createState() => _ExerciseSurvey4ScreenState();
 }
 
-class _ExerciseSurvey4ScreenState extends State<ExerciseSurvey4Screen> {
+class _ExerciseSurvey4ScreenState extends ConsumerState<ExerciseSurvey4Screen> {
   int? _selectedValue;
+  bool _isSubmitting = false;
 
   static const List<ExerciseOption> _options = [
     ExerciseOption(
@@ -45,12 +49,47 @@ class _ExerciseSurvey4ScreenState extends State<ExerciseSurvey4Screen> {
     Navigator.of(context).pop();
   }
 
-  void _onNextPressed() {
-    if (_selectedValue != null) {
-      widget.onComplete?.call();
-      // 설문 완료 후 운동 루틴 화면(1일차)으로 이동
-      context.go('/exercise/fixed1');
+  Future<void> _onNextPressed() async {
+    if (_selectedValue == null || _isSubmitting) return;
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      // Provider에 플랭크 응답 저장
+      ref.read(exerciseAbilityProvider.notifier).updatePlankResponse(
+        _getResponseLabel(_selectedValue!),
+      );
+
+      // API 제출
+      final success = await ref.read(exerciseAbilityProvider.notifier).submitExerciseAbility();
+
+      if (!mounted) return;
+
+      if (success) {
+        widget.onComplete?.call();
+        // 설문 완료 후 운동 루틴 화면(1일차)으로 이동
+        context.go('/exercise/fixed1');
+      } else {
+        // 에러 표시
+        final error = ref.read(exerciseAbilityProvider).error;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error ?? '제출 중 오류가 발생했습니다.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
     }
+  }
+
+  /// 선택된 값의 라벨 반환
+  String _getResponseLabel(int value) {
+    final option = _options.firstWhere((o) => o.value == value);
+    return option.label;
   }
 
   @override
@@ -65,8 +104,8 @@ class _ExerciseSurvey4ScreenState extends State<ExerciseSurvey4Screen> {
         style: AppTextStyles.body20Bold,
       ),
       bottomButtons: SurveyButtonsConfig(
-        nextText: '다음으로',
-        onNext: _onNextPressed,
+        nextText: _isSubmitting ? '제출 중...' : '다음으로',
+        onNext: _isSubmitting ? null : _onNextPressed,
         prevText: '이전으로',
         onPrev: _onPrevPressed,
       ),
@@ -85,7 +124,11 @@ class _ExerciseSurvey4ScreenState extends State<ExerciseSurvey4Screen> {
             label: option.label,
             imagePath: option.imagePath,
             selected: _selectedValue == option.value,
-            onTap: () => setState(() => _selectedValue = option.value),
+            onTap: () {
+              if (!_isSubmitting) {
+                setState(() => _selectedValue = option.value);
+              }
+            },
           );
         },
       ),

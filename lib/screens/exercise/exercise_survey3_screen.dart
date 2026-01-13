@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_condition_card.dart';
+import 'package:dduduk_app/providers/exercise_ability_provider.dart';
 import 'package:go_router/go_router.dart';
 
 /// 운동 설문 3 - 계단 오르기 층수 설문
-class ExerciseSurvey3Screen extends StatefulWidget {
+class ExerciseSurvey3Screen extends ConsumerStatefulWidget {
   const ExerciseSurvey3Screen({super.key});
 
   @override
-  State<ExerciseSurvey3Screen> createState() => _ExerciseSurvey3ScreenState();
+  ConsumerState<ExerciseSurvey3Screen> createState() => _ExerciseSurvey3ScreenState();
 }
 
-class _ExerciseSurvey3ScreenState extends State<ExerciseSurvey3Screen> {
+class _ExerciseSurvey3ScreenState extends ConsumerState<ExerciseSurvey3Screen> {
   int? _selectedValue;
 
   static const List<ExerciseOption> _options = [
@@ -45,8 +47,18 @@ class _ExerciseSurvey3ScreenState extends State<ExerciseSurvey3Screen> {
 
   void _onNextPressed() {
     if (_selectedValue != null) {
+      // Provider에 계단오르기 응답 저장
+      ref.read(exerciseAbilityProvider.notifier).updateStepupResponse(
+        _getResponseLabel(_selectedValue!),
+      );
       context.push('/exercise/survey4');
     }
+  }
+
+  /// 선택된 값의 라벨 반환
+  String _getResponseLabel(int value) {
+    final option = _options.firstWhere((o) => o.value == value);
+    return option.label;
   }
 
   @override
