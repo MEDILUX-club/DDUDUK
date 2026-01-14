@@ -6,6 +6,8 @@ import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_start_card.dart';
 import 'package:dduduk_app/repositories/user_repository.dart';
+import 'package:dduduk_app/repositories/exercise_repository.dart';
+import 'package:dduduk_app/models/exercise/weekly_workout_summary.dart';
 import 'package:go_router/go_router.dart';
 
 /// 운동 메인 화면 (데이터 있음)
@@ -20,11 +22,15 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
   int _currentNavIndex = 1; // 운동 탭 선택됨
   String _userName = '사용자님';
   final _userRepository = UserRepository();
+  final _exerciseRepository = ExerciseRepository();
+
+  WeeklyWorkoutSummary? _weeklySummary;
 
   @override
   void initState() {
     super.initState();
     _loadUserName();
+    _loadWeeklySummary();
   }
 
   Future<void> _loadUserName() async {
@@ -32,13 +38,33 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
       final profile = await _userRepository.getProfile();
       if (mounted) {
         setState(() {
-          _userName = profile.nickname.isNotEmpty 
-              ? '${profile.nickname}님' 
+          _userName = profile.nickname.isNotEmpty
+              ? '${profile.nickname}님'
               : '사용자님';
         });
       }
     } catch (e) {
       debugPrint('닉네임 로딩 오류: $e');
+    }
+  }
+
+  Future<void> _loadWeeklySummary() async {
+    try {
+      // 오늘 날짜를 referenceDate로 사용
+      final today = DateTime.now();
+      final referenceDate = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+
+      final summary = await _exerciseRepository.getWeeklySummary(
+        referenceDate: referenceDate,
+      );
+
+      if (mounted) {
+        setState(() {
+          _weeklySummary = summary;
+        });
+      }
+    } catch (e) {
+      debugPrint('주간 요약 로딩 오류: $e');
     }
   }
 
@@ -93,6 +119,14 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
 
 
   Widget _buildWeeklyProgress() {
+    // API 데이터가 로드되지 않았을 때 기본값 사용
+    final workoutCount = _weeklySummary?.thisWeekWorkoutCount ?? 0;
+    final totalMinutes = _weeklySummary?.thisWeekTotalMinutes ?? 0;
+    final workoutDiff = _weeklySummary?.workoutCountDiff ?? 0;
+    final minutesDiff = _weeklySummary?.totalMinutesDiff ?? 0;
+    final isWorkoutPositive = _weeklySummary?.isWorkoutCountPositive ?? true;
+    final isMinutesPositive = _weeklySummary?.isTotalMinutesPositive ?? true;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -123,10 +157,10 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
             Expanded(
               child: _StatCard(
                 title: '운동 횟수',
-                value: '3회',
-                change: '+1',
+                value: '${workoutCount}회',
+                change: '${workoutDiff >= 0 ? '+' : ''}$workoutDiff',
                 changeLabel: '저번 주 대비',
-                isPositive: true,
+                isPositive: isWorkoutPositive,
               ),
             ),
             const SizedBox(width: AppDimens.itemSpacing),
@@ -134,10 +168,10 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
             Expanded(
               child: _StatCard(
                 title: '총 시간',
-                value: '65분',
-                change: '+20분',
+                value: '${totalMinutes}분',
+                change: '${minutesDiff >= 0 ? '+' : ''}${minutesDiff}분',
                 changeLabel: '저번 주 대비',
-                isPositive: true,
+                isPositive: isMinutesPositive,
               ),
             ),
           ],
@@ -243,11 +277,11 @@ class _StatCard extends StatelessWidget {
           Row(
             children: [
               SvgPicture.asset(
-                'assets/icons/ic_up.svg',
+                isPositive ? 'assets/icons/ic_up.svg' : 'assets/icons/ic_down.svg',
                 width: 14,
                 height: 14,
-                colorFilter: const ColorFilter.mode(
-                  AppColors.primary,
+                colorFilter: ColorFilter.mode(
+                  isPositive ? AppColors.primary : AppColors.statusDestructive,
                   BlendMode.srcIn,
                 ),
               ),
@@ -255,7 +289,7 @@ class _StatCard extends StatelessWidget {
               Text(
                 change,
                 style: AppTextStyles.body12Regular.copyWith(
-                  color: AppColors.primary,
+                  color: isPositive ? AppColors.primary : AppColors.statusDestructive,
                 ),
               ),
               const SizedBox(width: 4),

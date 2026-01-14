@@ -1,6 +1,7 @@
 import 'package:dduduk_app/api/api_client.dart';
 import 'package:dduduk_app/models/exercise/exercise_recommendation.dart';
 import 'package:dduduk_app/models/exercise/workout_record.dart';
+import 'package:dduduk_app/models/exercise/weekly_workout_summary.dart';
 import 'package:dduduk_app/services/token_service.dart';
 
 class ExerciseRepository {
@@ -34,7 +35,7 @@ class ExerciseRepository {
   }
 
   /// 최초 운동 추천 생성 (POST /api/exercise-recommendation/initial)
-  /// 
+  ///
   /// 반환값: AI가 추천한 운동 리스트
   Future<ExerciseRecommendationResponse> createInitialRecommendation(String routineDate) async {
     final userId = TokenService.instance.getUserId();
@@ -50,7 +51,38 @@ class ExerciseRepository {
           'routineDate': routineDate,
         },
       );
-      
+
+      return ExerciseRecommendationResponse.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// 반복 운동 추천 생성 (POST /api/exercise-recommendation/repeat)
+  ///
+  /// 이전 루틴 기반 운동 추천
+  /// 반환값: AI가 추천한 운동 리스트
+  Future<ExerciseRecommendationResponse> createRepeatRecommendation({
+    required String routineDate,
+    required String previousRoutineDate,
+  }) async {
+    final userId = TokenService.instance.getUserId();
+    if (userId == null) {
+      throw Exception('User not logged in');
+    }
+
+    try {
+      final response = await _apiClient.post(
+        '/api/exercise-recommendation/repeat',
+        queryParameters: {
+          'userId': userId,
+          'routineDate': routineDate,
+          'previousRoutineDate': previousRoutineDate,
+        },
+      );
+
       return ExerciseRecommendationResponse.fromJson(
         response.data as Map<String, dynamic>,
       );
@@ -200,6 +232,34 @@ class ExerciseRepository {
             .toList();
       }
       return [];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// 주간 운동 요약 조회 (GET /api/workout-records/weekly-summary)
+  ///
+  /// 이번 주와 지난 주의 운동 횟수와 총 시간 비교
+  Future<WeeklyWorkoutSummary> getWeeklySummary({
+    required String referenceDate,
+  }) async {
+    final userId = TokenService.instance.getUserId();
+    if (userId == null) {
+      throw Exception('User not logged in');
+    }
+
+    try {
+      final response = await _apiClient.get(
+        '/api/workout-records/weekly-summary',
+        queryParameters: {
+          'userId': userId,
+          'referenceDate': referenceDate,
+        },
+      );
+
+      return WeeklyWorkoutSummary.fromJson(
+        response.data as Map<String, dynamic>,
+      );
     } catch (e) {
       rethrow;
     }

@@ -25,6 +25,16 @@ class _ExerciseScheduleReservationScreenState
   bool _isNotificationEnabled = false;
 
   @override
+  void initState() {
+    super.initState();
+    // 오늘 날짜로 자동 설정
+    final today = DateTime.now();
+    final formatted =
+        '${today.year.toString().padLeft(4, '0')}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+    _dateController.text = formatted;
+  }
+
+  @override
   void dispose() {
     _dateController.dispose();
     _timeController.dispose();
