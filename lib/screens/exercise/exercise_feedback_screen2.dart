@@ -8,7 +8,9 @@ import 'package:dduduk_app/widgets/common/selectable_option_card.dart';
 
 /// 운동 후 피드백 2단계: 오늘 내 근육은 어떻게 느꼈나요?
 class ExerciseFeedbackScreen2 extends StatefulWidget {
-  const ExerciseFeedbackScreen2({super.key});
+  final Map<String, dynamic>? feedbackData;
+
+  const ExerciseFeedbackScreen2({super.key, this.feedbackData});
 
   @override
   State<ExerciseFeedbackScreen2> createState() =>
@@ -32,7 +34,13 @@ class _ExerciseFeedbackScreen2State extends State<ExerciseFeedbackScreen2> {
 
   void _onNext() {
     if (_selectedOption != null) {
-      context.push('/exercise/feedback-3');
+      // 이전 데이터와 현재 선택 데이터를 결합하여 다음 화면으로 전달
+      final selectedText = _options[_selectedOption!];
+      final feedbackData = {
+        ...?widget.feedbackData,
+        'muscleStimulationResponse': selectedText,
+      };
+      context.push('/exercise/feedback-3', extra: feedbackData);
     }
   }
 

@@ -5,10 +5,13 @@ import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/widgets/common/selectable_option_card.dart';
+import 'package:dduduk_app/repositories/exercise_repository.dart';
 
 /// 운동 후 피드백 3단계: 운동 중 땀은 어느정도 났나요?
 class ExerciseFeedbackScreen3 extends StatefulWidget {
-  const ExerciseFeedbackScreen3({super.key});
+  final Map<String, dynamic>? feedbackData;
+
+  const ExerciseFeedbackScreen3({super.key, this.feedbackData});
 
   @override
   State<ExerciseFeedbackScreen3> createState() =>
@@ -17,6 +20,8 @@ class ExerciseFeedbackScreen3 extends StatefulWidget {
 
 class _ExerciseFeedbackScreen3State extends State<ExerciseFeedbackScreen3> {
   int? _selectedOption;
+  final ExerciseRepository _repository = ExerciseRepository();
+  bool _isSubmitting = false;
 
   final List<String> _options = [
     '안 났어요',
@@ -35,10 +40,44 @@ class _ExerciseFeedbackScreen3State extends State<ExerciseFeedbackScreen3> {
     context.pop();
   }
 
-  void _onNext() {
-    if (_selectedOption != null) {
+  Future<void> _onNext() async {
+    if (_selectedOption == null || _isSubmitting) return;
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      // 세 화면의 모든 피드백 데이터 수집
+      final selectedText = _options[_selectedOption!];
+      final rpeResponse = widget.feedbackData?['rpeResponse'] ?? '';
+      final muscleStimulationResponse =
+          widget.feedbackData?['muscleStimulationResponse'] ?? '';
+
+      // API 호출
+      await _repository.saveWorkoutFeedback(
+        rpeResponse: rpeResponse,
+        muscleStimulationResponse: muscleStimulationResponse,
+        sweatResponse: selectedText,
+      );
+
       // 피드백 완료 - 운동 예약 화면으로 이동
-      context.go('/exercise/reservation');
+      if (mounted) {
+        context.go('/exercise/reservation');
+      }
+    } catch (e) {
+      // 에러 처리
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('피드백 저장에 실패했습니다: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     }
   }
 
@@ -58,7 +97,7 @@ class _ExerciseFeedbackScreen3State extends State<ExerciseFeedbackScreen3> {
         onPrev: _onPrevious,
         nextText: '다음으로',
         onNext: _onNext,
-        isNextEnabled: _selectedOption != null,
+        isNextEnabled: _selectedOption != null && !_isSubmitting,
       ),
       child: SingleChildScrollView(
         child: Column(

@@ -33,7 +33,11 @@ class _ExerciseFeedbackScreen1State extends State<ExerciseFeedbackScreen1> {
 
   void _onNext() {
     if (_selectedOption != null) {
-      context.push('/exercise/feedback-2');
+      // 선택한 옵션의 텍스트를 다음 화면으로 전달
+      final selectedText = _options[_selectedOption!]['text']!;
+      context.push('/exercise/feedback-2', extra: {
+        'rpeResponse': selectedText,
+      });
     }
   }
 

@@ -90,7 +90,7 @@ class ExerciseRepository {
   }
 
   /// 운동 기록 저장 (POST /api/workout-records)
-  /// 
+  ///
   /// 완료된 운동 기록을 서버에 저장
   Future<void> saveWorkoutRecords({
     required String date,
@@ -114,6 +114,33 @@ class ExerciseRepository {
         data: {
           'date': date,
           'records': records.map((r) => r.toJson()).toList(),
+        },
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// 운동 후 피드백 저장 (POST /api/users/{userId}/workout-feedback)
+  ///
+  /// 운동 후 RPE, 근육 자극 정도, 땀 배출 정도 피드백 저장
+  Future<void> saveWorkoutFeedback({
+    required String rpeResponse,
+    required String muscleStimulationResponse,
+    required String sweatResponse,
+  }) async {
+    final userId = TokenService.instance.getUserId();
+    if (userId == null) {
+      throw Exception('User not logged in');
+    }
+
+    try {
+      await _apiClient.post(
+        '/api/users/$userId/workout-feedback',
+        data: {
+          'rpeResponse': rpeResponse,
+          'muscleStimulationResponse': muscleStimulationResponse,
+          'sweatResponse': sweatResponse,
         },
       );
     } catch (e) {

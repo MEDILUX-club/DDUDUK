@@ -216,12 +216,16 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/exercise/feedback-2',
       name: 'exerciseFeedback2',
-      builder: (context, state) => const ExerciseFeedbackScreen2(),
+      builder: (context, state) => ExerciseFeedbackScreen2(
+        feedbackData: state.extra as Map<String, dynamic>?,
+      ),
     ),
     GoRoute(
       path: '/exercise/feedback-3',
       name: 'exerciseFeedback3',
-      builder: (context, state) => const ExerciseFeedbackScreen3(),
+      builder: (context, state) => ExerciseFeedbackScreen3(
+        feedbackData: state.extra as Map<String, dynamic>?,
+      ),
     ),
     GoRoute(
       path: '/exercise/main-empty',
