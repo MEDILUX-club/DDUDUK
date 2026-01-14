@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_video_player.dart';
 import 'package:dduduk_app/widgets/exercise/rest_exit_modal.dart';
+import 'package:dduduk_app/widgets/exercise/exercise_info_badge.dart';
 
 
 /// 비디오의 확대 버튼을 누르면 전체 화면 모드로 전환
@@ -181,6 +182,22 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
                           ),
                         ),
                         const Spacer(),
+                        // 세트와 랩수 정보 (재생 버튼 위)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ExerciseInfoBadge(
+                              iconPath: 'assets/icons/ic_set.svg',
+                              value: widget.sets,
+                            ),
+                            const SizedBox(width: 12),
+                            ExerciseInfoBadge(
+                              iconPath: 'assets/icons/ic_lap.svg',
+                              value: widget.reps,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
                         // 버튼들 (하단)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,

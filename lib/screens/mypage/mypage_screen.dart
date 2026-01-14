@@ -188,15 +188,18 @@ class _MypageScreenState extends State<MypageScreen> {
                   // 기존 설문 데이터 삭제
                   await _userRepository.resetSurveys();
 
-                  // 설문 화면으로 이동
+                  // 설문 화면으로 이동하고 완료를 기다림
                   if (context.mounted) {
-                    Navigator.of(context).push(
+                    await Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => const SurveyStep2PainLocationScreen(
                           isChangePart: true,
                         ),
                       ),
                     );
+                    
+                    // 설문 완료 후 프로필 새로고침
+                    _loadProfile();
                   }
                 } catch (e) {
                   // 에러 처리

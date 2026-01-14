@@ -57,8 +57,7 @@ class _SurveyStep5WorkoutExpScreenState
 
   @override
   Widget build(BuildContext context) {
-    final bool shouldPopToMypage = widget.readOnly || widget.isChangePart;
-    final String nextButtonText = shouldPopToMypage ? '닫기' : '다음으로';
+    final String nextButtonText = (widget.readOnly || widget.isChangePart) ? '다음으로' : '다음으로';
     
     return SurveyLayout(
       readOnly: widget.readOnly,
@@ -82,33 +81,42 @@ class _SurveyStep5WorkoutExpScreenState
             return;
           }
 
-          if (shouldPopToMypage) {
-            // Pop all survey screens back to mypage
-            int count = 0;
-            Navigator.of(context).popUntil((_) => count++ >= (widget.isChangePart ? 4 : 5));
-          } else {
-            // Save red flags and submit survey
-            final notifier = ref.read(surveyProvider.notifier);
-            notifier.updateRedFlags(_selectedRisk ?? '해당 사항 없음');
+          // Save red flags
+          final notifier = ref.read(surveyProvider.notifier);
+          notifier.updateRedFlags(_selectedRisk ?? '해당 사항 없음');
 
-            // Submit to API
-            final success = await notifier.submitSurvey();
-            if (!context.mounted) return;
+          // Submit to API
+          final success = await notifier.submitSurvey();
+          if (!context.mounted) return;
 
-            if (success) {
+          if (success) {
+            if (widget.isChangePart || widget.readOnly) {
+              // 부위 변경 모드: Step6 건너뛰고 바로 마이페이지로
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('운동 부위가 변경되었습니다'),
+                  backgroundColor: Colors.green,
+                  duration: Duration(seconds: 2),
+                ),
+              );
+              // 모든 설문 화면 닫기 (마이페이지로 복귀)
+              int count = 0;
+              Navigator.of(context).popUntil((_) => count++ >= 4);
+            } else {
+              // 일반 설문 모드: Step6 결과 화면으로 이동
               final result = ref.read(surveyProvider).result;
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => SurveyStep6ResultScreen(result: result)),
               );
-            } else {
-              final state = ref.read(surveyProvider);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.error ?? '설문 제출에 실패했습니다.'),
-                  backgroundColor: Colors.red,
-                ),
-              );
             }
+          } else {
+            final state = ref.read(surveyProvider);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.error ?? '설문 제출에 실패했습니다.'),
+                backgroundColor: Colors.red,
+              ),
+            );
           }
         },
       ),
