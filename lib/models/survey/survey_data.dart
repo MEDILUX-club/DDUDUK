@@ -33,6 +33,7 @@ class SurveyData {
     return {
       'painArea': painArea ?? '',
       'affectedSide': affectedSide ?? '',
+      'affectedSideDetail': painAreaDetails?.join(', ') ?? '',
       'painStartedDate': painStartedDate ?? '',
       'painLevel': painLevel?.round() ?? 0,
       'painTrigger': painTriggers?.join(', ') ?? '',

@@ -16,6 +16,7 @@
 class PainSurveyRequest {
   final String painArea;           // 통증 부위 (step2)
   final String affectedSide;       // 어느 쪽 (step3) - 왼쪽/오른쪽/모두
+  final String affectedSideDetail; // 세부 부위 (step3)
   final String painStartedDate;    // 언제부터 (step3)
   final int painLevel;             // 통증 강도 (step4) - 0~10
   final String painTrigger;        // 언제 심해지나요 (step4)
@@ -26,6 +27,7 @@ class PainSurveyRequest {
   PainSurveyRequest({
     required this.painArea,
     required this.affectedSide,
+    required this.affectedSideDetail,
     required this.painStartedDate,
     required this.painLevel,
     required this.painTrigger,
@@ -37,6 +39,7 @@ class PainSurveyRequest {
   Map<String, dynamic> toJson() => {
         'painArea': painArea,
         'affectedSide': affectedSide,
+        'affectedSideDetail': affectedSideDetail,
         'painStartedDate': painStartedDate,
         'painLevel': painLevel,
         'painTrigger': painTrigger,
