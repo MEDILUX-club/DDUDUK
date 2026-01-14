@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
@@ -207,31 +206,24 @@ class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
   /// 다음 단계로 이동
   void _goToNext() {
     if (_showingRest) {
-      // 휴식 화면에서 → 다음 운동으로 (가로모드)
+      // 휴식 화면에서 → 다음 운동으로
       if (_currentIndex < widget.exercises.length - 1) {
-        SystemChrome.setPreferredOrientations([
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight,
-        ]);
         setState(() {
           _currentIndex++;
           _showingRest = false;
         });
       } else {
-        // 모든 운동 완료 (세로모드로 복원)
-        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+        // 모든 운동 완료
         context.go('/exercise/complete');
       }
     } else {
-      // 운동 화면에서 → 휴식 화면으로 (세로모드)
+      // 운동 화면에서 → 휴식 화면으로
       if (_currentIndex < widget.exercises.length - 1) {
-        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
         setState(() {
           _showingRest = true;
         });
       } else {
         // 마지막 운동이면 휴식 없이 완료
-        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
         context.go('/exercise/complete');
       }
     }
@@ -239,30 +231,23 @@ class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
 
   void _prevExercise() {
     if (_showingRest) {
-      // 휴식 화면에서 뒤로 → 현재 운동으로 (가로모드)
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
+      // 휴식 화면에서 뒤로 → 현재 운동으로
       setState(() {
         _showingRest = false;
       });
     } else if (_currentIndex > 0) {
-      // 운동 화면에서 뒤로 → 이전 운동으로 (가로모드 유지)
+      // 운동 화면에서 뒤로 → 이전 운동으로
       setState(() {
         _currentIndex--;
       });
     } else {
-      // 첫 번째 운동에서 뒤로가면 세로모드로 복원 후 종료
-      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+      // 첫 번째 운동에서 뒤로가면 종료
       Navigator.of(context).pop();
     }
   }
 
   @override
   void dispose() {
-    // 플로우 종료 시 세로 모드로 복원 (안전장치)
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     super.dispose();
   }
 

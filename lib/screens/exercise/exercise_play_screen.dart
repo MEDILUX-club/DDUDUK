@@ -60,18 +60,11 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
   @override
   void initState() {
     super.initState();
-    // 가로 모드 강제 설정
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    // 세로 모드 유지 (가로 모드 이슈는 나중에 해결)
   }
 
   @override
   void dispose() {
-    // 주의: 여기서 세로 모드로 복원하지 않음!
-    // 운동 간 전환 시에도 가로 모드 유지 필요
-    // 세로 모드 복원은 onNextExercise에서 마지막 운동 완료 시에만 수행
     super.dispose();
   }
 
@@ -110,7 +103,6 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
 
 
         final hasPrevious = widget.currentIndex > 0;
-        final hasNext = widget.currentIndex < widget.totalCount - 1;
 
         return Scaffold(
           backgroundColor: Colors.black,
@@ -205,11 +197,11 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
                               ),
                             ),
                             const SizedBox(width: 12),
-                            // 다음 버튼
+                            // 다음 버튼 (항상 활성화 - 마지막 운동에서는 완료 화면으로 이동)
                             _buildControlButton(
                               svgPath: 'assets/icons/ic_next.svg',
-                              onTap: hasNext ? _handleNext : null,
-                              isEnabled: hasNext,
+                              onTap: _handleNext,
+                              isEnabled: true,
                             ),
                           ],
                         ),

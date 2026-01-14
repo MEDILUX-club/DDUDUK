@@ -50,8 +50,8 @@ class ExerciseCompleteScreen extends StatelessWidget {
                 child: BaseButton(
                   text: '다음으로',
                   onPressed: () {
-                    // 운동 피드백 플로우로 이동
-                    context.go('/exercise/feedback1');
+                    // 운동 피드백 플로우로 이동 (feedback-1 → feedback-2 → feedback-3)
+                    context.go('/exercise/feedback-1');
                   },
                 ),
               ),

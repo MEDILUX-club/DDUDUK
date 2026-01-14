@@ -37,8 +37,8 @@ class _ExerciseFeedbackScreen3State extends State<ExerciseFeedbackScreen3> {
 
   void _onNext() {
     if (_selectedOption != null) {
-      // 피드백 완료 - 홈 또는 결과 화면으로 이동
-      context.go('/');
+      // 피드백 완료 - 운동 예약 화면으로 이동
+      context.go('/exercise/reservation');
     }
   }
 

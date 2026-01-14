@@ -55,4 +55,44 @@ class DailyPainRepository {
 
     return null;
   }
+
+  /// 회복률 조회 (GET)
+  /// 
+  /// 오늘 날짜 기준으로 회복률을 조회합니다.
+  /// date 파라미터가 없으면 서버에서 오늘 날짜로 계산합니다.
+  Future<int> getRecoveryRate({String? date}) async {
+    final userId = TokenService.instance.getUserId();
+
+    debugPrint('Recovery Rate 조회 시도');
+    debugPrint('  - User ID: $userId');
+    debugPrint('  - Date: ${date ?? "오늘"}');
+
+    if (userId == null) {
+      throw Exception('User not logged in');
+    }
+
+    final queryParams = <String, dynamic>{};
+    if (date != null) {
+      queryParams['date'] = date;
+    }
+
+    final response = await _apiClient.get(
+      Endpoints.dailyPain(userId),
+      queryParameters: queryParams.isNotEmpty ? queryParams : null,
+    );
+
+    debugPrint('Recovery Rate 응답 데이터: ${response.data}');
+
+    if (response.data is Map<String, dynamic>) {
+      final data = response.data as Map<String, dynamic>;
+      final recoveryRate = data['recoveryRate'];
+      if (recoveryRate is int) {
+        return recoveryRate;
+      } else if (recoveryRate is double) {
+        return recoveryRate.round();
+      }
+    }
+
+    return 0; // 기본값
+  }
 }

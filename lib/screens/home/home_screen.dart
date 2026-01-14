@@ -8,6 +8,7 @@ import 'package:dduduk_app/widgets/home/exercise_record_modal.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_routine_card.dart';
 import 'package:dduduk_app/services/token_service.dart';
 import 'package:dduduk_app/repositories/user_repository.dart';
+import 'package:dduduk_app/repositories/daily_pain_repository.dart';
 
 /// 홈 화면
 class HomeScreen extends StatefulWidget {
@@ -20,8 +21,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final int _currentNavIndex = 0;
   final _userRepository = UserRepository();
+  final _dailyPainRepository = DailyPainRepository();
   
   String _userName = '사용자';
+  int _recoveryPercent = 0;
 
   // 예시 데이터: 운동한 날짜 (8월)
   final List<int> _exerciseDays = [1, 4, 8, 9, 10, 12];
@@ -109,6 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadUserName();
+    _loadRecoveryRate();
   }
 
   Future<void> _loadUserName() async {
@@ -121,6 +125,19 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } catch (e) {
       debugPrint('닉네임 로딩 오류: $e');
+    }
+  }
+
+  Future<void> _loadRecoveryRate() async {
+    try {
+      final rate = await _dailyPainRepository.getRecoveryRate();
+      if (mounted) {
+        setState(() {
+          _recoveryPercent = rate;
+        });
+      }
+    } catch (e) {
+      debugPrint('회복률 로딩 오류: $e');
     }
   }
 
@@ -167,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const SizedBox(height: AppDimens.space16),
           // 회복상태 카드
-          RecoveryStatusCard(userName: _userName, recoveryPercent: 72),
+          RecoveryStatusCard(userName: _userName, recoveryPercent: _recoveryPercent),
           const SizedBox(height: AppDimens.space24),
           // 운동 캘린더
           ExerciseCalendar(
