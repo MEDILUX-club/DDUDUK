@@ -11,6 +11,7 @@ class CustomTextField extends StatelessWidget {
     this.hintText,
     this.suffixText,
     this.icon,
+    this.suffixWidget,
     this.keyboardType = TextInputType.text,
     this.readOnly = false,
     this.onTap,
@@ -23,6 +24,7 @@ class CustomTextField extends StatelessWidget {
   final String? hintText;
   final String? suffixText;
   final IconData? icon;
+  final Widget? suffixWidget;
   final TextInputType keyboardType;
   final bool readOnly;
   final VoidCallback? onTap;
@@ -32,6 +34,17 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // suffixWidget이 있으면 우선 사용, 없으면 icon 사용
+    Widget? suffixIconWidget;
+    if (suffixWidget != null) {
+      suffixIconWidget = Padding(
+        padding: const EdgeInsets.only(right: AppDimens.space12),
+        child: suffixWidget,
+      );
+    } else if (icon != null) {
+      suffixIconWidget = Icon(icon, size: AppDimens.iconSize, color: AppColors.textNormal);
+    }
+
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
@@ -52,9 +65,9 @@ class CustomTextField extends StatelessWidget {
           horizontal: AppDimens.space16,
         ),
         counterText: '', // maxLength 카운터 숨김
-        // 아이콘인 경우 suffixIcon 사용
-        suffixIcon: icon != null
-            ? Icon(icon, size: AppDimens.iconSize, color: AppColors.textNormal)
+        suffixIcon: suffixIconWidget,
+        suffixIconConstraints: suffixWidget != null 
+            ? const BoxConstraints(minHeight: 24, minWidth: 24)
             : null,
         // 텍스트인 경우 suffix 사용 (세로 정렬 문제 해결)
         suffix: suffixText != null

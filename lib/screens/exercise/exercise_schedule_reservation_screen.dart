@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
@@ -140,7 +141,12 @@ class _ExerciseScheduleReservationScreenState
             CustomTextField(
               controller: _dateController,
               hintText: '2025-12-26',
-              icon: Icons.calendar_month_outlined,
+              suffixWidget: SvgPicture.asset(
+                'assets/icons/ic_calendar.svg',
+                width: 20,
+                height: 20,
+                colorFilter: ColorFilter.mode(AppColors.textNeutral, BlendMode.srcIn),
+              ),
               readOnly: true,
               onTap: _pickDate,
             ),
@@ -150,7 +156,11 @@ class _ExerciseScheduleReservationScreenState
             CustomTextField(
               controller: _timeController,
               hintText: '00:00',
-              icon: Icons.access_time_outlined,
+              suffixWidget: Icon(
+                Icons.access_time_outlined,
+                size: 20,
+                color: AppColors.textNeutral,
+              ),
               readOnly: true,
               onTap: _pickTime,
             ),
@@ -165,25 +175,28 @@ class _ExerciseScheduleReservationScreenState
               decoration: BoxDecoration(
                 color: AppColors.fillBoxDefault,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.lineNeutral),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('운동 시작 30분 전 알림', style: AppTextStyles.body16Medium),
-                  Transform.scale(
-                    scale: 0.8,
-                    child: Switch(
-                      value: _isNotificationEnabled,
-                      onChanged: (value) {
-                        setState(() {
-                          _isNotificationEnabled = value;
-                        });
-                      },
-                      activeThumbColor: AppColors.primary,
-                      activeTrackColor: AppColors.primaryLight,
-                      inactiveThumbColor: AppColors.fillBoxDefault,
-                      inactiveTrackColor: AppColors.linePrimary,
+                  Padding(
+                    padding: const EdgeInsets.only(right: 0),
+                    child: Transform.scale(
+                      scale: 0.8,
+                      child: Switch(
+                        value: _isNotificationEnabled,
+                        onChanged: (value) {
+                          setState(() {
+                            _isNotificationEnabled = value;
+                          });
+                        },
+                        activeThumbColor: AppColors.textWhite,
+                        activeTrackColor: AppColors.primary,
+                        inactiveThumbColor: AppColors.fillBoxDefault,
+                        inactiveTrackColor: AppColors.linePrimary,
+                        trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                      ),
                     ),
                   ),
                 ],
