@@ -6,6 +6,7 @@ import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_routine_card.dart';
 import 'package:dduduk_app/repositories/exercise_repository.dart';
 import 'package:dduduk_app/models/exercise/exercise_recommendation.dart';
+import 'package:dduduk_app/models/exercise/workout_record.dart';
 import 'package:dduduk_app/screens/exercise/exercise_play_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_rest_screen.dart';
 
@@ -202,6 +203,11 @@ class ExercisePlayFlow extends StatefulWidget {
 class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
   int _currentIndex = 0;
   bool _showingRest = false; // true: 휴식 화면, false: 운동 화면
+  
+  /// 완료된 운동 인덱스 리스트 (휴식 화면으로 넘어갈 때 추가)
+  final List<int> _completedExerciseIndices = [];
+  
+  final _exerciseRepository = ExerciseRepository();
 
   /// 다음 단계로 이동
   void _goToNext() {
@@ -213,18 +219,21 @@ class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
           _showingRest = false;
         });
       } else {
-        // 모든 운동 완료
-        context.go('/exercise/complete');
+        // 모든 운동 완료 → 전체 저장 후 이동
+        _saveAndExit(saveAll: true);
       }
     } else {
-      // 운동 화면에서 → 휴식 화면으로
+      // 운동 화면에서 → 휴식 화면으로 (현재 운동 완료 처리)
+      _completedExerciseIndices.add(_currentIndex);
+      debugPrint('✅ 운동 ${_currentIndex + 1} 완료 (총 ${_completedExerciseIndices.length}개 완료)');
+      
       if (_currentIndex < widget.exercises.length - 1) {
         setState(() {
           _showingRest = true;
         });
       } else {
-        // 마지막 운동이면 휴식 없이 완료
-        context.go('/exercise/complete');
+        // 마지막 운동이면 휴식 없이 완료 → 전체 저장 후 이동
+        _saveAndExit(saveAll: true);
       }
     }
   }
@@ -243,6 +252,61 @@ class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
     } else {
       // 첫 번째 운동에서 뒤로가면 종료
       Navigator.of(context).pop();
+    }
+  }
+
+  /// 운동 영상 중 나가기 (현재 운동 미저장)
+  void _exitFromPlayScreen() {
+    debugPrint('📍 운동 영상 중 나가기: ${_completedExerciseIndices.length}개 운동 저장');
+    _saveAndExit(saveAll: false);
+  }
+
+  /// 휴식 중 나가기 (현재 운동까지 저장)
+  void _exitFromRestScreen() {
+    debugPrint('📍 휴식 중 나가기: ${_completedExerciseIndices.length}개 운동 저장');
+    _saveAndExit(saveAll: false);
+  }
+
+  /// 완료된 운동을 서버에 저장하고 메인 화면으로 이동
+  Future<void> _saveAndExit({required bool saveAll}) async {
+    try {
+      // 저장할 운동 목록 생성
+      final recordsToSave = <WorkoutRecord>[];
+      
+      for (final index in _completedExerciseIndices) {
+        final exercise = widget.exercises[index];
+        recordsToSave.add(WorkoutRecord(
+          exerciseId: exercise.exerciseId,
+          exerciseName: exercise.nameKo,
+          actualSets: exercise.recommendedSets,
+          actualReps: exercise.recommendedReps,
+          durationSeconds: 0, // 실제 소요 시간 추적 필요 시 추가
+        ));
+      }
+
+      if (recordsToSave.isNotEmpty) {
+        final now = DateTime.now();
+        final dateStr = '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+        
+        await _exerciseRepository.saveWorkoutRecords(
+          date: dateStr,
+          records: recordsToSave,
+        );
+        debugPrint('✅ 운동 기록 저장 완료: ${recordsToSave.length}개');
+      } else {
+        debugPrint('⚠️ 저장할 운동 기록 없음');
+      }
+    } catch (e) {
+      debugPrint('❌ 운동 기록 저장 실패: $e');
+    }
+
+    // 메인 화면으로 이동
+    if (mounted) {
+      if (saveAll) {
+        context.go('/exercise/complete');
+      } else {
+        context.go('/exercise/main');
+      }
     }
   }
 
@@ -277,6 +341,7 @@ class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
         nextExercises: nextExercises,
         onNextExercise: _goToNext,
         onRestComplete: _goToNext,
+        onExit: _exitFromRestScreen,
       );
     }
 
@@ -292,6 +357,7 @@ class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
       totalCount: widget.exercises.length,
       onNextExercise: _goToNext,
       onPreviousExercise: _prevExercise,
+      onExit: _exitFromPlayScreen,
     );
   }
 }

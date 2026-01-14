@@ -1,5 +1,6 @@
 import 'package:dduduk_app/api/api_client.dart';
 import 'package:dduduk_app/models/exercise/exercise_recommendation.dart';
+import 'package:dduduk_app/models/exercise/workout_record.dart';
 import 'package:dduduk_app/services/token_service.dart';
 
 class ExerciseRepository {
@@ -87,4 +88,37 @@ class ExerciseRepository {
       rethrow;
     }
   }
+
+  /// 운동 기록 저장 (POST /api/workout-records)
+  /// 
+  /// 완료된 운동 기록을 서버에 저장
+  Future<void> saveWorkoutRecords({
+    required String date,
+    required List<WorkoutRecord> records,
+  }) async {
+    final userId = TokenService.instance.getUserId();
+    if (userId == null) {
+      throw Exception('User not logged in');
+    }
+
+    if (records.isEmpty) {
+      return; // 저장할 기록이 없으면 API 호출 스킵
+    }
+
+    try {
+      await _apiClient.post(
+        '/api/workout-records',
+        queryParameters: {
+          'userId': userId,
+        },
+        data: {
+          'date': date,
+          'records': records.map((r) => r.toJson()).toList(),
+        },
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
+

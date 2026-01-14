@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/buttons/primary_button.dart';
@@ -21,6 +20,7 @@ class ExerciseRestScreen extends StatefulWidget {
     this.nextExercises = const [],
     this.onRestComplete,
     this.onNextExercise,
+    this.onExit,
   });
 
   /// 초기 휴식 시간 (초)
@@ -40,6 +40,9 @@ class ExerciseRestScreen extends StatefulWidget {
 
   /// 다음 운동 버튼 클릭 시 호출되는 콜백
   final VoidCallback? onNextExercise;
+
+  /// 나가기 콜백 (휴식 중 나가기 - 현재 운동까지 저장)
+  final VoidCallback? onExit;
 
   @override
   State<ExerciseRestScreen> createState() => _ExerciseRestScreenState();
@@ -257,7 +260,8 @@ class _ExerciseRestScreenState extends State<ExerciseRestScreen> {
     );
 
     if (shouldExit == true && mounted) {
-      context.go('/exercise/main');
+      _timer?.cancel();
+      widget.onExit?.call();
     }
   }
 

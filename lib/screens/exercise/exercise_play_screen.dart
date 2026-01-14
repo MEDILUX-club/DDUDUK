@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_video_player.dart';
+import 'package:dduduk_app/widgets/exercise/rest_exit_modal.dart';
 
 
 /// 비디오의 확대 버튼을 누르면 전체 화면 모드로 전환
@@ -18,6 +18,7 @@ class ExercisePlayScreen extends StatefulWidget {
     this.totalCount = 1,
     this.onPreviousExercise,
     this.onNextExercise,
+    this.onExit,
   });
 
   /// 재생할 동영상 URL
@@ -46,6 +47,9 @@ class ExercisePlayScreen extends StatefulWidget {
 
   /// 다음 운동 콜백
   final VoidCallback? onNextExercise;
+
+  /// 나가기 콜백 (운동 영상 중 나가기 - 현재 운동 미저장)
+  final VoidCallback? onExit;
 
   @override
   State<ExercisePlayScreen> createState() => _ExercisePlayScreenState();
@@ -92,8 +96,15 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
     widget.onNextExercise?.call();
   }
 
-  void _handleBack() {
-    Navigator.of(context).maybePop();
+  Future<void> _handleBack() async {
+    final shouldExit = await showDialog<bool>(
+      context: context,
+      builder: (context) => const RestExitModal(),
+    );
+
+    if (shouldExit == true && mounted) {
+      widget.onExit?.call();
+    }
   }
 
   @override
