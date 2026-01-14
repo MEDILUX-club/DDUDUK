@@ -44,6 +44,12 @@ class _ExerciseFixed1ScreenState extends State<ExerciseFixed1Screen> {
       try {
         final response = await _exerciseRepository.getRoutineByDate(dateStr);
         
+        debugPrint('[API] GET 루틴 조회 성공: ${response.exercises.length}개 운동');
+        for (var i = 0; i < response.exercises.length; i++) {
+          final ex = response.exercises[i];
+          debugPrint('  ${i + 1}. ${ex.nameKo} - URL: ${ex.videoUrl}');
+        }
+        
         if (mounted) {
           setState(() {
             _exercises = response.exercises;
@@ -56,21 +62,26 @@ class _ExerciseFixed1ScreenState extends State<ExerciseFixed1Screen> {
       }
 
       // 2차: GET 실패 시 POST로 생성 후 저장
-      debugPrint('📍 AI 운동 추천 생성 및 저장 시도...');
+      debugPrint('AI 운동 추천 생성 및 저장 시도...');
       
       // 2-1. AI 운동 추천 생성
       final recommendation = await _exerciseRepository.createInitialRecommendation(dateStr);
-      debugPrint('✅ AI 운동 추천 생성 완료: ${recommendation.exercises.length}개 운동');
+      debugPrint('AI 운동 추천 생성 완료: ${recommendation.exercises.length}개 운동');
+      for (var i = 0; i < recommendation.exercises.length; i++) {
+        final ex = recommendation.exercises[i];
+        debugPrint('  ${i + 1}. ${ex.nameKo} - URL: ${ex.videoUrl}');
+      }
       
       // 2-2. 추천 운동 저장
       await _exerciseRepository.saveRoutines(
         routineDate: dateStr,
         exercises: recommendation.exercises,
       );
-      debugPrint('✅ 추천 운동 저장 완료');
+      debugPrint('추천 운동 저장 완료');
       
       // 2-3. 다시 GET으로 조회 (저장된 데이터 확인)
       final response = await _exerciseRepository.getRoutineByDate(dateStr);
+      debugPrint('[API] 저장 후 재조회 성공: ${response.exercises.length}개 운동');
       
       if (mounted) {
         setState(() {
@@ -207,7 +218,17 @@ class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
   /// 완료된 운동 인덱스 리스트 (휴식 화면으로 넘어갈 때 추가)
   final List<int> _completedExerciseIndices = [];
   
+  /// 운동 시작 시간 (전체 운동 세션 시작 시간)
+  DateTime? _workoutStartTime;
+  
   final _exerciseRepository = ExerciseRepository();
+
+  @override
+  void initState() {
+    super.initState();
+    // 첫 운동 시작 시간 기록
+    _workoutStartTime = DateTime.now();
+  }
 
   /// 다음 단계로 이동
   void _goToNext() {
@@ -225,7 +246,7 @@ class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
     } else {
       // 운동 화면에서 → 휴식 화면으로 (현재 운동 완료 처리)
       _completedExerciseIndices.add(_currentIndex);
-      debugPrint('✅ 운동 ${_currentIndex + 1} 완료 (총 ${_completedExerciseIndices.length}개 완료)');
+      debugPrint('운동 ${_currentIndex + 1} 완료 (총 ${_completedExerciseIndices.length}개 완료)');
       
       if (_currentIndex < widget.exercises.length - 1) {
         setState(() {
@@ -257,21 +278,34 @@ class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
 
   /// 운동 영상 중 나가기 (현재 운동 미저장)
   void _exitFromPlayScreen() {
-    debugPrint('📍 운동 영상 중 나가기: ${_completedExerciseIndices.length}개 운동 저장');
+    debugPrint('운동 영상 중 나가기: ${_completedExerciseIndices.length}개 운동 저장');
     _saveAndExit(saveAll: false);
   }
 
   /// 휴식 중 나가기 (현재 운동까지 저장)
   void _exitFromRestScreen() {
-    debugPrint('📍 휴식 중 나가기: ${_completedExerciseIndices.length}개 운동 저장');
+    debugPrint('휴식 중 나가기: ${_completedExerciseIndices.length}개 운동 저장');
     _saveAndExit(saveAll: false);
   }
 
   /// 완료된 운동을 서버에 저장하고 메인 화면으로 이동
   Future<void> _saveAndExit({required bool saveAll}) async {
+    // 총 운동 시간 계산 (초 단위)
+    int totalDurationSeconds = 0;
+    if (_workoutStartTime != null) {
+      final endTime = DateTime.now();
+      totalDurationSeconds = endTime.difference(_workoutStartTime!).inSeconds;
+      debugPrint('총 소요 시간: $totalDurationSeconds초 (${(totalDurationSeconds / 60).toStringAsFixed(1)}분)');
+    }
+    
     try {
       // 저장할 운동 목록 생성
       final recordsToSave = <WorkoutRecord>[];
+      
+      // 각 운동에 동일한 시간을 분배 (간단한 방법)
+      final durationPerExercise = _completedExerciseIndices.isNotEmpty
+          ? (totalDurationSeconds / _completedExerciseIndices.length).round()
+          : 0;
       
       for (final index in _completedExerciseIndices) {
         final exercise = widget.exercises[index];
@@ -280,7 +314,7 @@ class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
           exerciseName: exercise.nameKo,
           actualSets: exercise.recommendedSets,
           actualReps: exercise.recommendedReps,
-          durationSeconds: 0, // 실제 소요 시간 추적 필요 시 추가
+          durationSeconds: durationPerExercise, // 실제 소요 시간 반영
         ));
       }
 
@@ -292,12 +326,12 @@ class _ExercisePlayFlowState extends State<ExercisePlayFlow> {
           date: dateStr,
           records: recordsToSave,
         );
-        debugPrint('✅ 운동 기록 저장 완료: ${recordsToSave.length}개');
+        debugPrint(' 운동 기록 저장 완료: ${recordsToSave.length}개');
       } else {
-        debugPrint('⚠️ 저장할 운동 기록 없음');
+        debugPrint(' 저장할 운동 기록 없음');
       }
     } catch (e) {
-      debugPrint('❌ 운동 기록 저장 실패: $e');
+      debugPrint(' 운동 기록 저장 실패: $e');
     }
 
     // 메인 화면으로 이동

@@ -33,6 +33,13 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
     _loadWeeklySummary();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 화면이 다시 표시될 때 데이터 새로고침
+    _loadWeeklySummary();
+  }
+
   Future<void> _loadUserName() async {
     try {
       final profile = await _userRepository.getProfile();
@@ -84,9 +91,12 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
     }
   }
 
-  void _onStartExercise() {
+  void _onStartExercise() async {
     // 컨디션 체크 화면으로 이동 (여기서 신규/기존 유저 분기)
-    context.push('/exercise/fixed');
+    await context.push('/exercise/fixed');
+    
+    // 운동 완료 후 돌아왔을 때 데이터 새로고침
+    _loadWeeklySummary();
   }
 
   @override

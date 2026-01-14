@@ -1,9 +1,8 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 
-/// 운동 동영상 재생 위젯 (YouTube 전용 - Universal Support)
+/// 운동 동영상 재생 위젯 (YouTube 전용 - Native Player)
 ///
 /// [videoUrl] - 재생할 YouTube URL
 /// [onPlayStateChanged] - 재생 상태 변경 콜백
@@ -17,6 +16,7 @@ class ExerciseVideoPlayer extends StatefulWidget {
     this.onPositionChanged,
     this.onExpandPressed,
     this.showExpandButton = true,
+    this.onVideoEnded,
   });
 
   final String videoUrl;
@@ -24,6 +24,7 @@ class ExerciseVideoPlayer extends StatefulWidget {
   final ValueChanged<Duration>? onPositionChanged;
   final VoidCallback? onExpandPressed;
   final bool showExpandButton;
+  final VoidCallback? onVideoEnded;
 
   @override
   State<ExerciseVideoPlayer> createState() => ExerciseVideoPlayerState();
@@ -31,136 +32,83 @@ class ExerciseVideoPlayer extends StatefulWidget {
 
 class ExerciseVideoPlayerState extends State<ExerciseVideoPlayer> {
   late YoutubePlayerController _controller;
-  bool _isInitialized = false;
-  
-  // 상태 관리를 위한 변수
+  bool _isPlayerReady = false;
   bool _isPlaying = false;
-  Timer? _positionTimer;
 
   @override
   void initState() {
     super.initState();
-    _initializeVideo();
+    _initializePlayer();
   }
 
-  void _initializeVideo() {
-    final videoId = YoutubePlayerController.convertUrlToId(widget.videoUrl);
-    
-    if (videoId != null) {
-      _controller = YoutubePlayerController.fromVideoId(
-        videoId: videoId,
-        autoPlay: true,
-        params: const YoutubePlayerParams(
-          showControls: false, // 커스텀 UI 사용
-          showFullscreenButton: false,
+  void _initializePlayer() {
+    final videoId = YoutubePlayer.convertUrlToId(widget.videoUrl);
+
+    if (videoId != null && videoId.isNotEmpty) {
+      _controller = YoutubePlayerController(
+        initialVideoId: videoId,
+        flags: const YoutubePlayerFlags(
+          autoPlay: true,
           mute: false,
-          loop: false,
-          strictRelatedVideos: true,
+          hideControls: true,
+          controlsVisibleAtStart: false,
+          enableCaption: false,
         ),
       );
 
-      // 상태 리스너 등록
-      _controller.setFullScreenListener((isFullScreen) {
-        // 풀스크린 처리 (필요 시)
-      });
-
-      // 재생 상태 및 시간 변경 감지
-      _controller.videoStateStream.listen((state) {
-        // 영상 상태 업데이트
-        _updateState();
-      });
-
-      setState(() {
-        _isInitialized = true;
-      });
+      _controller.addListener(_onPlayerStateChanged);
     } else {
-      debugPrint('Error: Invalid YouTube URL: ${widget.videoUrl}');
+      // Invalid URL
     }
   }
 
-  void _updateState() async {
+  void _onPlayerStateChanged() {
     if (!mounted) return;
-    
-    final state = await _controller.playerState;
-    final isPlaying = state == PlayerState.playing;
-    
+
+    final isPlaying = _controller.value.isPlaying;
+    final position = _controller.value.position;
+
     if (_isPlaying != isPlaying) {
       setState(() {
         _isPlaying = isPlaying;
       });
       widget.onPlayStateChanged?.call(isPlaying);
-
-      if (isPlaying) {
-        _startPositionTimer();
-      } else {
-        _stopPositionTimer();
-      }
     }
-  }
 
-  void _startPositionTimer() {
-    _positionTimer?.cancel();
-    _positionTimer = Timer.periodic(const Duration(milliseconds: 200), (timer) async {
-      if (!mounted) return;
-      final position = await _controller.currentTime;
-      widget.onPositionChanged?.call(Duration(milliseconds: (position * 1000).toInt()));
-    });
-  }
-
-  void _stopPositionTimer() {
-    _positionTimer?.cancel();
-    _positionTimer = null;
+    widget.onPositionChanged?.call(position);
   }
 
   @override
   void dispose() {
-    _stopPositionTimer();
-    _controller.close();
+    _controller.dispose();
     super.dispose();
   }
 
-  /// 재생/일시정지 토글
   void togglePlay() {
     if (_isPlaying) {
-      _controller.pauseVideo();
+      _controller.pause();
     } else {
-      _controller.playVideo();
+      _controller.play();
     }
   }
 
   /// 재생
   void play() {
-    _controller.playVideo();
+    _controller.play();
   }
 
   /// 일시정지
   void pause() {
-    _controller.pauseVideo();
+    _controller.pause();
   }
 
-  /// 현재 재생 위치 (비동기라 즉시 반환 어려움, 타이머가 업데이트함)
-  Future<Duration> get position async {
-    final secs = await _controller.currentTime;
-    return Duration(milliseconds: (secs * 1000).toInt());
-  }
- 
   /// 재생 중인지 여부
   bool get isPlaying => _isPlaying;
 
   @override
   Widget build(BuildContext context) {
-    if (!_isInitialized) {
-      return Container(
-        decoration: BoxDecoration(
-           color: AppColors.fillOption,
-           borderRadius: BorderRadius.circular(12),
-        ),
-        child: const Center(child: CircularProgressIndicator()),
-      );
-    }
-
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.fillOption,
       ),
       child: AspectRatio(
@@ -170,7 +118,15 @@ class ExerciseVideoPlayerState extends State<ExerciseVideoPlayer> {
             Positioned.fill(
               child: YoutubePlayer(
                 controller: _controller,
-                aspectRatio: 16 / 9,
+                showVideoProgressIndicator: false,
+                onReady: () {
+                  setState(() {
+                    _isPlayerReady = true;
+                  });
+                },
+                onEnded: (metadata) {
+                  widget.onVideoEnded?.call();
+                },
               ),
             ),
             

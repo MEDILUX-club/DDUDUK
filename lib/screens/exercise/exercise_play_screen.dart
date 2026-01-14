@@ -85,6 +85,7 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
   }
 
   void _handlePlayPause() {
+    debugPrint('[PlayScreen] 재생/일시정지 버튼 클릭 (현재 상태: ${_isPlaying ? "재생 중" : "일시정지"})');
     _videoPlayerKey.currentState?.togglePlay();
   }
 
@@ -135,6 +136,7 @@ class _ExercisePlayScreenState extends State<ExercisePlayScreen> {
                             onPlayStateChanged: _onPlayStateChanged,
                             onPositionChanged: _onPositionChanged,
                             showExpandButton: false,
+                            onVideoEnded: _handleNext, // 영상 종료 시 자동으로 다음으로
                           ),
                         ),
                       ),
