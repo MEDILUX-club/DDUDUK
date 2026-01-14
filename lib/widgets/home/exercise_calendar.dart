@@ -10,6 +10,7 @@ class ExerciseCalendar extends StatefulWidget {
     super.key,
     this.exerciseDays = const [],
     this.onDateSelected,
+    this.onMonthChanged,
   });
 
   /// 운동한 날짜 목록 (해당 월의 일자)
@@ -17,6 +18,9 @@ class ExerciseCalendar extends StatefulWidget {
 
   /// 날짜 선택 콜백
   final ValueChanged<DateTime>? onDateSelected;
+
+  /// 월 변경 콜백 (년도, 월 전달)
+  final ValueChanged<DateTime>? onMonthChanged;
 
   @override
   State<ExerciseCalendar> createState() => _ExerciseCalendarState();
@@ -37,12 +41,14 @@ class _ExerciseCalendarState extends State<ExerciseCalendar> {
     setState(() {
       _currentMonth = DateTime(_currentMonth.year, _currentMonth.month - 1, 1);
     });
+    widget.onMonthChanged?.call(_currentMonth);
   }
 
   void _nextMonth() {
     setState(() {
       _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + 1, 1);
     });
+    widget.onMonthChanged?.call(_currentMonth);
   }
 
   @override

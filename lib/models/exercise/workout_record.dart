@@ -18,15 +18,19 @@ class WorkoutRecordRequest {
 
 /// 개별 운동 기록 모델
 class WorkoutRecord {
+  final int? id;
   final String exerciseId;
   final String exerciseName;
+  final String? date;
   final int actualSets;
   final int actualReps;
   final int durationSeconds;
 
   WorkoutRecord({
+    this.id,
     required this.exerciseId,
     required this.exerciseName,
+    this.date,
     required this.actualSets,
     required this.actualReps,
     required this.durationSeconds,
@@ -44,8 +48,10 @@ class WorkoutRecord {
 
   factory WorkoutRecord.fromJson(Map<String, dynamic> json) {
     return WorkoutRecord(
+      id: json['id'] as int?,
       exerciseId: json['exerciseId'] as String? ?? '',
       exerciseName: json['exerciseName'] as String? ?? '',
+      date: json['date'] as String?,
       actualSets: json['actualSets'] as int? ?? 0,
       actualReps: json['actualReps'] as int? ?? 0,
       durationSeconds: json['durationSeconds'] as int? ?? 0,

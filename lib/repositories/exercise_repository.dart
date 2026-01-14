@@ -147,5 +147,62 @@ class ExerciseRepository {
       rethrow;
     }
   }
+
+  /// 날짜별 운동 기록 조회 (GET /api/workout-records/date)
+  ///
+  /// 특정 날짜의 완료된 운동 기록 조회
+  Future<List<WorkoutRecord>> getWorkoutRecordsByDate(String date) async {
+    final userId = TokenService.instance.getUserId();
+    if (userId == null) {
+      throw Exception('User not logged in');
+    }
+
+    try {
+      final response = await _apiClient.get(
+        '/api/workout-records/date',
+        queryParameters: {
+          'userId': userId,
+          'date': date,
+        },
+      );
+
+      if (response.data is List) {
+        return (response.data as List)
+            .map((json) => WorkoutRecord.fromJson(json as Map<String, dynamic>))
+            .toList();
+      }
+      return [];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// 운동 기록이 있는 날짜 목록 조회 (GET /api/workout-records/dates)
+  ///
+  /// 해당 유저의 운동 기록이 있는 모든 날짜 리스트 반환
+  Future<List<String>> getWorkoutRecordDates() async {
+    final userId = TokenService.instance.getUserId();
+    if (userId == null) {
+      throw Exception('User not logged in');
+    }
+
+    try {
+      final response = await _apiClient.get(
+        '/api/workout-records/dates',
+        queryParameters: {
+          'userId': userId,
+        },
+      );
+
+      if (response.data is List) {
+        return (response.data as List)
+            .map((date) => date.toString())
+            .toList();
+      }
+      return [];
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
 
