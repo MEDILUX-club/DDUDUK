@@ -169,8 +169,10 @@ class ApiClient {
   }
 }
 
-/// 인증 인터셉터 - 토큰 자동 주입
+/// 인증 인터셉터 - 토큰 자동 주입 및 갱신
 class _AuthInterceptor extends Interceptor {
+  bool _isRefreshing = false;
+
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     final noAuthPaths = [
@@ -192,6 +194,58 @@ class _AuthInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
+    // 401 에러이고, refresh 요청이 아닌 경우에만 토큰 갱신 시도
+    if (err.response?.statusCode == 401 &&
+        err.requestOptions.path != Endpoints.refresh &&
+        !_isRefreshing) {
+      _isRefreshing = true;
+
+      try {
+        // 현재 refresh token 가져오기
+        final refreshToken = TokenService.instance.getRefreshToken();
+        if (refreshToken == null) {
+          _isRefreshing = false;
+          handler.next(err);
+          return;
+        }
+
+        // 토큰 갱신 요청
+        final response = await ApiClient.instance.dio.post(
+          Endpoints.refresh,
+          data: {'refreshToken': refreshToken},
+        );
+
+        // 새 토큰 저장
+        final newAccessToken = response.data['accessToken'] as String;
+        final newRefreshToken = response.data['refreshToken'] as String;
+        final userId = TokenService.instance.getUserId();
+
+        if (userId != null) {
+          await TokenService.instance.saveTokens(
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
+            userId: userId,
+          );
+        }
+
+        _isRefreshing = false;
+
+        // 원래 요청 재시도
+        final opts = err.requestOptions;
+        opts.headers['Authorization'] = 'Bearer $newAccessToken';
+
+        final retryResponse = await ApiClient.instance.dio.fetch(opts);
+        handler.resolve(retryResponse);
+        return;
+      } catch (refreshError) {
+        _isRefreshing = false;
+        // 토큰 갱신 실패 - 원래 에러 전달 (로그아웃 처리 필요)
+        if (kDebugMode) {
+          debugPrint('🔴 토큰 갱신 실패: $refreshError');
+        }
+      }
+    }
+
     handler.next(err);
   }
 }

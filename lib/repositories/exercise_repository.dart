@@ -1,4 +1,5 @@
 import 'package:dduduk_app/api/api_client.dart';
+import 'package:dduduk_app/api/endpoints.dart';
 import 'package:dduduk_app/models/exercise/exercise_recommendation.dart';
 import 'package:dduduk_app/models/exercise/workout_record.dart';
 import 'package:dduduk_app/models/exercise/weekly_workout_summary.dart';
@@ -10,54 +11,45 @@ class ExerciseRepository {
   ExerciseRepository({ApiClient? apiClient})
       : _apiClient = apiClient ?? ApiClient.instance;
 
-  /// 날짜별 운동 루틴 조회 (GET /api/routines/date)
-  Future<ExerciseRecommendationResponse> getRoutineByDate(String date) async {
+  /// 현재 로그인된 사용자 ID 가져오기
+  int get _userId {
     final userId = TokenService.instance.getUserId();
     if (userId == null) {
       throw Exception('User not logged in');
     }
+    return userId;
+  }
 
-    try {
-      final response = await _apiClient.get(
-        '/api/routines/date',
-        queryParameters: {
-          'userId': userId,
-          'date': date,
-        },
-      );
+  /// 날짜별 운동 루틴 조회 (GET /api/routines/date)
+  Future<ExerciseRecommendationResponse> getRoutineByDate(String date) async {
+    final response = await _apiClient.get(
+      Endpoints.routinesDate,
+      queryParameters: {
+        'userId': _userId,
+        'date': date,
+      },
+    );
 
-      return ExerciseRecommendationResponse.fromJson(
-        response.data as Map<String, dynamic>,
-      );
-    } catch (e) {
-      rethrow;
-    }
+    return ExerciseRecommendationResponse.fromJson(
+      response.data as Map<String, dynamic>,
+    );
   }
 
   /// 최초 운동 추천 생성 (POST /api/exercise-recommendation/initial)
   ///
   /// 반환값: AI가 추천한 운동 리스트
   Future<ExerciseRecommendationResponse> createInitialRecommendation(String routineDate) async {
-    final userId = TokenService.instance.getUserId();
-    if (userId == null) {
-      throw Exception('User not logged in');
-    }
+    final response = await _apiClient.post(
+      Endpoints.exerciseRecommendationInitial,
+      queryParameters: {
+        'userId': _userId,
+        'routineDate': routineDate,
+      },
+    );
 
-    try {
-      final response = await _apiClient.post(
-        '/api/exercise-recommendation/initial',
-        queryParameters: {
-          'userId': userId,
-          'routineDate': routineDate,
-        },
-      );
-
-      return ExerciseRecommendationResponse.fromJson(
-        response.data as Map<String, dynamic>,
-      );
-    } catch (e) {
-      rethrow;
-    }
+    return ExerciseRecommendationResponse.fromJson(
+      response.data as Map<String, dynamic>,
+    );
   }
 
   /// 반복 운동 추천 생성 (POST /api/exercise-recommendation/repeat)
@@ -68,27 +60,18 @@ class ExerciseRepository {
     required String routineDate,
     required String previousRoutineDate,
   }) async {
-    final userId = TokenService.instance.getUserId();
-    if (userId == null) {
-      throw Exception('User not logged in');
-    }
+    final response = await _apiClient.post(
+      Endpoints.exerciseRecommendationRepeat,
+      queryParameters: {
+        'userId': _userId,
+        'routineDate': routineDate,
+        'previousRoutineDate': previousRoutineDate,
+      },
+    );
 
-    try {
-      final response = await _apiClient.post(
-        '/api/exercise-recommendation/repeat',
-        queryParameters: {
-          'userId': userId,
-          'routineDate': routineDate,
-          'previousRoutineDate': previousRoutineDate,
-        },
-      );
-
-      return ExerciseRecommendationResponse.fromJson(
-        response.data as Map<String, dynamic>,
-      );
-    } catch (e) {
-      rethrow;
-    }
+    return ExerciseRecommendationResponse.fromJson(
+      response.data as Map<String, dynamic>,
+    );
   }
 
   /// 추천 운동 기록 저장 (POST /api/routines)
@@ -98,27 +81,18 @@ class ExerciseRepository {
     required String routineDate,
     required List<RecommendedExercise> exercises,
   }) async {
-    final userId = TokenService.instance.getUserId();
-    if (userId == null) {
-      throw Exception('User not logged in');
-    }
-
-    try {
-      final response = await _apiClient.post(
-        '/api/routines',
-        data: {
-          'userId': userId,
-          'routineDate': routineDate,
-          'exercises': exercises.map((e) => e.toJson()).toList(),
-        },
-      );
-      
-      return ExerciseRecommendationResponse.fromJson(
-        response.data as Map<String, dynamic>,
-      );
-    } catch (e) {
-      rethrow;
-    }
+    final response = await _apiClient.post(
+      Endpoints.routines,
+      data: {
+        'userId': _userId,
+        'routineDate': routineDate,
+        'exercises': exercises.map((e) => e.toJson()).toList(),
+      },
+    );
+    
+    return ExerciseRecommendationResponse.fromJson(
+      response.data as Map<String, dynamic>,
+    );
   }
 
   /// 운동 기록 저장 (POST /api/workout-records)
@@ -128,29 +102,20 @@ class ExerciseRepository {
     required String date,
     required List<WorkoutRecord> records,
   }) async {
-    final userId = TokenService.instance.getUserId();
-    if (userId == null) {
-      throw Exception('User not logged in');
-    }
-
     if (records.isEmpty) {
       return; // 저장할 기록이 없으면 API 호출 스킵
     }
 
-    try {
-      await _apiClient.post(
-        '/api/workout-records',
-        queryParameters: {
-          'userId': userId,
-        },
-        data: {
-          'date': date,
-          'records': records.map((r) => r.toJson()).toList(),
-        },
-      );
-    } catch (e) {
-      rethrow;
-    }
+    await _apiClient.post(
+      Endpoints.workoutRecords,
+      queryParameters: {
+        'userId': _userId,
+      },
+      data: {
+        'date': date,
+        'records': records.map((r) => r.toJson()).toList(),
+      },
+    );
   }
 
   /// 운동 후 피드백 저장 (POST /api/users/{userId}/workout-feedback)
@@ -161,80 +126,53 @@ class ExerciseRepository {
     required String muscleStimulationResponse,
     required String sweatResponse,
   }) async {
-    final userId = TokenService.instance.getUserId();
-    if (userId == null) {
-      throw Exception('User not logged in');
-    }
-
-    try {
-      await _apiClient.post(
-        '/api/users/$userId/workout-feedback',
-        data: {
-          'rpeResponse': rpeResponse,
-          'muscleStimulationResponse': muscleStimulationResponse,
-          'sweatResponse': sweatResponse,
-        },
-      );
-    } catch (e) {
-      rethrow;
-    }
+    await _apiClient.post(
+      Endpoints.workoutFeedback(_userId),
+      data: {
+        'rpeResponse': rpeResponse,
+        'muscleStimulationResponse': muscleStimulationResponse,
+        'sweatResponse': sweatResponse,
+      },
+    );
   }
 
   /// 날짜별 운동 기록 조회 (GET /api/workout-records/date)
   ///
   /// 특정 날짜의 완료된 운동 기록 조회
   Future<List<WorkoutRecord>> getWorkoutRecordsByDate(String date) async {
-    final userId = TokenService.instance.getUserId();
-    if (userId == null) {
-      throw Exception('User not logged in');
-    }
+    final response = await _apiClient.get(
+      Endpoints.workoutRecordsDate,
+      queryParameters: {
+        'userId': _userId,
+        'date': date,
+      },
+    );
 
-    try {
-      final response = await _apiClient.get(
-        '/api/workout-records/date',
-        queryParameters: {
-          'userId': userId,
-          'date': date,
-        },
-      );
-
-      if (response.data is List) {
-        return (response.data as List)
-            .map((json) => WorkoutRecord.fromJson(json as Map<String, dynamic>))
-            .toList();
-      }
-      return [];
-    } catch (e) {
-      rethrow;
+    if (response.data is List) {
+      return (response.data as List)
+          .map((json) => WorkoutRecord.fromJson(json as Map<String, dynamic>))
+          .toList();
     }
+    return [];
   }
 
   /// 운동 기록이 있는 날짜 목록 조회 (GET /api/workout-records/dates)
   ///
   /// 해당 유저의 운동 기록이 있는 모든 날짜 리스트 반환
   Future<List<String>> getWorkoutRecordDates() async {
-    final userId = TokenService.instance.getUserId();
-    if (userId == null) {
-      throw Exception('User not logged in');
-    }
+    final response = await _apiClient.get(
+      Endpoints.workoutRecordsDates,
+      queryParameters: {
+        'userId': _userId,
+      },
+    );
 
-    try {
-      final response = await _apiClient.get(
-        '/api/workout-records/dates',
-        queryParameters: {
-          'userId': userId,
-        },
-      );
-
-      if (response.data is List) {
-        return (response.data as List)
-            .map((date) => date.toString())
-            .toList();
-      }
-      return [];
-    } catch (e) {
-      rethrow;
+    if (response.data is List) {
+      return (response.data as List)
+          .map((date) => date.toString())
+          .toList();
     }
+    return [];
   }
 
   /// 주간 운동 요약 조회 (GET /api/workout-records/weekly-summary)
@@ -243,26 +181,16 @@ class ExerciseRepository {
   Future<WeeklyWorkoutSummary> getWeeklySummary({
     required String referenceDate,
   }) async {
-    final userId = TokenService.instance.getUserId();
-    if (userId == null) {
-      throw Exception('User not logged in');
-    }
+    final response = await _apiClient.get(
+      Endpoints.workoutRecordsWeeklySummary,
+      queryParameters: {
+        'userId': _userId,
+        'referenceDate': referenceDate,
+      },
+    );
 
-    try {
-      final response = await _apiClient.get(
-        '/api/workout-records/weekly-summary',
-        queryParameters: {
-          'userId': userId,
-          'referenceDate': referenceDate,
-        },
-      );
-
-      return WeeklyWorkoutSummary.fromJson(
-        response.data as Map<String, dynamic>,
-      );
-    } catch (e) {
-      rethrow;
-    }
+    return WeeklyWorkoutSummary.fromJson(
+      response.data as Map<String, dynamic>,
+    );
   }
 }
-

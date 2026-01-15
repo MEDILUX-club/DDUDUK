@@ -36,8 +36,15 @@ class Endpoints {
   static const String workoutRecordsWeeklySummary =
       '/api/workout-records/weekly-summary';
   static const String workoutRecordsDate = '/api/workout-records/date';
+  static const String workoutRecordsDates = '/api/workout-records/dates';
 
   // Workout Routine (운동 루틴)
   static const String routines = '/api/routines';
   static const String routinesDate = '/api/routines/date';
+
+  // Exercise Recommendation (운동 추천)
+  static const String exerciseRecommendationInitial =
+      '/api/exercise-recommendation/initial';
+  static const String exerciseRecommendationRepeat =
+      '/api/exercise-recommendation/repeat';
 }
