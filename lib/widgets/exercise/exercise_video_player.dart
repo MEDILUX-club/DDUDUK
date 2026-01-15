@@ -32,7 +32,6 @@ class ExerciseVideoPlayer extends StatefulWidget {
 
 class ExerciseVideoPlayerState extends State<ExerciseVideoPlayer> {
   late YoutubePlayerController _controller;
-  bool _isPlayerReady = false;
   bool _isPlaying = false;
 
   @override
@@ -120,9 +119,7 @@ class ExerciseVideoPlayerState extends State<ExerciseVideoPlayer> {
                 controller: _controller,
                 showVideoProgressIndicator: false,
                 onReady: () {
-                  setState(() {
-                    _isPlayerReady = true;
-                  });
+                  // Player Ready
                 },
                 onEnded: (metadata) {
                   widget.onVideoEnded?.call();

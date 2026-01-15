@@ -1,5 +1,5 @@
-/// 운동 능력 평가 API 요청/응답 모델
-/// POST /api/users/{userId}/exercise-ability
+// 운동 능력 평가 API 요청/응답 모델
+// POST /api/users/{userId}/exercise-ability
 
 /// 운동 능력 평가 요청
 class ExerciseAbilityRequest {

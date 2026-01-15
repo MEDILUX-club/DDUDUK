@@ -20,7 +20,7 @@ class ExerciseMainScreen extends ConsumerStatefulWidget {
 }
 
 class _ExerciseMainScreenState extends ConsumerState<ExerciseMainScreen> {
-  int _currentNavIndex = 1; // 운동 탭 선택됨
+  final int _currentNavIndex = 1; // 운동 탭 선택됨
 
   @override
   void initState() {
@@ -145,7 +145,7 @@ class _ExerciseMainScreenState extends ConsumerState<ExerciseMainScreen> {
             Expanded(
               child: _StatCard(
                 title: '운동 횟수',
-                value: '${workoutCount}회',
+                value: '$workoutCount회',
                 change: '${workoutDiff >= 0 ? '+' : ''}$workoutDiff',
                 changeLabel: '저번 주 대비',
                 isPositive: isWorkoutPositive,
@@ -156,8 +156,8 @@ class _ExerciseMainScreenState extends ConsumerState<ExerciseMainScreen> {
             Expanded(
               child: _StatCard(
                 title: '총 시간',
-                value: '${totalMinutes}분',
-                change: '${minutesDiff >= 0 ? '+' : ''}${minutesDiff}분',
+                value: '$totalMinutes분',
+                change: '${minutesDiff >= 0 ? '+' : ''}$minutesDiff분',
                 changeLabel: '저번 주 대비',
                 isPositive: isMinutesPositive,
               ),

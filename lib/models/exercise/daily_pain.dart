@@ -1,5 +1,5 @@
-/// 일일 통증 기록 API 요청/응답 모델
-/// POST /api/users/{userId}/daily-pain
+// 일일 통증 기록 API 요청/응답 모델
+// POST /api/users/{userId}/daily-pain
 
 /// 일일 통증 기록 요청
 class DailyPainRequest {

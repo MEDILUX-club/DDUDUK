@@ -22,7 +22,7 @@ class ExerciseMainEmptyScreen extends ConsumerStatefulWidget {
 }
 
 class _ExerciseMainEmptyScreenState extends ConsumerState<ExerciseMainEmptyScreen> {
-  int _currentNavIndex = 1; // 운동 탭 선택됨
+  final int _currentNavIndex = 1; // 운동 탭 선택됨
 
   @override
   void initState() {

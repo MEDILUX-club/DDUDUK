@@ -89,6 +89,8 @@ class _ExerciseSurvey4ScreenState extends ConsumerState<ExerciseSurvey4Screen> {
           // 실패해도 화면 이동은 진행
         }
         
+        if (!mounted) return;
+
         widget.onComplete?.call();
         // 설문 완료 후 운동 루틴 화면(1일차)으로 이동
         context.go('/exercise/fixed1');
