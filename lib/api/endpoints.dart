@@ -1,7 +1,9 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 /// API 엔드포인트 상수 정의
 class Endpoints {
   // Base URL
-  static const String baseUrl = 'http://43.201.28.83:8080';
+  static String get baseUrl => dotenv.env['BASE_URL'] ?? 'http://localhost:8080';
 
   // Auth (인증)
   static const String login = '/api/auth/login';

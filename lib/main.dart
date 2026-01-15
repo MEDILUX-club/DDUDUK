@@ -10,17 +10,16 @@ import 'package:dduduk_app/router.dart';
 import 'package:dduduk_app/services/notification_service.dart';
 import 'package:dduduk_app/services/token_service.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 카카오 SDK 초기화
-  KakaoSdk.init(nativeAppKey: 'ab5d133eb445dd76f3c31a7c9250b2e9');
+  // 환경변수 로드
+  await dotenv.load(fileName: ".env");
 
-  // 디버그 모드에서 키 해시 출력 (개발자 콘솔에 등록할 때 사용)
-  if (kDebugMode) {
-    final keyHash = await KakaoSdk.origin;
-    debugPrint('🔑 카카오 키 해시: $keyHash');
-  }
+  // 카카오 SDK 초기화
+  KakaoSdk.init(nativeAppKey: dotenv.env['KAKAO_NATIVE_APP_KEY'] ?? '');
 
   // Initialize TokenService
   await TokenService.getInstance();
