@@ -24,7 +24,6 @@ import 'package:dduduk_app/screens/mypage/mypage_screen.dart';
 import 'package:dduduk_app/screens/mypage/profile_edit_screen.dart';
 
 // Exercise screens
-import 'package:dduduk_app/screens/exercise/exercise_play_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_complete_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_survey_fixed_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_survey1_screen.dart';
@@ -36,9 +35,7 @@ import 'package:dduduk_app/screens/exercise/exercise_feedback_screen2.dart';
 import 'package:dduduk_app/screens/exercise/exercise_feedback_screen3.dart';
 import 'package:dduduk_app/screens/exercise/exercise_main_empty_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_main_screen.dart';
-import 'package:dduduk_app/screens/exercise/exercise_rest_screen.dart';
 import 'package:dduduk_app/screens/exercise/exercise_survey_fixed1_screen.dart';
-import 'package:dduduk_app/widgets/exercise/exercise_routine_card.dart';
 import 'package:dduduk_app/screens/exercise/exercise_schedule_reservation_screen.dart';
 
 /// 앱 라우터 설정
@@ -51,7 +48,6 @@ final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   debugLogDiagnostics: true, // 개발 중 라우팅 로그 출력
   routes: [
-    // =========================================================================
     // Auth Routes
     GoRoute(
       path: '/',
@@ -74,18 +70,14 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const TermsAgreementScreen(),
     ),
 
-    // =========================================================================
     // Home Routes
-    // =========================================================================
     GoRoute(
       path: '/home',
       name: 'home',
       builder: (context, state) => const HomeScreen(),
     ),
 
-    // =========================================================================
     // Mypage Routes
-    // =========================================================================
     GoRoute(
       path: '/mypage',
       name: 'mypage',
@@ -97,9 +89,7 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const ProfileEditScreen(),
     ),
 
-    // =========================================================================
     // Survey Routes
-    // =========================================================================
     GoRoute(
       path: '/survey/intro',
       name: 'surveyIntro',
@@ -141,32 +131,7 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const SurveyCompletionScreen(),
     ),
 
-    // =========================================================================
     // Exercise Routes
-    // =========================================================================
-    GoRoute(
-      path: '/exercise/play',
-      name: 'exercisePlay',
-      builder: (context, state) {
-        // 쿼리 파라미터 또는 extra에서 데이터 받기
-        final extra = state.extra as Map<String, dynamic>?;
-        return ExercisePlayScreen(
-          videoUrl:
-              extra?['videoUrl'] ??
-              'https://www.youtube.com/watch?v=akLRbdTtD7Y',
-          exerciseName: extra?['exerciseName'] ?? '푸쉬업',
-          exerciseDescription:
-              extra?['exerciseDescription'] ??
-              '가슴과 삼두근을 강화하는 기본 운동이에요\n팔꿈치를 90도로 구부리며 천천히 내렸다가 올려요',
-          sets: extra?['sets'] ?? 3,
-          reps: extra?['reps'] ?? 10,
-          currentIndex: extra?['currentIndex'] ?? 0,
-          totalCount: extra?['totalCount'] ?? 1,
-          onPreviousExercise: extra?['onPreviousExercise'],
-          onNextExercise: extra?['onNextExercise'],
-        );
-      },
-    ),
     GoRoute(
       path: '/exercise/fixed',
       name: 'exerciseSurveyFixed',
@@ -178,12 +143,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/exercise/fixed1',
       name: 'exerciseFixed1',
-      builder: (context, state) {
-        final extra = state.extra as Map<String, dynamic>?;
-        return ExerciseFixed1Screen(
-          dayNumber: extra?['dayNumber'] ?? 1,
-        );
-      },
+      builder: (context, state) => const ExerciseFixed1Screen(),
     ),
     GoRoute(
       path: '/exercise/survey1',
@@ -241,28 +201,6 @@ final GoRouter appRouter = GoRouter(
       path: '/exercise/complete',
       name: 'exerciseComplete',
       builder: (context, state) => const ExerciseCompleteScreen(),
-    ),
-    GoRoute(
-      path: '/exercise/rest',
-      name: 'exerciseRest',
-      builder: (context, state) {
-        final extra = state.extra as Map<String, dynamic>?;
-
-        // 기본 테스트 데이터
-        final defaultNextExercises = [
-          const ExerciseRoutineData(name: '스쿼트', sets: 3, reps: 10),
-          const ExerciseRoutineData(name: '스쿼트', sets: 3, reps: 10),
-        ];
-
-        return ExerciseRestScreen(
-          initialRestSeconds: extra?['initialRestSeconds'] ?? 30,
-          extensionSeconds: extra?['extensionSeconds'] ?? 20,
-          maxExtensions: extra?['maxExtensions'] ?? 3,
-          nextExercises: extra?['nextExercises'] ?? defaultNextExercises,
-          onRestComplete: extra?['onRestComplete'],
-          onNextExercise: extra?['onNextExercise'],
-        );
-      },
     ),
     GoRoute(
       path: '/exercise/reservation',

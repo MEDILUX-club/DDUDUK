@@ -138,18 +138,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         final exerciseState = ref.read(exerciseProvider);
         final workoutRecords = exerciseState.completedRecords;
 
-        // WorkoutRecord를 ExerciseRoutineData로 변환
-        final records = workoutRecords.map((record) {
-          return ExerciseRoutineData(
-            name: record.exerciseName,
-            sets: record.actualSets,
-            reps: record.actualReps,
-            // API에는 난이도 정보가 없으므로 null로 설정
-            difficulty: null,
-            // 운동 이미지는 exerciseId로 매핑 필요 (임시로 null)
-            imagePath: _getExerciseImagePath(record.exerciseId),
-          );
-        }).toList();
+        // WorkoutRecord를 ExerciseRoutineData로 변환 (같은 운동은 합치기)
+        final Map<String, ExerciseRoutineData> groupedRecords = {};
+        
+        for (final record in workoutRecords) {
+          final name = record.exerciseName;
+          if (groupedRecords.containsKey(name)) {
+            // 기존 운동에 세트/횟수 합산
+            final existing = groupedRecords[name]!;
+            groupedRecords[name] = ExerciseRoutineData(
+              name: name,
+              sets: existing.sets + record.actualSets,
+              reps: existing.reps + record.actualReps,
+              difficulty: existing.difficulty,
+              imagePath: existing.imagePath,
+            );
+          } else {
+            // 새 운동 추가
+            groupedRecords[name] = ExerciseRoutineData(
+              name: name,
+              sets: record.actualSets,
+              reps: record.actualReps,
+              difficulty: null,
+              imagePath: _getExerciseImagePath(record.exerciseId),
+            );
+          }
+        }
+        
+        final records = groupedRecords.values.toList();
 
         // 캐시에 저장
         _cachedRecords[dateString] = records;
