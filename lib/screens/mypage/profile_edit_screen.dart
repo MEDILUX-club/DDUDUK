@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/layouts/default_layout.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
@@ -7,21 +8,20 @@ import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/common/custom_text_field.dart';
 import 'package:dduduk_app/widgets/mypage/profile_photo_picker.dart';
-import 'package:dduduk_app/repositories/user_repository.dart';
+import 'package:dduduk_app/providers/user_provider.dart';
 
 /// 프로필 설정 화면
-class ProfileEditScreen extends StatefulWidget {
+class ProfileEditScreen extends ConsumerStatefulWidget {
   const ProfileEditScreen({super.key});
 
   @override
-  State<ProfileEditScreen> createState() => _ProfileEditScreenState();
+  ConsumerState<ProfileEditScreen> createState() => _ProfileEditScreenState();
 }
 
-class _ProfileEditScreenState extends State<ProfileEditScreen> {
+class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
   final _nicknameController = TextEditingController();
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
-  final _userRepository = UserRepository();
 
   File? _profileImage;
   bool _isLoading = true;
@@ -44,40 +44,37 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   /// 서버에서 프로필 정보 로드
   Future<void> _loadProfile() async {
-    try {
-      final profile = await _userRepository.getProfile();
-      if (mounted) {
-        setState(() {
-          _nicknameController.text = profile.nickname;
-          _heightController.text = profile.height?.toString() ?? '';
-          _weightController.text = profile.weight?.toString() ?? '';
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      debugPrint('프로필 로딩 오류: $e');
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+    await ref.read(userProvider.notifier).fetchProfile();
+    final userState = ref.read(userProvider);
+
+    if (mounted && userState.profile != null) {
+      setState(() {
+        _nicknameController.text = userState.profile!.nickname;
+        _heightController.text = userState.profile!.height?.toString() ?? '';
+        _weightController.text = userState.profile!.weight?.toString() ?? '';
+        _isLoading = false;
+      });
+    } else if (mounted) {
+      setState(() => _isLoading = false);
     }
   }
 
   /// 프로필 저장 (닉네임 + 이미지)
   Future<void> _saveProfile() async {
     if (_isSaving) return;
-    
+
     setState(() => _isSaving = true);
 
     try {
+      final notifier = ref.read(userProvider.notifier);
+
       // 1. 프로필 이미지가 있으면 먼저 업로드
       if (_profileImage != null) {
-        await _userRepository.uploadProfileImage(_profileImage!);
+        await notifier.uploadProfileImage(_profileImage!);
       }
 
       // 2. 닉네임 업데이트
-      await _userRepository.updateDisplayInfo(
-        nickname: _nicknameController.text,
-      );
+      await notifier.updateNickname(_nicknameController.text);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -151,8 +148,8 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     });
 
     try {
-      // 실제 서버 API 호출
-      final isAvailable = await _userRepository.checkNicknameDuplicate(
+      // Provider를 통해 닉네임 중복 확인
+      final isAvailable = await ref.read(userProvider.notifier).checkNicknameDuplicate(
         _nicknameController.text,
       );
 

@@ -46,10 +46,7 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
         _userRepository = userRepository ?? UserRepository(),
         super(SurveyState(surveyData: SurveyData()));
 
-  // ──────────────────────────────────────
   // Step 1: 기본 정보
-  // ──────────────────────────────────────
-
   void updateBasicInfo({
     String? birthDate,
     int? height,
@@ -63,19 +60,13 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
     state = state.copyWith(surveyData: state.surveyData);
   }
 
-  // ──────────────────────────────────────
   // Step 2: 통증 부위
-  // ──────────────────────────────────────
-
   void updatePainArea(String painArea) {
     state.surveyData.painArea = painArea;
     state = state.copyWith(surveyData: state.surveyData);
   }
 
-  // ──────────────────────────────────────
   // Step 3: 통증 기본 정보
-  // ──────────────────────────────────────
-
   void updatePainBasicInfo({
     String? affectedSide,
     List<String>? painAreaDetails,
@@ -87,10 +78,7 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
     state = state.copyWith(surveyData: state.surveyData);
   }
 
-  // ──────────────────────────────────────
   // Step 4: 통증 세부 정보
-  // ──────────────────────────────────────
-
   void updatePainDetailInfo({
     double? painLevel,
     Set<String>? painTriggers,
@@ -104,18 +92,11 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
     state = state.copyWith(surveyData: state.surveyData);
   }
 
-  // ──────────────────────────────────────
   // Step 5: 위험 신호
-  // ──────────────────────────────────────
-
   void updateRedFlags(String redFlags) {
     state.surveyData.redFlags = redFlags;
     state = state.copyWith(surveyData: state.surveyData);
   }
-
-  // ──────────────────────────────────────
-  // API 제출
-  // ──────────────────────────────────────
 
   /// 설문 데이터를 API에 제출
   /// 1. 사용자 기본 정보(생년월일, 성별, 키, 몸무게) 먼저 저장
@@ -166,10 +147,6 @@ class SurveyNotifier extends StateNotifier<SurveyState> {
       return false;
     }
   }
-
-  // ──────────────────────────────────────
-  // 초기화
-  // ──────────────────────────────────────
 
   /// 설문 데이터 초기화 (새로운 설문 시작 시)
   void reset() {

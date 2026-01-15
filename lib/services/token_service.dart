@@ -29,9 +29,7 @@ class TokenService {
     return _instance!;
   }
 
-  // ──────────────────────────────────────
   // Access Token
-  // ──────────────────────────────────────
 
   /// Access Token 저장
   Future<void> saveAccessToken(String token) async {
@@ -48,9 +46,7 @@ class TokenService {
     await _prefs?.remove(_accessTokenKey);
   }
 
-  // ──────────────────────────────────────
   // Refresh Token
-  // ──────────────────────────────────────
 
   /// Refresh Token 저장
   Future<void> saveRefreshToken(String token) async {
@@ -67,9 +63,7 @@ class TokenService {
     await _prefs?.remove(_refreshTokenKey);
   }
 
-  // ──────────────────────────────────────
   // User ID
-  // ──────────────────────────────────────
 
   /// User ID 저장
   Future<void> saveUserId(int userId) async {
@@ -86,9 +80,7 @@ class TokenService {
     await _prefs?.remove(_userIdKey);
   }
 
-  // ──────────────────────────────────────
   // 운동 시작 여부 (첫 운동 진입 확인용)
-  // ──────────────────────────────────────
 
   /// 운동 시작 여부 저장
   Future<void> setHasStartedExercise(bool value) async {
@@ -105,9 +97,7 @@ class TokenService {
     await _prefs?.remove(_hasStartedExerciseKey);
   }
 
-  // ──────────────────────────────────────
   // 전체 토큰 관리
-  // ──────────────────────────────────────
 
   /// 모든 토큰 저장
   Future<void> saveTokens({

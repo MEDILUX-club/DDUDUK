@@ -9,10 +9,6 @@
 // 기존 설문 결과를 조회합니다. (읽기 전용 리뷰, 마이페이지)
 // Response: PainSurveyResponse
 
-// ──────────────────────────────────────
-// Request
-// ──────────────────────────────────────
-
 class PainSurveyRequest {
   final String painArea;           // 통증 부위 (step2)
   final String affectedSide;       // 어느 쪽 (step3) - 왼쪽/오른쪽/모두
@@ -48,10 +44,6 @@ class PainSurveyRequest {
         'redFlags': redFlags,
       };
 }
-
-// ──────────────────────────────────────
-// Response
-// ──────────────────────────────────────
 
 class PainSurveyResponse {
   final String? painArea;              // 통증 부위 (GET 응답에 포함)

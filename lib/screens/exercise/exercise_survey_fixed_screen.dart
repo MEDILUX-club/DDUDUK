@@ -1,31 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/widgets/survey/pain_level_face.dart';
+import 'package:dduduk_app/providers/daily_pain_provider.dart';
 import 'package:dduduk_app/repositories/exercise_ability_repository.dart';
-import 'package:dduduk_app/repositories/daily_pain_repository.dart';
 
 /// 운동 전 통증 정도 설문 화면 (고정 설문)
-/// 
+///
 /// 신규 유저와 기존 유저 모두 "시작하기" 버튼을 누르면 이 화면으로 옵니다.
 /// - 신규 유저 (exercise-ability 미완료): → survey1→2→3→4 → fixed1
 /// - 기존 유저 (exercise-ability 완료): → fixed1 (survey 스킵)
-class ExerciseSurveyFixedScreen extends StatefulWidget {
+class ExerciseSurveyFixedScreen extends ConsumerStatefulWidget {
   const ExerciseSurveyFixedScreen({super.key, this.onComplete});
 
   /// 설문 완료 시 콜백 (통증 레벨 전달)
   final void Function(double painLevel)? onComplete;
 
   @override
-  State<ExerciseSurveyFixedScreen> createState() =>
+  ConsumerState<ExerciseSurveyFixedScreen> createState() =>
       _ExerciseSurveyFixedScreenState();
 }
 
-class _ExerciseSurveyFixedScreenState extends State<ExerciseSurveyFixedScreen> {
+class _ExerciseSurveyFixedScreenState extends ConsumerState<ExerciseSurveyFixedScreen> {
   double _painLevel = 10;
-  bool _isLoading = false;
   final ExerciseAbilityRepository _exerciseAbilityRepository = ExerciseAbilityRepository();
-  final DailyPainRepository _dailyPainRepository = DailyPainRepository();
 
   /// 오늘 날짜를 YYYY-MM-DD 형식으로 반환
   String _getTodayDateString() {
@@ -34,20 +33,32 @@ class _ExerciseSurveyFixedScreenState extends State<ExerciseSurveyFixedScreen> {
   }
 
   Future<void> _onNextPressed() async {
-    if (_isLoading) return;
+    final dailyPainState = ref.read(dailyPainProvider);
+    if (dailyPainState.isLoading) return;
 
-    setState(() => _isLoading = true);
+    widget.onComplete?.call(_painLevel);
 
-    try {
-      widget.onComplete?.call(_painLevel);
+    // 1. Provider를 통해 daily-pain API 호출 (통증 정도 저장)
+    final success = await ref.read(dailyPainProvider.notifier).recordDailyPain(
+      recordDate: _getTodayDateString(),
+      painLevel: _painLevel.round(),
+    );
 
-      // 1. daily-pain API 호출 (통증 정도 저장)
-      await _dailyPainRepository.createOrUpdateDailyPain(
-        recordDate: _getTodayDateString(),
-        painLevel: _painLevel.round(),
+    if (!mounted) return;
+
+    if (!success) {
+      final error = ref.read(dailyPainProvider).error;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error ?? '저장 중 오류가 발생했습니다.'),
+          backgroundColor: Colors.red,
+        ),
       );
+      return;
+    }
 
-      // 2. exercise-ability 완료 여부 확인
+    // 2. exercise-ability 완료 여부 확인
+    try {
       final exerciseAbility = await _exerciseAbilityRepository.getExerciseAbility();
 
       if (!mounted) return;
@@ -62,7 +73,7 @@ class _ExerciseSurveyFixedScreenState extends State<ExerciseSurveyFixedScreen> {
     } catch (e) {
       debugPrint('오류 발생: $e');
       if (!mounted) return;
-      
+
       // 에러 표시
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -70,15 +81,14 @@ class _ExerciseSurveyFixedScreenState extends State<ExerciseSurveyFixedScreen> {
           backgroundColor: Colors.red,
         ),
       );
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final dailyPainState = ref.watch(dailyPainProvider);
+    final isLoading = dailyPainState.isLoading;
+
     return SurveyLayout(
       appBarTitle: '컨디션 체크',
       showProgressBar: false,
@@ -88,8 +98,8 @@ class _ExerciseSurveyFixedScreenState extends State<ExerciseSurveyFixedScreen> {
       currentStep: 1,
       totalSteps: 1,
       bottomButtons: SurveyButtonsConfig(
-        nextText: _isLoading ? '저장 중...' : '다음으로',
-        onNext: _isLoading ? null : _onNextPressed,
+        nextText: isLoading ? '저장 중...' : '다음으로',
+        onNext: isLoading ? null : _onNextPressed,
       ),
       child: SingleChildScrollView(
         child: PainLevelSelector(

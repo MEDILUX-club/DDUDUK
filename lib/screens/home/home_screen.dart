@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/layouts/home_layout.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
@@ -7,26 +8,20 @@ import 'package:dduduk_app/widgets/home/exercise_calendar.dart';
 import 'package:dduduk_app/widgets/home/exercise_record_modal.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_routine_card.dart';
 import 'package:dduduk_app/services/token_service.dart';
-import 'package:dduduk_app/repositories/user_repository.dart';
-import 'package:dduduk_app/repositories/daily_pain_repository.dart';
-import 'package:dduduk_app/repositories/exercise_repository.dart';
+import 'package:dduduk_app/providers/user_provider.dart';
+import 'package:dduduk_app/providers/daily_pain_provider.dart';
+import 'package:dduduk_app/providers/exercise_provider.dart';
 
 /// 홈 화면
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   final int _currentNavIndex = 0;
-  final _userRepository = UserRepository();
-  final _dailyPainRepository = DailyPainRepository();
-  final _exerciseRepository = ExerciseRepository();
-
-  String _userName = '사용자';
-  int _recoveryPercent = 0;
 
   // 운동한 날짜 목록 (API에서 불러옴)
   List<int> _exerciseDays = [];
@@ -39,51 +34,25 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUserName();
-    _loadRecoveryRate();
+    _loadInitialData();
+  }
+
+  Future<void> _loadInitialData() async {
+    // Provider를 통해 데이터 로드
+    ref.read(userProvider.notifier).fetchProfile();
+    ref.read(dailyPainProvider.notifier).fetchRecoveryRate();
     _loadExerciseDates();
   }
 
-  Future<void> _loadUserName() async {
-    try {
-      final profile = await _userRepository.getProfile();
-      if (mounted) {
-        setState(() {
-          _userName = profile.nickname.isNotEmpty ? profile.nickname : '사용자';
-        });
-      }
-    } catch (e) {
-      debugPrint('닉네임 로딩 오류: $e');
-    }
-  }
-
-  Future<void> _loadRecoveryRate() async {
-    try {
-      final rate = await _dailyPainRepository.getRecoveryRate();
-      if (mounted) {
-        setState(() {
-          _recoveryPercent = rate;
-        });
-      }
-    } catch (e) {
-      debugPrint('회복률 로딩 오류: $e');
-    }
-  }
-
   Future<void> _loadExerciseDates() async {
-    try {
-      final dates = await _exerciseRepository.getWorkoutRecordDates();
-      debugPrint(' API에서 받은 운동 날짜 목록: $dates');
-      if (mounted) {
-        setState(() {
-          _allExerciseDates = dates;
-          // 현재 월의 운동 날짜만 필터링
-          _updateExerciseDaysForCurrentMonth();
-          debugPrint(' 필터링된 운동 날짜 (일자만): $_exerciseDays');
-        });
-      }
-    } catch (e) {
-      debugPrint('운동 날짜 로딩 오류: $e');
+    await ref.read(exerciseProvider.notifier).fetchWorkoutDates();
+    final exerciseState = ref.read(exerciseProvider);
+    if (mounted) {
+      setState(() {
+        _allExerciseDates = exerciseState.workoutDates;
+        _updateExerciseDaysForCurrentMonth();
+        debugPrint(' 필터링된 운동 날짜 (일자만): $_exerciseDays');
+      });
     }
   }
 
@@ -159,10 +128,11 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
 
-      // API에서 운동 기록 불러오기
+      // Provider를 통해 운동 기록 불러오기
       try {
-        final workoutRecords = await _exerciseRepository
-            .getWorkoutRecordsByDate(dateString);
+        await ref.read(exerciseProvider.notifier).fetchWorkoutRecordsByDate(dateString);
+        final exerciseState = ref.read(exerciseProvider);
+        final workoutRecords = exerciseState.completedRecords;
 
         // WorkoutRecord를 ExerciseRoutineData로 변환
         final records = workoutRecords.map((record) {
@@ -218,6 +188,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userState = ref.watch(userProvider);
+    final painState = ref.watch(dailyPainProvider);
+
+    final userName = userState.nickname;
+    final recoveryPercent = painState.recoveryRate;
+
     return HomeLayout(
       title: 'DDUDUK',
       currentNavIndex: _currentNavIndex,
@@ -228,8 +204,8 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: AppDimens.space16),
           // 회복상태 카드
           RecoveryStatusCard(
-            userName: _userName,
-            recoveryPercent: _recoveryPercent,
+            userName: userName,
+            recoveryPercent: recoveryPercent,
           ),
           const SizedBox(height: AppDimens.space24),
           // 운동 캘린더

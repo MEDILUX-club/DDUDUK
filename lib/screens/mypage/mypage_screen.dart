@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/layouts/home_layout.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
@@ -8,28 +9,22 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/screens/survey/survey_step1_basic_info_screen.dart';
 import 'package:dduduk_app/screens/survey/survey_step2_pain_location_screen.dart';
 import 'package:dduduk_app/widgets/exercise/rest_exit_modal.dart';
-import 'package:dduduk_app/repositories/user_repository.dart';
 import 'package:dduduk_app/repositories/pain_survey_repository.dart';
 import 'package:dduduk_app/services/token_service.dart';
+import 'package:dduduk_app/providers/user_provider.dart';
 
 /// 마이페이지 화면
-class MypageScreen extends StatefulWidget {
+class MypageScreen extends ConsumerStatefulWidget {
   const MypageScreen({super.key});
 
   @override
-  State<MypageScreen> createState() => _MypageScreenState();
+  ConsumerState<MypageScreen> createState() => _MypageScreenState();
 }
 
-class _MypageScreenState extends State<MypageScreen> {
+class _MypageScreenState extends ConsumerState<MypageScreen> {
   final int _currentNavIndex = 2; // 마이페이지 탭 선택
-  final _userRepository = UserRepository();
   final _painSurveyRepository = PainSurveyRepository();
-  
-  // 프로필 데이터
-  String _userName = '';
-  String? _profileImageUrl;
-  bool _isLoading = true;
-  
+
   // 진단 결과 데이터
   int _diagnosisPercentage = 0;
   String _painArea = '';
@@ -38,57 +33,30 @@ class _MypageScreenState extends State<MypageScreen> {
   @override
   void initState() {
     super.initState();
-    _loadProfile();
+    _loadData();
   }
 
-  Future<void> _loadProfile() async {
+  Future<void> _loadData() async {
+    // Provider를 통해 프로필 로드
+    ref.read(userProvider.notifier).fetchProfile();
+
+    // 진단 결과 로드
+    await _loadDiagnosis();
+  }
+
+  Future<void> _loadDiagnosis() async {
     try {
-      // 프로필 및 진단 결과 동시 로드
-      final results = await Future.wait([
-        _userRepository.getProfile(),
-        _painSurveyRepository.getPainSurvey(),
-      ]);
+      final painSurvey = await _painSurveyRepository.getPainSurvey();
 
-      final profile = results[0];
-      final painSurvey = results[1];
-
-      if (mounted) {
+      if (mounted && painSurvey != null) {
         setState(() {
-          _userName = (profile as dynamic).nickname.isNotEmpty 
-              ? (profile as dynamic).nickname 
-              : '사용자';
-          
-          // 상대 경로인 경우 Base URL 붙이기
-          final imageUrl = (profile as dynamic).profileImageUrl as String?;
-          if (imageUrl != null && imageUrl.isNotEmpty) {
-            if (imageUrl.startsWith('/')) {
-              _profileImageUrl = 'http://43.201.28.83:8080$imageUrl';
-            } else {
-              _profileImageUrl = imageUrl;
-            }
-          } else {
-            _profileImageUrl = null;
-          }
-          
-          debugPrint('프로필 이미지 URL: $_profileImageUrl');
-          
-          if (painSurvey != null) {
-            _diagnosisPercentage = (painSurvey as dynamic).diagnosisPercentage;
-            _painArea = (painSurvey as dynamic).painArea ?? '';
-            _diagnosisType = _getDiagnosisTypeName((painSurvey as dynamic).diagnosisType);
-          }
-          
-          _isLoading = false;
+          _diagnosisPercentage = painSurvey.diagnosisPercentage;
+          _painArea = painSurvey.painArea ?? '';
+          _diagnosisType = _getDiagnosisTypeName(painSurvey.diagnosisType);
         });
       }
     } catch (e) {
-      debugPrint('프로필 로딩 오류: $e');
-      if (mounted) {
-        setState(() {
-          _userName = '사용자';
-          _isLoading = false;
-        });
-      }
+      debugPrint('진단 결과 로딩 오류: $e');
     }
   }
 
@@ -127,6 +95,20 @@ class _MypageScreenState extends State<MypageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userState = ref.watch(userProvider);
+    final userName = userState.isLoading ? '로딩 중...' : userState.nickname;
+
+    // 프로필 이미지 URL 처리
+    String? profileImageUrl;
+    final imageUrl = userState.profileImageUrl;
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      if (imageUrl.startsWith('/')) {
+        profileImageUrl = 'http://43.201.28.83:8080$imageUrl';
+      } else {
+        profileImageUrl = imageUrl;
+      }
+    }
+
     return HomeLayout(
       title: '마이페이지',
       currentNavIndex: _currentNavIndex,
@@ -136,15 +118,15 @@ class _MypageScreenState extends State<MypageScreen> {
           const SizedBox(height: AppDimens.space16),
           // 프로필 카드
           _ProfileCard(
-            userName: _isLoading ? '로딩 중...' : _userName,
-            profileImageUrl: _profileImageUrl,
+            userName: userName,
+            profileImageUrl: profileImageUrl,
             recoveryPercent: _diagnosisPercentage,
             painArea: _painArea,
             conditionType: _diagnosisType.isNotEmpty ? _diagnosisType : '진단 정보 없음',
             onEditPressed: () async {
               // 프로필 편집 화면으로 이동하고 돌아오면 새로고침
               await context.push('/mypage/profile-edit');
-              _loadProfile();
+              ref.read(userProvider.notifier).fetchProfile();
             },
           ),
           const SizedBox(height: AppDimens.space16),
@@ -185,8 +167,8 @@ class _MypageScreenState extends State<MypageScreen> {
               );
               if (result == true && context.mounted) {
                 try {
-                  // 기존 설문 데이터 삭제
-                  await _userRepository.resetSurveys();
+                  // Provider를 통해 설문 초기화
+                  await ref.read(userProvider.notifier).resetSurveys();
 
                   // 설문 화면으로 이동하고 완료를 기다림
                   if (context.mounted) {
@@ -197,9 +179,10 @@ class _MypageScreenState extends State<MypageScreen> {
                         ),
                       ),
                     );
-                    
+
                     // 설문 완료 후 프로필 새로고침
-                    _loadProfile();
+                    ref.read(userProvider.notifier).fetchProfile();
+                    _loadDiagnosis();
                   }
                 } catch (e) {
                   // 에러 처리

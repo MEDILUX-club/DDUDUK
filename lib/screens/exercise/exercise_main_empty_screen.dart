@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
@@ -7,22 +8,20 @@ import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/layouts/home_layout.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_start_card.dart';
 import 'package:dduduk_app/services/token_service.dart';
-import 'package:dduduk_app/repositories/user_repository.dart';
+import 'package:dduduk_app/providers/user_provider.dart';
 import 'package:go_router/go_router.dart';
 
 /// 운동 메인 화면 (빈 상태)
-class ExerciseMainEmptyScreen extends StatefulWidget {
+class ExerciseMainEmptyScreen extends ConsumerStatefulWidget {
   const ExerciseMainEmptyScreen({super.key});
 
   @override
-  State<ExerciseMainEmptyScreen> createState() =>
+  ConsumerState<ExerciseMainEmptyScreen> createState() =>
       _ExerciseMainEmptyScreenState();
 }
 
-class _ExerciseMainEmptyScreenState extends State<ExerciseMainEmptyScreen> {
+class _ExerciseMainEmptyScreenState extends ConsumerState<ExerciseMainEmptyScreen> {
   int _currentNavIndex = 1; // 운동 탭 선택됨
-  String _userName = '사용자님';
-  final _userRepository = UserRepository();
 
   @override
   void initState() {
@@ -31,18 +30,8 @@ class _ExerciseMainEmptyScreenState extends State<ExerciseMainEmptyScreen> {
   }
 
   Future<void> _loadUserName() async {
-    try {
-      final profile = await _userRepository.getProfile();
-      if (mounted) {
-        setState(() {
-          _userName = profile.nickname.isNotEmpty 
-              ? '${profile.nickname}님' 
-              : '사용자님';
-        });
-      }
-    } catch (e) {
-      debugPrint('닉네임 로딩 오류: $e');
-    }
+    // Provider를 통해 프로필 로드
+    ref.read(userProvider.notifier).fetchProfile();
   }
 
   void _onNavTap(int index) {
@@ -72,6 +61,12 @@ class _ExerciseMainEmptyScreenState extends State<ExerciseMainEmptyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Provider에서 상태 읽기
+    final userState = ref.watch(userProvider);
+    final userName = userState.hasProfile && userState.nickname.isNotEmpty
+        ? '${userState.nickname}님'
+        : '사용자님';
+
     return HomeLayout(
       title: '운동하기',
       currentNavIndex: _currentNavIndex,
@@ -80,7 +75,7 @@ class _ExerciseMainEmptyScreenState extends State<ExerciseMainEmptyScreen> {
         children: [
           // 상단 그린 카드
           ExerciseStartCard(
-            userName: _userName,
+            userName: userName,
             onStartPressed: _onStartExercise,
           ),
           const SizedBox(height: AppDimens.space24),

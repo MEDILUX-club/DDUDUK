@@ -3,10 +3,6 @@
 // Request: LoginRequest
 // Response: LoginResponse
 
-// ──────────────────────────────────────
-// Request
-// ──────────────────────────────────────
-
 /// 소셜 로그인 요청
 class LoginRequest {
   final String socialType;  // KAKAO, NAVER, APPLE
@@ -30,10 +26,6 @@ class LoginRequest {
     return json;
   }
 }
-
-// ──────────────────────────────────────
-// Response
-// ──────────────────────────────────────
 
 /// 소셜 로그인 응답
 class LoginResponse {

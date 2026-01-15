@@ -3,10 +3,6 @@
 // Request: RefreshRequest
 // Response: RefreshResponse
 
-// ──────────────────────────────────────
-// Request
-// ──────────────────────────────────────
-
 /// 토큰 갱신 요청
 class RefreshRequest {
   final String refreshToken;
@@ -17,10 +13,6 @@ class RefreshRequest {
         'refreshToken': refreshToken,
       };
 }
-
-// ──────────────────────────────────────
-// Response
-// ──────────────────────────────────────
 
 /// 토큰 갱신 응답
 class RefreshResponse {

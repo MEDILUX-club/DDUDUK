@@ -1,29 +1,29 @@
-﻿import 'package:flutter/foundation.dart'
+import 'package:flutter/foundation.dart'
     show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/screens/auth/terms_agreement_screen.dart';
 import 'package:dduduk_app/services/social_auth_service.dart';
 import 'package:dduduk_app/services/token_service.dart';
-import 'package:dduduk_app/repositories/auth_repository.dart';
 import 'package:dduduk_app/repositories/pain_survey_repository.dart';
 import 'package:dduduk_app/api/api_exception.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/buttons/primary_button.dart';
+import 'package:dduduk_app/providers/auth_provider.dart';
 
-class SignInScreen extends StatefulWidget {
+class SignInScreen extends ConsumerStatefulWidget {
   const SignInScreen({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  ConsumerState<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignInScreenState extends ConsumerState<SignInScreen> {
   bool _isLoading = false;
-  final AuthRepository _authRepository = AuthRepository();
   final PainSurveyRepository _painSurveyRepository = PainSurveyRepository();
 
   /// 로딩 상태 표시
@@ -48,11 +48,18 @@ class _SignInScreenState extends State<SignInScreen> {
       }
       debugPrint('$providerName 소셜 로그인 성공: $socialResult');
 
-      // 2. 서버 로그인 (JWT 토큰 발급)
-      final loginResponse = await _authRepository.login(
+      // 2. Provider를 통해 서버 로그인 (JWT 토큰 발급)
+      final success = await ref.read(authProvider.notifier).login(
         socialResult.toLoginRequest(),
       );
-      debugPrint('서버 로그인 성공: userId=${loginResponse.userId}, nickname=${loginResponse.nickname}');
+
+      if (!success) {
+        final error = ref.read(authProvider).error;
+        _showError(error ?? '$providerName 로그인에 실패했습니다.');
+        return;
+      }
+
+      debugPrint('서버 로그인 성공');
 
       if (!mounted) return;
 

@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/layouts/survey_layout.dart';
 import 'package:dduduk_app/widgets/common/selectable_option_card.dart';
-import 'package:dduduk_app/repositories/exercise_repository.dart';
+import 'package:dduduk_app/providers/exercise_provider.dart';
 
 /// 운동 후 피드백 3단계: 운동 중 땀은 어느정도 났나요?
-class ExerciseFeedbackScreen3 extends StatefulWidget {
+class ExerciseFeedbackScreen3 extends ConsumerStatefulWidget {
   final Map<String, dynamic>? feedbackData;
 
   const ExerciseFeedbackScreen3({super.key, this.feedbackData});
 
   @override
-  State<ExerciseFeedbackScreen3> createState() =>
+  ConsumerState<ExerciseFeedbackScreen3> createState() =>
       _ExerciseFeedbackScreen3State();
 }
 
-class _ExerciseFeedbackScreen3State extends State<ExerciseFeedbackScreen3> {
+class _ExerciseFeedbackScreen3State extends ConsumerState<ExerciseFeedbackScreen3> {
   int? _selectedOption;
-  final ExerciseRepository _repository = ExerciseRepository();
-  bool _isSubmitting = false;
 
   final List<String> _options = [
     '안 났어요',
@@ -41,48 +40,43 @@ class _ExerciseFeedbackScreen3State extends State<ExerciseFeedbackScreen3> {
   }
 
   Future<void> _onNext() async {
-    if (_selectedOption == null || _isSubmitting) return;
+    if (_selectedOption == null) return;
 
-    setState(() {
-      _isSubmitting = true;
-    });
+    final exerciseState = ref.read(exerciseProvider);
+    if (exerciseState.isLoading) return;
 
-    try {
-      // 세 화면의 모든 피드백 데이터 수집
-      final selectedText = _options[_selectedOption!];
-      final rpeResponse = widget.feedbackData?['rpeResponse'] ?? '';
-      final muscleStimulationResponse =
-          widget.feedbackData?['muscleStimulationResponse'] ?? '';
+    // 세 화면의 모든 피드백 데이터 수집
+    final selectedText = _options[_selectedOption!];
+    final rpeResponse = widget.feedbackData?['rpeResponse'] ?? '';
+    final muscleStimulationResponse =
+        widget.feedbackData?['muscleStimulationResponse'] ?? '';
 
-      // API 호출
-      await _repository.saveWorkoutFeedback(
-        rpeResponse: rpeResponse,
-        muscleStimulationResponse: muscleStimulationResponse,
-        sweatResponse: selectedText,
-      );
+    // Provider를 통해 API 호출
+    final success = await ref.read(exerciseProvider.notifier).saveWorkoutFeedback(
+      rpeResponse: rpeResponse,
+      muscleStimulationResponse: muscleStimulationResponse,
+      sweatResponse: selectedText,
+    );
 
+    if (!mounted) return;
+
+    if (success) {
       // 피드백 완료 - 운동 예약 화면으로 이동
-      if (mounted) {
-        context.go('/exercise/reservation');
-      }
-    } catch (e) {
+      context.go('/exercise/reservation');
+    } else {
       // 에러 처리
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('피드백 저장에 실패했습니다: $e')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSubmitting = false;
-        });
-      }
+      final error = ref.read(exerciseProvider).error;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error ?? '피드백 저장에 실패했습니다.')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final exerciseState = ref.watch(exerciseProvider);
+    final isSubmitting = exerciseState.isLoading;
+
     return SurveyLayout(
       appBarTitle: '운동 만족도',
       stepLabel: '자가평가',
@@ -95,9 +89,9 @@ class _ExerciseFeedbackScreen3State extends State<ExerciseFeedbackScreen3> {
       bottomButtons: SurveyButtonsConfig(
         prevText: '이전으로',
         onPrev: _onPrevious,
-        nextText: '다음으로',
+        nextText: isSubmitting ? '저장 중...' : '다음으로',
         onNext: _onNext,
-        isNextEnabled: _selectedOption != null && !_isSubmitting,
+        isNextEnabled: _selectedOption != null && !isSubmitting,
       ),
       child: SingleChildScrollView(
         child: Column(

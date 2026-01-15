@@ -22,7 +22,6 @@ class ApiClient {
       ),
     );
 
-    // 인터셉터 추가
     _dio.interceptors.addAll([
       _AuthInterceptor(),
       _LoggingInterceptor(),
@@ -37,10 +36,6 @@ class ApiClient {
 
   /// Dio 인스턴스 접근
   Dio get dio => _dio;
-
-  // ──────────────────────────────────────
-  // HTTP Methods
-  // ──────────────────────────────────────
 
   /// GET 요청
   Future<Response<T>> get<T>(
@@ -178,7 +173,6 @@ class ApiClient {
 class _AuthInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    // 로그인/회원가입은 토큰 불필요
     final noAuthPaths = [
       Endpoints.login,
       Endpoints.refresh,
@@ -190,9 +184,7 @@ class _AuthInterceptor extends Interceptor {
         if (token != null) {
           options.headers['Authorization'] = 'Bearer $token';
         }
-      } catch (_) {
-        // TokenService가 초기화되지 않은 경우 무시
-      }
+      } catch (_) {}
     }
 
     handler.next(options);
@@ -200,10 +192,6 @@ class _AuthInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    // 401 에러 시 토큰 갱신 시도
-    if (err.response?.statusCode == 401) {
-      // 현재는 그냥 에러 전달
-    }
     handler.next(err);
   }
 }

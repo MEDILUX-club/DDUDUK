@@ -73,42 +73,30 @@ class ExerciseAbilityNotifier extends StateNotifier<ExerciseAbilityState> {
   })  : _repository = repository ?? ExerciseAbilityRepository(),
         super(ExerciseAbilityState(data: ExerciseAbilityData()));
 
-  // ──────────────────────────────────────
   // Survey 1: 스쿼트
-  // ──────────────────────────────────────
   void updateSquatResponse(String value) {
     state.data.squatResponse = value;
     state = state.copyWith(data: state.data);
   }
 
-  // ──────────────────────────────────────
   // Survey 2: 푸쉬업
-  // ──────────────────────────────────────
   void updatePushupResponse(String value) {
     state.data.pushupResponse = value;
     state = state.copyWith(data: state.data);
   }
 
-  // ──────────────────────────────────────
   // Survey 3: 계단오르기
-  // ──────────────────────────────────────
   void updateStepupResponse(String value) {
     state.data.stepupResponse = value;
     state = state.copyWith(data: state.data);
   }
 
-  // ──────────────────────────────────────
   // Survey 4: 플랭크
-  // ──────────────────────────────────────
   void updatePlankResponse(String value) {
     state.data.plankResponse = value;
     state = state.copyWith(data: state.data);
   }
 
-  // ──────────────────────────────────────
-  // API 제출
-  // ──────────────────────────────────────
-  
   /// 운동 능력 평가 데이터를 API에 제출
   Future<bool> submitExerciseAbility() async {
     if (!state.data.isComplete) {
@@ -136,10 +124,6 @@ class ExerciseAbilityNotifier extends StateNotifier<ExerciseAbilityState> {
     }
   }
 
-  // ──────────────────────────────────────
-  // 초기화
-  // ──────────────────────────────────────
-  
   /// 설문 데이터 초기화 (새로운 설문 시작 시)
   void reset() {
     state = ExerciseAbilityState(data: ExerciseAbilityData());

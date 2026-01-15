@@ -1,36 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/layouts/home_layout.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
 import 'package:dduduk_app/theme/app_dimens.dart';
 import 'package:dduduk_app/theme/app_text_styles.dart';
 import 'package:dduduk_app/widgets/exercise/exercise_start_card.dart';
-import 'package:dduduk_app/repositories/user_repository.dart';
-import 'package:dduduk_app/repositories/exercise_repository.dart';
-import 'package:dduduk_app/models/exercise/weekly_workout_summary.dart';
+import 'package:dduduk_app/providers/user_provider.dart';
+import 'package:dduduk_app/providers/exercise_provider.dart';
 import 'package:go_router/go_router.dart';
 
 /// 운동 메인 화면 (데이터 있음)
-class ExerciseMainScreen extends StatefulWidget {
+class ExerciseMainScreen extends ConsumerStatefulWidget {
   const ExerciseMainScreen({super.key});
 
   @override
-  State<ExerciseMainScreen> createState() => _ExerciseMainScreenState();
+  ConsumerState<ExerciseMainScreen> createState() => _ExerciseMainScreenState();
 }
 
-class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
+class _ExerciseMainScreenState extends ConsumerState<ExerciseMainScreen> {
   int _currentNavIndex = 1; // 운동 탭 선택됨
-  String _userName = '사용자님';
-  final _userRepository = UserRepository();
-  final _exerciseRepository = ExerciseRepository();
-
-  WeeklyWorkoutSummary? _weeklySummary;
 
   @override
   void initState() {
     super.initState();
-    _loadUserName();
-    _loadWeeklySummary();
+    _loadData();
   }
 
   @override
@@ -40,39 +34,17 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
     _loadWeeklySummary();
   }
 
-  Future<void> _loadUserName() async {
-    try {
-      final profile = await _userRepository.getProfile();
-      if (mounted) {
-        setState(() {
-          _userName = profile.nickname.isNotEmpty
-              ? '${profile.nickname}님'
-              : '사용자님';
-        });
-      }
-    } catch (e) {
-      debugPrint('닉네임 로딩 오류: $e');
-    }
+  Future<void> _loadData() async {
+    // Provider를 통해 데이터 로드
+    ref.read(userProvider.notifier).fetchProfile();
+    _loadWeeklySummary();
   }
 
   Future<void> _loadWeeklySummary() async {
-    try {
-      // 오늘 날짜를 referenceDate로 사용
-      final today = DateTime.now();
-      final referenceDate = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
-
-      final summary = await _exerciseRepository.getWeeklySummary(
-        referenceDate: referenceDate,
-      );
-
-      if (mounted) {
-        setState(() {
-          _weeklySummary = summary;
-        });
-      }
-    } catch (e) {
-      debugPrint('주간 요약 로딩 오류: $e');
-    }
+    // 오늘 날짜를 referenceDate로 사용
+    final today = DateTime.now();
+    final referenceDate = '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+    ref.read(exerciseProvider.notifier).fetchWeeklySummary(referenceDate);
   }
 
   void _onNavTap(int index) {
@@ -94,13 +66,21 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
   void _onStartExercise() async {
     // 컨디션 체크 화면으로 이동 (여기서 신규/기존 유저 분기)
     await context.push('/exercise/fixed');
-    
+
     // 운동 완료 후 돌아왔을 때 데이터 새로고침
     _loadWeeklySummary();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Provider에서 상태 읽기
+    final userState = ref.watch(userProvider);
+    final exerciseState = ref.watch(exerciseProvider);
+
+    final userName = userState.hasProfile && userState.nickname.isNotEmpty
+        ? '${userState.nickname}님'
+        : '사용자님';
+
     return HomeLayout(
       title: '운동하기',
       currentNavIndex: _currentNavIndex,
@@ -110,13 +90,13 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
         children: [
           // 상단 그린 카드
           ExerciseStartCard(
-            userName: _userName,
+            userName: userName,
             onStartPressed: _onStartExercise,
           ),
           const SizedBox(height: AppDimens.space24),
 
           // 이번 주 진행 상황
-          _buildWeeklyProgress(),
+          _buildWeeklyProgress(exerciseState),
           const SizedBox(height: AppDimens.space24),
 
           // 다음 운동 루틴
@@ -128,14 +108,15 @@ class _ExerciseMainScreenState extends State<ExerciseMainScreen> {
 
 
 
-  Widget _buildWeeklyProgress() {
-    // API 데이터가 로드되지 않았을 때 기본값 사용
-    final workoutCount = _weeklySummary?.thisWeekWorkoutCount ?? 0;
-    final totalMinutes = _weeklySummary?.thisWeekTotalMinutes ?? 0;
-    final workoutDiff = _weeklySummary?.workoutCountDiff ?? 0;
-    final minutesDiff = _weeklySummary?.totalMinutesDiff ?? 0;
-    final isWorkoutPositive = _weeklySummary?.isWorkoutCountPositive ?? true;
-    final isMinutesPositive = _weeklySummary?.isTotalMinutesPositive ?? true;
+  Widget _buildWeeklyProgress(ExerciseState exerciseState) {
+    // Provider 데이터가 로드되지 않았을 때 기본값 사용
+    final weeklySummary = exerciseState.weeklySummary;
+    final workoutCount = weeklySummary?.thisWeekWorkoutCount ?? 0;
+    final totalMinutes = weeklySummary?.thisWeekTotalMinutes ?? 0;
+    final workoutDiff = weeklySummary?.workoutCountDiff ?? 0;
+    final minutesDiff = weeklySummary?.totalMinutesDiff ?? 0;
+    final isWorkoutPositive = weeklySummary?.isWorkoutCountPositive ?? true;
+    final isMinutesPositive = weeklySummary?.isTotalMinutesPositive ?? true;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -430,4 +411,3 @@ class _ExerciseCard extends StatelessWidget {
     );
   }
 }
-
