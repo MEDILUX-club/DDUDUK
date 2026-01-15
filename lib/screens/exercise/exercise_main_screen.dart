@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/layouts/home_layout.dart';
@@ -24,14 +25,10 @@ class _ExerciseMainScreenState extends ConsumerState<ExerciseMainScreen> {
   @override
   void initState() {
     super.initState();
-    _loadData();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // 화면이 다시 표시될 때 데이터 새로고침
-    _loadWeeklySummary();
+    // Provider 수정은 build 이후에 수행해야 함
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
   }
 
   Future<void> _loadData() async {

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dduduk_app/layouts/default_layout.dart';
@@ -39,7 +40,10 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
   void initState() {
     super.initState();
     _nicknameController.addListener(_onNicknameChanged);
-    _loadProfile();
+    // Provider 수정은 build 이후에 수행해야 함
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _loadProfile();
+    });
   }
 
   /// 서버에서 프로필 정보 로드

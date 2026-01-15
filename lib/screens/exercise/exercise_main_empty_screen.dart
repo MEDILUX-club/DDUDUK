@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dduduk_app/theme/app_colors.dart';
@@ -26,7 +27,10 @@ class _ExerciseMainEmptyScreenState extends ConsumerState<ExerciseMainEmptyScree
   @override
   void initState() {
     super.initState();
-    _loadUserName();
+    // Provider 수정은 build 이후에 수행해야 함
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _loadUserName();
+    });
   }
 
   Future<void> _loadUserName() async {
