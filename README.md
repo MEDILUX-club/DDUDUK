@@ -110,6 +110,8 @@ Screen (UI)  →  Provider (상태관리)  →  Repository (API 호출)  →  Ap
 
 ## 5. 남은 과제
 
+> 시간상 한두 번 테스트 후 시연 영상 촬영까지만 진행. 이후 추가 테스트 미실시로 정상 동작하지 않을 수 있으며, 코드 리팩토링 필요.
+
 - GoRouter 인증 리다이렉트(redirect guard) 미구현
 - StateNotifier → Notifier 마이그레이션 (Riverpod 권장)
 - JWT 토큰이 SharedPreferences에 평문 저장 → flutter_secure_storage 전환 권장
