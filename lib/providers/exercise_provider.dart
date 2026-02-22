@@ -67,6 +67,46 @@ class ExerciseNotifier extends StateNotifier<ExerciseState> {
         isLoading: false,
       );
     } on ApiException catch (e) {
+      // 403 에러 발생 시 (루틴이 없는 경우) 생성 시도
+      if (e.statusCode == 403) {
+        try {
+          ExerciseRecommendationResponse? generatedRoutine;
+          
+          // 이전 운동 기록이 있는지 확인하여 Initial / Repeat 결정
+          final previousDate = _getPreviousDate(date);
+          
+          if (previousDate != null) {
+            // 2-1. 이전 기록이 있으면: Repeat (반복 추천) 시도
+            try {
+              generatedRoutine = await _repository.createRepeatRecommendation(
+                routineDate: date,
+                previousRoutineDate: previousDate,
+              );
+            } catch (repeatError) {
+              // Repeat 실패 시 (예: 403) -> Initial (최초 추천)로 재시도
+              generatedRoutine = await _repository.createInitialRecommendation(date);
+            }
+          } else {
+            // 2-2. 이전 기록이 없으면: Initial (최초 추천)
+            generatedRoutine = await _repository.createInitialRecommendation(date);
+          }
+
+          // 3. 생성된 추천 루틴 저장
+          final savedRoutine = await _repository.saveRoutines(
+            routineDate: date,
+            exercises: generatedRoutine.exercises,
+          );
+
+          state = state.copyWith(
+            currentRoutine: savedRoutine,
+            isLoading: false,
+          );
+          return;
+        } catch (fallbackError) {
+          // 생성/저장 실패 시
+        }
+      }
+
       state = state.copyWith(
         isLoading: false,
         error: e.userMessage,
@@ -77,6 +117,25 @@ class ExerciseNotifier extends StateNotifier<ExerciseState> {
         isLoading: false,
       );
     }
+  }
+
+  /// 현재 날짜(date) 직전의 운동 날짜 반환
+  String? _getPreviousDate(String currentDate) {
+    if (state.workoutDates.isEmpty) return null;
+
+    // 날짜 정렬 (오름차순)
+    final sortedDates = [...state.workoutDates]..sort();
+    
+    // currentDate보다 작은 값 중 가장 큰 값 찾기
+    String? lastDate;
+    for (final date in sortedDates) {
+      if (date.compareTo(currentDate) < 0) {
+        lastDate = date;
+      } else {
+        break; // currentDate보다 크거나 같으면 중단
+      }
+    }
+    return lastDate;
   }
 
   /// 최초 운동 추천 생성

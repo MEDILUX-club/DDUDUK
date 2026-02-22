@@ -60,7 +60,8 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>kakaoab5d133eb445dd76f3c31a7c9250b2e9</string>
+				<!-- 카카오 개발자 콘솔에서 발급받은 네이티브 앱 키를 kakao 뒤에 붙여 입력 -->
+				<string>kakao{YOUR_KAKAO_NATIVE_APP_KEY}</string>
 			</array>
 		</dict>
 		<!-- 네이버 로그인 URL Scheme -->
@@ -87,9 +88,11 @@
 	<key>NaverServiceAppUrlScheme</key>
 	<string>naverlogin</string>
 	<key>NaverConsumerKey</key>
-	<string>VUbt2N03YPpIBpU6Q1P4</string>
+	<!-- 네이버 개발자 센터에서 발급받은 Consumer Key 입력 -->
+	<string>{YOUR_NAVER_CONSUMER_KEY}</string>
 	<key>NaverConsumerSecret</key>
-	<string>mSXkMPhMm0</string>
+	<!-- 네이버 개발자 센터에서 발급받은 Consumer Secret 입력 -->
+	<string>{YOUR_NAVER_CONSUMER_SECRET}</string>
 	<key>NaverServiceAppName</key>
 	<string>뚜둑</string>
 </dict>
